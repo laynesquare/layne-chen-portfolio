@@ -3,11 +3,11 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import { Color, Group, MeshStandardMaterial, Raycaster, Vector2 } from 'three';
 
-useGLTF.preload('/scenary/cage.glb');
+useGLTF.preload('/scenery/cage-transformed.glb');
 
 export default function Cage() {
 	const group = useRef<Group>(null);
-	const { nodes, materials, animations, scene } = useGLTF('/scenary/cage.glb');
+	const { nodes, materials, animations, scene } = useGLTF('/scenery/cage-transformed.glb');
 	const { actions } = useAnimations(animations, scene);
 	const timeRef = useRef(0);
 	const hoveredRef = useRef(false);
@@ -17,13 +17,6 @@ export default function Cage() {
 
 	useEffect(() => {
 		console.log(materials);
-
-		scene.traverse(child => {
-			if (child.isMesh) {
-				// Example: Apply material properties
-				// applyProps(child.material, { envMapIntensity: 2, roughness: 0.45, metalness: 0.8, color: '#fff' });
-			}
-		});
 	}, [actions, scene, materials]);
 
 	useFrame((state, delta) => {
@@ -58,14 +51,14 @@ export default function Cage() {
 
 	return (
 		<group
-			ref={group}
-			scale={[5, 5, 5]}
-			position={[0, 4, 0]}
-			onPointerOver={() => (hoveredRef.current = true)}
-			onPointerOut={() => (hoveredRef.current = false)}>
-			<primitive
-				object={scene}
-				dampen={0.5}
+			dispose={null}
+			ref={group}>
+			<mesh
+				geometry={nodes['Hedra001_Material_#0_0'].geometry}
+				material={materials.Material_0}
+				scale={0.08}
+				position={[-0.016, 0, 0.088]}
+				rotation={[-Math.PI / 2, 0, 0]}
 			/>
 		</group>
 	);

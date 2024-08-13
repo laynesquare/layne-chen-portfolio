@@ -12,62 +12,53 @@ import {
 	Scanline,
 	GodRays,
 	LensFlare,
+	N8AO,
 } from '@react-three/postprocessing';
 import { KernelSize, Resolution, BlendFunction } from 'postprocessing';
-import { Vector2, BackSide } from 'three';
+import { Vector2, BackSide, Vector3 } from 'three';
 
-// com
+// Import custom components
 import { Floor, Cage, Particles, Model, Loader } from '@/components';
 
-// type
+// Import types
 import { SceneProps } from '@/types';
 
-function AdjustCamera() {
-	const { camera } = useThree();
-	const scroll = useScroll();
+import { BallCollider, Physics, RigidBody, CylinderCollider } from '@react-three/rapier';
 
-	useFrame(() => {
-		const scrollOffset = scroll.offset;
-	});
-
-	useEffect(() => {
-		camera.position.set(-0.9225665193808417, 3.534796092969559, 3.3980916163639696);
-		camera.rotation.set(0.36711881061574475, -0.09825279434400959, 0.03770469119335154, 'XYZ');
-	}, [camera]);
-
-	return null;
-}
-
-export default function Scene({ loader }: SceneProps) {
+export default function Scene({ Loader, Camera }: SceneProps) {
 	return (
 		<>
 			<Canvas
 				shadows
-				gl={{ antialias: true }}
+				gl={{ antialias: true, alpha: false }}
 				camera={{ fov: 75 }}
 				className='relative h-svh z-0'>
-				{/* <OrbitControls /> */}
+				<OrbitControls />
 				<ambientLight intensity={10} />
 
 				<directionalLight
 					position={[15, 15, 15]}
-					intensity={50}
+					intensity={5}
 					castShadow
 					// shadow-mapSize-width={1024}
 					// shadow-mapSize-height={1024}
 				/>
 
-				<Suspense fallback={loader}>
+				<Suspense fallback={Loader}>
 					<ScrollControls
 						damping={0.5}
 						pages={10}>
-						<Cage />
-						<Model />
-						<Floor />
+						<Physics gravity={[0, 0, 0]}>
+							<Pointer />
+							<Model />
+						</Physics>
+						{/* <Cage /> */}
+						{/* <Model /> */}
+						{/* <Floor /> */}
 						{/* <Smoke /> */}
-						<Particles />
-						<AdjustCamera />
-						{/* <PsychedelicBackground /> */}
+						{/* <Particles /> */}
+						{Camera}
+						<PsychedelicBackground />
 						<EffectComposer>
 							<Bloom
 								intensity={0.3} // The bloom intensity.
@@ -83,11 +74,16 @@ export default function Scene({ loader }: SceneProps) {
 								blendFunction={BlendFunction.NORMAL} // blend mode
 								offset={[0.0005, 0.0005]} // color offset
 							/>
+							{/* <N8AO
+								color='red'
+								aoRadius={2}
+								intensity={1.15}
+							/> */}
 
-							<Noise
+							{/* <Noise
 								blendFunction={BlendFunction.NORMAL} // blend mode
 								premultiply // whether to premultiply the noise texture
-							/>
+							/> */}
 
 							{/* <Noise
 							blendFunction={BlendFunction.NORMAL} // blend mode
@@ -121,6 +117,23 @@ export default function Scene({ loader }: SceneProps) {
 				</Suspense>
 			</Canvas>
 		</>
+	);
+}
+
+function Pointer({ vec = new Vector3() }) {
+	const ref = useRef();
+	useFrame(({ mouse, viewport }) => {
+		vec.lerp({ x: (mouse.x * viewport.width) / 2, y: (mouse.y * viewport.height) / 2, z: 0 }, 0.2);
+		ref.current?.setNextKinematicTranslation(vec);
+	});
+	return (
+		<RigidBody
+			position={[100, 100, 100]}
+			type='kinematicPosition'
+			colliders={false}
+			ref={ref}>
+			<BallCollider args={[2]} />
+		</RigidBody>
 	);
 }
 

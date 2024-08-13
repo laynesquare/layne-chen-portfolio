@@ -7,6 +7,8 @@ import Image from 'next/image';
 // types
 import { FrameProps } from '@/types';
 
+// three
+
 // img
 import frameTopLeftIdentity from '@/public/frame/frame-top-left-identity.png';
 import frameTopCenter1st from '@/public/frame/frame-top-center-1st.png';
@@ -36,18 +38,10 @@ import frameCenterLetterHFamily from '@/public/frame/frame-center-letter-h-famil
 import frameCenterLetterEFamily from '@/public/frame/frame-center-letter-e-family.svg';
 import frameCenterLetterNFamily from '@/public/frame/frame-center-letter-n-family.svg';
 
-export default function Frame({ isSceneLoaded }: FrameProps) {
+export default function Frame({ isSceneLoaded, scroll }: FrameProps) {
 	useEffect(() => {
-		const handleScroll = () => {
-			const scrollPosition = window.scrollY;
-		};
-
-		window.addEventListener('mousemove', handleScroll);
-
-		return () => {
-			window.removeEventListener('scroll', handleScroll);
-		};
-	}, []);
+		console.log(scroll);
+	}, [scroll]);
 	return (
 		<>
 			<div className={isSceneLoaded ? 'block' : 'hidden'}>

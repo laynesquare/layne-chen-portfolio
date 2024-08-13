@@ -1,13 +1,26 @@
 import { useScroll } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Vector3 } from 'three';
 
-export default function AdjustCamera() {
-	const { camera } = useThree();
+// Debounce function to limit the rate at which the handler is called
+const debounce = (func, wait) => {
+	let timeout;
+	return (...args) => {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => func(...args), wait);
+	};
+};
+
+export default function Camera({ handleScroll }) {
+	const [vec] = useState(() => new Vector3());
+	const { camera, mouse } = useThree();
 	const scroll = useScroll();
 
 	useFrame(() => {
 		const scrollOffset = scroll.offset;
+		handleScroll(scrollOffset);
+		// camera.position.lerp(vec.set(mouse.x, mouse.y + 3.534796092969559, 3.3980916163639696), 0.05);
 	});
 
 	useEffect(() => {

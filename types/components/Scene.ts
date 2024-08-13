@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 
 export interface SceneProps {
-	loader: ReactNode;
+	Loader: ReactNode;
+	Camera: ReactNode;
 }
