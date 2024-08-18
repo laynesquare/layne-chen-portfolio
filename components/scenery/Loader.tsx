@@ -9,7 +9,6 @@ export default function Loader({ handleSceneLoaded }: LoaderProps) {
 
 	useEffect(() => {
 		if (progress === 100) {
-			handleSceneLoaded();
 		}
 	}, [progress, handleSceneLoaded]);
 

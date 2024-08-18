@@ -1,9 +1,9 @@
 'use client';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Frame, Loader, Camera } from '@/components';
+import { Frame, Loader, Camera, Scene, Hero } from '@/components';
 
-const Scene = dynamic(() => import('@/components/scenery/Scene'), { ssr: false });
+// const Scene = dynamic(() => import('@/components/scenery/Scene'), { ssr: false });
 
 export default function Home() {
 	const [isSceneLoaded, setIsSceneLoaded] = useState<boolean>(false);
@@ -19,14 +19,9 @@ export default function Home() {
 
 	return (
 		<main className='h-full'>
-			{/* <Frame
-				isSceneLoaded={isSceneLoaded}
-				scroll={scroll}
-			/> */}
-			<Scene
-				Loader={<Loader handleSceneLoaded={handleSceneLoaded} />}
-				Camera={<Camera handleScroll={handleScroll} />}
-			/>
+			<Hero />
+			{/* <Frame /> */}
+			<Scene />
 		</main>
 	);
 }

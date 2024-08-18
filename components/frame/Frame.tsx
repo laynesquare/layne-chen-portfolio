@@ -38,7 +38,7 @@ import frameCenterLetterHFamily from '@/public/frame/frame-center-letter-h-famil
 import frameCenterLetterEFamily from '@/public/frame/frame-center-letter-e-family.svg';
 import frameCenterLetterNFamily from '@/public/frame/frame-center-letter-n-family.svg';
 
-export default function Frame({ isSceneLoaded, scroll }: FrameProps) {
+export default function Frame({ isSceneLoaded = true, scroll }: FrameProps) {
 	useEffect(() => {
 		console.log(scroll);
 	}, [scroll]);
@@ -161,7 +161,7 @@ export default function Frame({ isSceneLoaded, scroll }: FrameProps) {
 					<p>hover the ring to rotate</p>
 				</div>
 
-				<Image
+				{/* <Image
 					src={frameCenterLetterL}
 					alt=''
 					className='frame-center-letter frame-center-letter-l'
@@ -205,7 +205,7 @@ export default function Frame({ isSceneLoaded, scroll }: FrameProps) {
 					src={frameCenterLetterNFamily}
 					alt=''
 					className='frame-center-letter frame-center-letter-n-family'
-				/>
+				/> */}
 			</div>
 		</>
 	);

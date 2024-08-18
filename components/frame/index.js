@@ -1,3 +1,4 @@
 import Frame from './Frame';
+import Hero from './Hero';
 
-export { Frame };
+export { Frame, Hero };

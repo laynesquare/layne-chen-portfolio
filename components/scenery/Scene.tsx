@@ -2,7 +2,17 @@
 
 import { Suspense, useEffect, useRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { useProgress, Html, ScrollControls, useScroll, OrbitControls, Environment, Sky } from '@react-three/drei';
+import {
+	useProgress,
+	Html,
+	ScrollControls,
+	useScroll,
+	OrbitControls,
+	Text,
+	Preload,
+	MeshTransmissionMaterial,
+	Text3D,
+} from '@react-three/drei';
 import {
 	EffectComposer,
 	Bloom,
@@ -18,101 +28,77 @@ import { KernelSize, Resolution, BlendFunction } from 'postprocessing';
 import { Vector2, BackSide, Vector3 } from 'three';
 
 // Import custom components
-import { Floor, Cage, Particles, Model, Loader } from '@/components';
+import { Floor, Cage, Particles, Model, Loader, Camera, Laser, Ray } from '@/components';
 
 // Import types
 import { SceneProps } from '@/types';
 
-import { BallCollider, Physics, RigidBody, CylinderCollider } from '@react-three/rapier';
+import { BallCollider, Physics, RigidBody } from '@react-three/rapier';
 
-export default function Scene({ Loader, Camera }: SceneProps) {
+import { suspend } from 'suspend-react';
+
+export default function Scene({}: SceneProps) {
 	return (
 		<>
 			<Canvas
-				shadows
-				gl={{ antialias: true, alpha: false }}
-				camera={{ fov: 75 }}
+				gl={{
+					antialias: false,
+					alpha: false,
+					stencil: false,
+					depth: false,
+					powerPreference: 'high-performance',
+				}}
+				// eventSource={document.getElementById('root')}
+				// eventPrefix='client'
+				camera={{ fov: 100 }}
 				className='relative h-svh z-0'>
+				<color
+					attach='background'
+					args={['#141414']}
+				/>
 				<OrbitControls />
-				<ambientLight intensity={10} />
-
+				{/* <ambientLight intensity={10} /> */}
 				<directionalLight
 					position={[15, 15, 15]}
 					intensity={5}
 					castShadow
-					// shadow-mapSize-width={1024}
-					// shadow-mapSize-height={1024}
 				/>
 
-				<Suspense fallback={Loader}>
+				<Suspense>
 					<ScrollControls
 						damping={0.5}
 						pages={10}>
 						<Physics gravity={[0, 0, 0]}>
-							<Pointer />
+							{/* <Pointer /> */}
 							<Model />
+							{/* <Laser /> */}
 						</Physics>
-						{/* <Cage /> */}
-						{/* <Model /> */}
-						{/* <Floor /> */}
-						{/* <Smoke /> */}
-						{/* <Particles /> */}
-						{Camera}
-						<PsychedelicBackground />
+
+						<Ray />
+
+						<Camera />
+						<gridHelper
+							args={[100, 100, '#232323', '#232323']}
+							position={[0, 0, -5]} // Position it slightly behind the camera
+							rotation={[Math.PI / 2, 0, 0]} // Rotate it 90 degrees to stand vertically
+						/>
+
 						<EffectComposer>
 							<Bloom
-								intensity={0.3} // The bloom intensity.
-								kernelSize={KernelSize.VERY_LARGE} // blur kernel size
-								luminanceThreshold={2} // luminance threshold. Raise this value to mask out darker elements in the scene.
-								luminanceSmoothing={0.1} // smoothness of the luminance threshold. Range is [0, 1]
-								mipmapBlur={true} // Enables or disables mipmap blur.
-								resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
-								resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
+								intensity={0.1} //
+								kernelSize={KernelSize.VERY_LARGE}
+								luminanceThreshold={0.5}
+								luminanceSmoothing={0.01}
+								mipmapBlur={false}
+								resolutionX={Resolution.AUTO_SIZE}
+								resolutionY={Resolution.AUTO_SIZE}
 							/>
-
 							<ChromaticAberration
 								blendFunction={BlendFunction.NORMAL} // blend mode
-								offset={[0.0005, 0.0005]} // color offset
+								offset={[0.001, 0.001]} // color offset
 							/>
-							{/* <N8AO
-								color='red'
-								aoRadius={2}
-								intensity={1.15}
-							/> */}
-
-							{/* <Noise
-								blendFunction={BlendFunction.NORMAL} // blend mode
-								premultiply // whether to premultiply the noise texture
-							/> */}
-
-							{/* <Noise
-							blendFunction={BlendFunction.NORMAL} // blend mode
-							premultiply // whether to premultiply the noise texture
-						/> */}
-							{/* <GodRays
-							blendFunction={BlendFunction.Screen} // The blend function of this effect.
-							samples={60} // The number of samples per pixel.
-							density={0.96} // The density of the light rays.
-							decay={0.9} // An illumination decay factor.
-							weight={0.4} // A light ray weight factor.
-							exposure={0.6} // A constant attenuation coefficient.
-							clampMax={1} // An upper bound for the saturation of the overall effect.
-							width={Resolution.AUTO_SIZE} // Render width.
-							height={Resolution.AUTO_SIZE} // Render height.
-							kernelSize={KernelSize.SMALL} // The blur kernel size. Has no effect if blur is disabled.
-							blur={true} // Whether the god rays should be blurred to reduce artifacts.
-						/> */}
-
-							{/* <ToneMapping
-							blendFunction={BlendFunction.HARD_MIX} // blend mode
-							adaptive={true} // toggle adaptive luminance map usage
-							resolution={256} // texture resolution of the luminance map
-							middleGrey={0.6} // middle grey factor
-							maxLuminance={100.0} // maximum luminance
-							averageLuminance={1.0} // average luminance
-							adaptationRate={1.0} // luminance adaptation rate
-						/> */}
 						</EffectComposer>
+						<Preload />
 					</ScrollControls>
 				</Suspense>
 			</Canvas>
@@ -120,19 +106,67 @@ export default function Scene({ Loader, Camera }: SceneProps) {
 	);
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                 Layne Chen                                 */
+/* -------------------------------------------------------------------------- */
+
+// function Status({ text }) {
+// 	return <Text3D>HELLO R3F</Text3D>;
+// }
+function Brand({ text, font = '/font/Inter_Medium_Regular.json' }) {
+	const textOptions = {
+		font,
+		size: 5,
+		height: 1,
+	};
+	return (
+		<>
+			<Text3D
+				position={[0, 0, 5]}
+				castShadow
+				bevelEnabled
+				font={font}
+				scale={1}
+				letterSpacing={-0.03}
+				height={0.25}
+				bevelSize={0.01}
+				bevelSegments={10}
+				curveSegments={128}
+				bevelThickness={0.01}>
+				{text}
+				<MeshTransmissionMaterial
+					backside
+					backsideThickness={2}
+					transmission={1}
+					clearcoat={1}
+					clearcoatRoughness={1}
+					thickness={0.3}
+					chromaticAberration={0.45}
+					roughness={0}
+				/>
+			</Text3D>
+		</>
+	);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                     游標                                    */
+/* -------------------------------------------------------------------------- */
+
 function Pointer({ vec = new Vector3() }) {
 	const ref = useRef();
-	useFrame(({ mouse, viewport }) => {
-		vec.lerp({ x: (mouse.x * viewport.width) / 2, y: (mouse.y * viewport.height) / 2, z: 0 }, 0.2);
-		ref.current?.setNextKinematicTranslation(vec);
-	});
+	useFrame(({ mouse, viewport }) =>
+		ref.current?.setNextKinematicTranslation(
+			vec.set((mouse.x * viewport.width) / 2, (mouse.y * viewport.height) / 2, 0),
+		),
+	);
 	return (
 		<RigidBody
-			position={[100, 100, 100]}
+			position={[0, 0, 0]}
 			type='kinematicPosition'
 			colliders={false}
 			ref={ref}>
-			<BallCollider args={[2]} />
+			<BallCollider args={[1]} />
 		</RigidBody>
 	);
 }
@@ -178,33 +212,36 @@ const PsychedelicBackground = () => {
 					 mix(hash(n + 57.0), hash(n + 58.0), f.x), f.y);
 	  }
   
-	  void main() {
-		  vec2 uv = (vUv - 0.5) * iResolution.xy / iResolution.y;
-		  
-		  float t = time * 0.5;
-		  float n = noise(uv * 4.0 + t);
-		  
-		  uv.x += sin(uv.y * 10.0 + t) * 0.2;
-		  uv.y += sin(uv.x * 10.0 + t) * 0.2;
-		  
-		  float pattern = 0.5 + 0.5 * sin(15.0 * length(uv + vec2(sin(t), cos(t))) + t * 5.0 + n * 20.0);
-		  
-		  vec3 col = palette(pattern + n);
-  
-		  gl_FragColor = vec4(col, 1.0);
-	  }
+	void main() {
+		vec2 uv = (vUv - 0.5) * iResolution.xy / iResolution.y;
+
+		float t = time * 0.5;
+		float n = noise(uv * 4.0 + t);
+
+		uv.x += sin(uv.y * 10.0 + t) * 0.2;
+		uv.y += sin(uv.x * 10.0 + t) * 0.2;
+
+		float pattern = 0.5 + 0.5 * sin(15.0 * length(uv + vec2(sin(t), cos(t))) + t * 5.0 + n * 20.0);
+
+		vec3 col = palette(pattern + n);
+
+		// Darken the color by multiplying by a factor (e.g., 0.5)
+		// col *= 1;
+
+		gl_FragColor = vec4(col, 1.0);
+	}
 	`;
 
 	useFrame(({ clock }) => {
 		if (shaderRef.current) {
-			shaderRef.current.uniforms.time.value = clock.getElapsedTime();
+			shaderRef.current.uniforms.time.value = clock.getElapsedTime() * 0.1;
 			shaderRef.current.uniforms.iResolution.value = new Vector2(window.innerWidth, window.innerHeight);
 		}
 	});
 
 	return (
-		<mesh>
-			<sphereGeometry args={[100, 50, 50]} />
+		<mesh frustumCulled={true}>
+			<sphereGeometry args={[50, 50, 50]} />
 			<shaderMaterial
 				ref={shaderRef}
 				vertexShader={vertexShader}

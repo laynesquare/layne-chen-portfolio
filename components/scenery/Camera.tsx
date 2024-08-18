@@ -1,32 +1,22 @@
-import { useScroll } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useState } from 'react';
-import { Vector3 } from 'three';
+import { easing } from 'maath';
+import { useEffect } from 'react';
 
-// Debounce function to limit the rate at which the handler is called
-const debounce = (func, wait) => {
-	let timeout;
-	return (...args) => {
-		clearTimeout(timeout);
-		timeout = setTimeout(() => func(...args), wait);
-	};
-};
-
-export default function Camera({ handleScroll }) {
-	const [vec] = useState(() => new Vector3());
-	const { camera, mouse } = useThree();
-	const scroll = useScroll();
-
-	useFrame(() => {
-		const scrollOffset = scroll.offset;
-		handleScroll(scrollOffset);
-		// camera.position.lerp(vec.set(mouse.x, mouse.y + 3.534796092969559, 3.3980916163639696), 0.05);
-	});
+export default function Camera({}) {
+	const { camera } = useThree();
 
 	useEffect(() => {
-		camera.position.set(-0.9225665193808417, 3.534796092969559, 3.3980916163639696);
-		camera.rotation.set(0.36711881061574475, -0.09825279434400959, 0.03770469119335154, 'XYZ');
-	}, [camera]);
+		camera.layers.enableAll();
+	}, []);
+	useFrame((state, delta) => {
+		// easing.damp3(
+		// 	state.camera.position,
+		// 	[Math.sin(-state.pointer.x / 3) * 2.5, (state.pointer.y / 3) * 1.75, 5 + Math.cos(state.pointer.x / 3) * 1],
+		// 	0.2,
+		// 	delta,
+		// );
+		// state.camera.lookAt(0, 0, 0);
+	});
 
 	return null;
 }

@@ -7,6 +7,12 @@ const config: Config = {
 		'./app/**/*.{js,ts,jsx,tsx,mdx}',
 	],
 	theme: {
+		colors: {
+			primary: 'var(--color-primary)',
+		},
+		fontFamily: {
+			primary: ['"Krona One"', 'sans-serif'],
+		},
 		screens: {
 			sm: '375px',
 			md: '768px',

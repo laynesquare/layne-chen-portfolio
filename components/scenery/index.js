@@ -5,5 +5,8 @@ import Smoke from './Smoke';
 import Floor from './Floor';
 import Loader from './Loader';
 import Camera from './Camera';
+import Scene from './Scene';
+import Laser from './Laser';
+import Ray from './Ray';
 
-export { Cage, Model, Particles, Smoke, Floor, Loader, Camera };
+export { Cage, Model, Particles, Smoke, Floor, Loader, Camera, Scene, Laser, Ray };
