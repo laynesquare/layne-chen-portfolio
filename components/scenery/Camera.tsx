@@ -9,13 +9,17 @@ export default function Camera({}) {
 		camera.layers.enableAll();
 	}, []);
 	useFrame((state, delta) => {
-		// easing.damp3(
-		// 	state.camera.position,
-		// 	[Math.sin(-state.pointer.x / 3) * 2.5, (state.pointer.y / 3) * 1.75, 5 + Math.cos(state.pointer.x / 3) * 1],
-		// 	0.2,
-		// 	delta,
-		// );
-		// state.camera.lookAt(0, 0, 0);
+		easing.damp3(
+			state.camera.position,
+			[
+				Math.sin(-state.pointer.x / 3) * 2.5,
+				(state.pointer.y / 3) * 1.75,
+				2 + Math.cos(state.pointer.x / 3) * 0.5,
+			],
+			0.1,
+			delta,
+		);
+		state.camera.lookAt(0, 0, 0);
 	});
 
 	return null;

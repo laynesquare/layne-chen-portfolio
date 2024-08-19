@@ -1,7 +1,7 @@
 // cSpell: ignore Raycaster, GLTF, metalness, clearcoat, matcap, drei
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { MeshTransmissionMaterial, useAnimations, useGLTF } from '@react-three/drei';
+import { MeshTransmissionMaterial, useAnimations, useGLTF, Float } from '@react-three/drei';
 import { Intersection, useFrame, useGraph, useThree } from '@react-three/fiber';
 import { BallCollider, Physics, RigidBody, CylinderCollider } from '@react-three/rapier';
 
@@ -25,6 +25,7 @@ import {
 	IcosahedronGeometry,
 	MathUtils,
 	SphereGeometry,
+	FrontSide,
 } from 'three';
 
 import CustomShaderMaterial from 'three-custom-shader-material';
@@ -33,12 +34,24 @@ import fragmentShader from '@/shaders/animated-displaced-sphere/fragment';
 import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 import { useControls } from 'leva';
+import { lerp } from 'three/src/math/MathUtils.js';
 
 export default function Model({ position, children, vec = new Vector3(), scale, r = MathUtils.randFloatSpread }) {
 	const materialRef = useRef(null);
 	const depthMaterialRef = useRef(null);
+	const isPress = useRef(false);
 
-	const {
+	const geometry = useMemo(() => {
+		const geometry = mergeVertices(new IcosahedronGeometry(1, 128));
+		geometry.computeTangents();
+		return geometry;
+	}, []);
+
+	const api = useRef();
+	const ballRef = useRef();
+	const pos = useMemo(() => position || [r(10), r(10), r(0)], []);
+
+	let {
 		gradientStrength,
 		color,
 		speed,
@@ -51,26 +64,29 @@ export default function Model({ position, children, vec = new Vector3(), scale, 
 		reflectivity,
 		ior,
 		iridescence,
+		iridescenceIOR,
 		transmission,
 		thickness,
 		dispersion,
 	} = useControls({
 		gradientStrength: { value: 1, min: 1, max: 3, step: 0.001 },
 		color: '#E0FB60',
-		speed: { min: 0, max: 20, step: 0.001, value: 3.5 },
-		noiseStrength: { value: 0.3, min: 0, max: 3, step: 0.001 },
-		displacementStrength: { min: 0, max: 10, step: 1, value: 1 },
-		fractAmount: { value: 4, min: 0, max: 10, step: 1 },
+		speed: { min: 0, max: 20, step: 0.001, value: 4 },
+		noiseStrength: { value: 2, min: 0, max: 10, step: 0.001 },
+		displacementStrength: { min: 0, max: 10, step: 0.01, value: 1.2 },
+		fractAmount: { min: 0, max: 10, step: 0.1, value: 1.2 },
 		roughness: { min: 0, max: 1, step: 0.001, value: 1 },
 		metalness: { min: 0, max: 1, step: 0.001, value: 0 },
-		clearcoat: { min: 0, max: 1, step: 0.001, value: 1 },
+		clearcoat: { min: 0, max: 1, step: 0.001, value: 0 },
 		reflectivity: { min: 0, max: 1, step: 0.001, value: 0.46 },
 		ior: { min: 0.001, max: 5, step: 0.001, value: 1.2 },
-		iridescence: { min: 0, max: 1, step: 0.001, value: 1 },
+		iridescence: { min: 0, max: 1, step: 0.001, value: 0 },
+		iridescenceIOR: { min: 1, max: 2.333, step: 0.001, value: 1.3 },
 		transmission: { min: 0, max: 1, step: 0.001, value: 0 },
 		thickness: { min: 0, max: 10, step: 0.1, value: 5 },
 		dispersion: { min: 0, max: 20, step: 1, value: 5 },
 	});
+
 	const uniforms = {
 		uTime: { value: 0 },
 		uColor: { value: new Color(color) },
@@ -81,30 +97,54 @@ export default function Model({ position, children, vec = new Vector3(), scale, 
 		uFractAmount: { value: fractAmount },
 	};
 
-	const geometry = useMemo(() => {
-		const geometry = mergeVertices(new IcosahedronGeometry(1, 128));
-		geometry.computeTangents();
-		return geometry;
-	}, []);
-
-	const api = useRef();
-	const ballRef = useRef();
-	const pos = useMemo(() => position || [r(10), r(10), r(10)], []);
-
 	useFrame(({ clock }) => {
 		const elapsedTime = clock.getElapsedTime();
 
-		if (materialRef.current) {
-			materialRef.current.uniforms.uTime.value = elapsedTime;
+		if (materialRef.current && depthMaterialRef.current) {
+			updateMaterialTime(elapsedTime);
+			updateNoiseStrength();
+			updateIridescence();
+			updateMetalness();
+			updateClearcoat();
+			applyImpulseToApi();
 		}
-
-		if (depthMaterialRef.current) {
-			depthMaterialRef.current.uniforms.uTime.value = elapsedTime;
-		}
-
-		const delta = Math.min(0.1, elapsedTime);
-		api.current?.applyImpulse(vec.copy(api.current.translation()).negate().multiplyScalar(0.5));
 	});
+
+	function updateMaterialTime(elapsedTime) {
+		materialRef.current.uniforms.uTime.value = elapsedTime;
+		depthMaterialRef.current.uniforms.uTime.value = elapsedTime;
+	}
+
+	function updateNoiseStrength() {
+		const { uNoiseStrength } = materialRef.current.uniforms;
+		if (isPress.current && uNoiseStrength.value < 4) {
+			uNoiseStrength.value += 0.05;
+		} else if (!isPress.current && uNoiseStrength.value > 2) {
+			uNoiseStrength.value -= 0.025;
+		}
+	}
+
+	function updateIridescence() {
+		const targetIridescence = isPress.current ? 1 : 0;
+		materialRef.current.iridescence = lerp(materialRef.current.iridescence, targetIridescence, 0.05);
+	}
+
+	function updateMetalness() {
+		const targetMetalness = isPress.current ? 1 : 0;
+		materialRef.current.metalness = lerp(materialRef.current.metalness, targetMetalness, 0.1);
+	}
+
+	function updateClearcoat() {
+		const targetClearcoats = isPress.current ? 1 : 0;
+		materialRef.current.clearcoat = lerp(materialRef.current.clearcoat, targetClearcoats, 0.1);
+	}
+
+	function applyImpulseToApi() {
+		if (api.current) {
+			const impulse = vec.copy(api.current.translation()).negate().multiplyScalar(0.5);
+			api.current.applyImpulse(impulse);
+		}
+	}
 
 	return (
 		<RigidBody
@@ -115,57 +155,59 @@ export default function Model({ position, children, vec = new Vector3(), scale, 
 			ref={api}
 			colliders={false}>
 			<BallCollider args={[1]} />
-			{/* <mesh
-				receiveShadow
-				castShadow>
-				<sphereGeometry args={[3, 32, 32]} />
-				<MeshTransmissionMaterial
-					backside
-					thickness={3}
-					chromaticAberration={0.025}
-					anisotropy={0.1}
-					distortion={0.1}
-					distortionScale={0.1}
-					temporalDistortion={0.2}
-					iridescence={1}
-					iridescenceIOR={1}
-					iridescenceThicknessRange={[0, 1400]}
-				/>
-			</mesh> */}
-			<mesh
-				name='main-character'
-				geometry={geometry}
-				ref={ballRef}
-				frustumCulled={false}>
-				<CustomShaderMaterial
-					ref={materialRef}
-					baseMaterial={MeshPhysicalMaterial}
-					silent
-					vertexShader={vertexShader}
-					fragmentShader={fragmentShader}
-					roughness={roughness}
-					metalness={metalness}
-					reflectivity={reflectivity}
-					clearcoat={clearcoat}
-					ior={ior}
-					iridescence={iridescence}
-					transmission={transmission}
-					thickness={thickness}
-					dispersion={dispersion}
-					uniforms={uniforms}
-					transparent
-				/>
+			<Float floatIntensity={2}>
+				<mesh
+					name='main-character'
+					geometry={geometry}
+					ref={ballRef}
+					frustumCulled={false}>
+					<CustomShaderMaterial
+						ref={materialRef}
+						baseMaterial={MeshPhysicalMaterial}
+						silent
+						vertexShader={vertexShader}
+						fragmentShader={fragmentShader}
+						roughness={roughness}
+						metalness={metalness}
+						reflectivity={reflectivity}
+						clearcoat={clearcoat}
+						ior={ior}
+						iridescence={iridescence}
+						iridescenceIOR={iridescenceIOR}
+						transmission={transmission}
+						thickness={thickness}
+						dispersion={dispersion}
+						uniforms={uniforms}
+						transparent
+					/>
 
-				<CustomShaderMaterial
-					ref={depthMaterialRef}
-					baseMaterial={MeshDepthMaterial}
-					vertexShader={vertexShader}
-					uniforms={uniforms}
-					silent
-					depthPacking={RGBADepthPacking}
-					attach='customDepthMaterial'
-				/>
-			</mesh>
+					<CustomShaderMaterial
+						ref={depthMaterialRef}
+						baseMaterial={MeshDepthMaterial}
+						vertexShader={vertexShader}
+						uniforms={uniforms}
+						silent
+						depthPacking={RGBADepthPacking}
+						attach='customDepthMaterial'
+					/>
+				</mesh>
+
+				<mesh
+					position={[0, 0, 0]}
+					onPointerDown={e => (isPress.current = true)}
+					onPointerUp={e => (isPress.current = false)}
+					onPointerOver={e => (document.body.style.cursor = 'pointer')}
+					onPointerOut={e => {
+						isPress.current = false;
+						document.body.style.cursor = 'default';
+					}}>
+					<circleGeometry args={[2, 32]} />
+					<meshBasicMaterial
+						transparent={true}
+						opacity={0} // Adjust the opacity value (0.0 to 1.0) as needed
+					/>
+				</mesh>
+			</Float>
 		</RigidBody>
 	);
 }

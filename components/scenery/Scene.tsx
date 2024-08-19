@@ -12,6 +12,8 @@ import {
 	Preload,
 	MeshTransmissionMaterial,
 	Text3D,
+	Environment,
+	Lightformer,
 } from '@react-three/drei';
 import {
 	EffectComposer,
@@ -48,21 +50,15 @@ export default function Scene({}: SceneProps) {
 					depth: false,
 					powerPreference: 'high-performance',
 				}}
-				// eventSource={document.getElementById('root')}
-				// eventPrefix='client'
+				eventSource={document.getElementById('root')}
+				eventPrefix='client'
 				camera={{ fov: 100 }}
 				className='relative h-svh z-0'>
 				<color
 					attach='background'
 					args={['#141414']}
 				/>
-				<OrbitControls />
-				{/* <ambientLight intensity={10} /> */}
-				<directionalLight
-					position={[15, 15, 15]}
-					intensity={5}
-					castShadow
-				/>
+				{/* <OrbitControls /> */}
 
 				<Suspense>
 					<ScrollControls
@@ -83,13 +79,24 @@ export default function Scene({}: SceneProps) {
 							rotation={[Math.PI / 2, 0, 0]} // Rotate it 90 degrees to stand vertically
 						/>
 
+						<Environment
+							preset='warehouse'
+							backgroundBlurriness={1}>
+							<Lightformer
+								intensity={8}
+								position={[10, 5, 0]}
+								scale={[10, 50, 1]}
+								onUpdate={self => self.lookAt(0, 0, 0)}
+							/>
+						</Environment>
+
 						<EffectComposer>
 							<Bloom
 								intensity={0.1} //
 								kernelSize={KernelSize.VERY_LARGE}
 								luminanceThreshold={0.5}
 								luminanceSmoothing={0.01}
-								mipmapBlur={false}
+								mipmapBlur={true}
 								resolutionX={Resolution.AUTO_SIZE}
 								resolutionY={Resolution.AUTO_SIZE}
 							/>
@@ -102,49 +109,6 @@ export default function Scene({}: SceneProps) {
 					</ScrollControls>
 				</Suspense>
 			</Canvas>
-		</>
-	);
-}
-
-/* -------------------------------------------------------------------------- */
-/*                                 Layne Chen                                 */
-/* -------------------------------------------------------------------------- */
-
-// function Status({ text }) {
-// 	return <Text3D>HELLO R3F</Text3D>;
-// }
-function Brand({ text, font = '/font/Inter_Medium_Regular.json' }) {
-	const textOptions = {
-		font,
-		size: 5,
-		height: 1,
-	};
-	return (
-		<>
-			<Text3D
-				position={[0, 0, 5]}
-				castShadow
-				bevelEnabled
-				font={font}
-				scale={1}
-				letterSpacing={-0.03}
-				height={0.25}
-				bevelSize={0.01}
-				bevelSegments={10}
-				curveSegments={128}
-				bevelThickness={0.01}>
-				{text}
-				<MeshTransmissionMaterial
-					backside
-					backsideThickness={2}
-					transmission={1}
-					clearcoat={1}
-					clearcoatRoughness={1}
-					thickness={0.3}
-					chromaticAberration={0.45}
-					roughness={0}
-				/>
-			</Text3D>
 		</>
 	);
 }
