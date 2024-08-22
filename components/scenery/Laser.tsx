@@ -37,15 +37,15 @@ export default function Laser() {
 		};
 	}, [scene]);
 
-	useEffect(() => {
-		// Build the BVH for the main character's mesh
-		const mainCharacter = scene.getObjectByName('main-character');
-		if (mainCharacter && mainCharacter.geometry) {
-			mainCharacter.geometry.computeBoundsTree = computeBoundsTree;
-			mainCharacter.geometry.disposeBoundsTree = disposeBoundsTree;
-			mainCharacter.geometry.boundsTree = new MeshBVH(mainCharacter.geometry);
-		}
-	}, [scene]);
+	// useEffect(() => {
+	// 	// Build the BVH for the main character's mesh
+	// 	const mainCharacter = scene.getObjectByName('main-character');
+	// 	if (mainCharacter && mainCharacter.geometry) {
+	// 		mainCharacter.geometry.computeBoundsTree = computeBoundsTree;
+	// 		mainCharacter.geometry.disposeBoundsTree = disposeBoundsTree;
+	// 		mainCharacter.geometry.boundsTree = new MeshBVH(mainCharacter.geometry);
+	// 	}
+	// }, [scene]);
 
 	useFrame(() => {
 		lasersRef.current.forEach(({ start }) => {

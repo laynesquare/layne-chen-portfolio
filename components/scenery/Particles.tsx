@@ -73,4 +73,4 @@ export default function Particles() {
 	);
 }
 
-useGLTF.preload('/scenery/particles-transformed.glb');
+// useGLTF.preload('/scenery/particles-transformed.glb');
