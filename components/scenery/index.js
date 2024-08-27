@@ -8,5 +8,6 @@ import Camera from './Camera';
 import Scene from './Scene';
 import Laser from './Laser';
 import Ray from './Ray';
+import Identity from './Identity';
 
-export { Cage, Model, Particles, Smoke, Floor, Loader, Camera, Scene, Laser, Ray };
+export { Cage, Model, Particles, Smoke, Floor, Loader, Camera, Scene, Laser, Ray, Identity };

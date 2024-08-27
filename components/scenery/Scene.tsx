@@ -31,7 +31,7 @@ import { KernelSize, Resolution, BlendFunction } from 'postprocessing';
 import { Vector2, BackSide, Vector3 } from 'three';
 
 // Import custom components
-import { Floor, Cage, Particles, Model, Loader, Camera, Laser, Ray, Hero } from '@/components';
+import { Floor, Cage, Particles, Model, Loader, Camera, Laser, Ray, Hero, Identity } from '@/components';
 
 // Import types
 import { SceneProps } from '@/types';
@@ -56,11 +56,12 @@ export default function Scene({ wrapperRef }: SceneProps) {
 			}}
 			camera={{ fov: 100 }}
 			eventSource={wrapperRef?.current}>
-			{/* <OrbitControls /> */}
+			<OrbitControls />
 
 			<Suspense>
-				<Model />
-				<Camera />
+				{/* <Model /> */}
+				{/* <Camera /> */}
+				<Identity />
 				<Environment preset='warehouse'>
 					<Lightformer
 						intensity={5}

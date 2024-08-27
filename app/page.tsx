@@ -14,7 +14,7 @@ export default function Home() {
 			<main
 				className={`overall-ctn`}
 				ref={wrapperRef}>
-				<Hero contentRef={contentRef} />
+				{/* <Hero contentRef={contentRef} /> */}
 				<Scene wrapperRef={wrapperRef} />
 			</main>
 		</>
