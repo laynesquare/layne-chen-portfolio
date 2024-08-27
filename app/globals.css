@@ -9,10 +9,18 @@
 /* Dark Mode Variables */
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: #141414;
-		--color-primary: #e0fb60;
+		--background: #1d1d1d;
+		--color-primary: #f6ffc9;
+		--color-secondary: #7b60fb;
 		--color-abysmal: #1a1a1a;
-		--color-font-primary: white;
+		--color-white: #fff;
+
+		--color--ivory: #fffff0;
+
+		--color-font-primary: var(--color-primary);
+		--color-font-secondary: var(--color-secondary);
+		--color-font-neutral: var(--color--ivory);
+		--color-font-neutral-contrast: var(--color-abysmal);
 	}
 }
 
@@ -31,7 +39,7 @@ body {
 }
 
 body {
-	color: var(--color-font-primary);
+	color: var(--color-font-neutral);
 	background-color: var(--background);
 	scrollbar-width: 0px;
 	-ms-overflow-style: none;
@@ -62,5 +70,22 @@ body::-webkit-scrollbar,
 @layer components {
 	.overall-ctn {
 		@apply relative overflow-y-scroll w-full h-full max-h-[100dvh] max-w-[100dvw];
+	}
+
+	.menu-btn-underlay {
+		z-index: -1;
+		position: absolute;
+		top: 0;
+		right: 0;
+		height: 100%;
+		/* width: 100%; */
+		pointer-events: none;
+		background-color: var(--color-secondary);
+	}
+
+	.logo-name {
+		backdrop-filter: blur(10px);
+		mix-blend-mode: color-burn;
+		isolation: isolate;
 	}
 }

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { MeshTransmissionMaterial, useAnimations, useGLTF, Float } from '@react-three/drei';
 import { Intersection, useFrame, useGraph, useThree } from '@react-three/fiber';
-import { BallCollider, Physics, RigidBody, CylinderCollider } from '@react-three/rapier';
+import { BallCollider, Physics, RigidBody, CylinderCollider, RapierRigidBody } from '@react-three/rapier';
 import { MeshBVH, acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
 
 import {
@@ -37,13 +37,18 @@ import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { useControls } from 'leva';
 import { lerp } from 'three/src/math/MathUtils.js';
 
-export default function Model({ position, children, vec = new Vector3(), scale, r = MathUtils.randFloatSpread }) {
+// gsap
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { RoughEase } from 'gsap/EasePack';
+gsap.registerPlugin(useGSAP);
+
+export default function Model({ r = MathUtils.randFloatSpread }) {
 	const materialRef = useRef(null);
 	const depthMaterialRef = useRef(null);
-	const isBallPress = useRef(false);
-	const ballPhysicsApi = useRef();
+	const [isBallPress, setIsBallPress] = useState(false);
 	const ballRef = useRef();
-	const ballPos = useMemo(() => position || [r(10), r(10), r(0)], []);
+	const ballPos = useMemo(() => [r(10), r(10), r(0)], []);
 	const ballGeometry = useMemo(() => {
 		const geometry = mergeVertices(new IcosahedronGeometry(1, 128));
 		geometry.computeTangents();
@@ -52,7 +57,7 @@ export default function Model({ position, children, vec = new Vector3(), scale, 
 
 	const ballMaskRef = useRef(null);
 
-	let {
+	const {
 		gradientStrength,
 		color,
 		speed,
@@ -76,7 +81,7 @@ export default function Model({ position, children, vec = new Vector3(), scale, 
 		noiseStrength: { value: 2, min: 0, max: 10, step: 0.001 },
 		displacementStrength: { min: 0, max: 10, step: 0.01, value: 1.2 },
 		fractAmount: { min: 0, max: 10, step: 0.1, value: 1.2 },
-		roughness: { min: 0, max: 1, step: 0.001, value: 1 },
+		roughness: { min: 0, max: 1, step: 0.001, value: 0.5 },
 		metalness: { min: 0, max: 1, step: 0.001, value: 0 },
 		clearcoat: { min: 0, max: 1, step: 0.001, value: 0 },
 		reflectivity: { min: 0, max: 1, step: 0.001, value: 0.46 },
@@ -88,7 +93,7 @@ export default function Model({ position, children, vec = new Vector3(), scale, 
 		dispersion: { min: 0, max: 20, step: 1, value: 5 },
 	});
 
-	const uniforms = {
+	const uniformsRef = useRef({
 		uTime: { value: 0 },
 		uColor: { value: new Color(color) },
 		uGradientStrength: { value: gradientStrength },
@@ -96,7 +101,7 @@ export default function Model({ position, children, vec = new Vector3(), scale, 
 		uNoiseStrength: { value: noiseStrength },
 		uDisplacementStrength: { value: displacementStrength },
 		uFractAmount: { value: fractAmount },
-	};
+	});
 
 	useEffect(() => {
 		initializeGeometry(ballRef);
@@ -107,14 +112,62 @@ export default function Model({ position, children, vec = new Vector3(), scale, 
 		const elapsedTime = clock.getElapsedTime();
 
 		if (materialRef.current && depthMaterialRef.current) {
+			updatePosition();
 			updateMaterialTime(elapsedTime);
-			updateNoiseStrength();
-			updateIridescence();
-			updateMetalness();
-			updateClearcoat();
-			applyImpulseToApi();
 		}
 	});
+
+	useGSAP(() => {
+		if (ballRef.current && materialRef.current && uniformsRef.current) {
+			if (isBallPress) {
+				gsap.to(ballRef.current.scale, {
+					x: 1.05,
+					y: 1.05,
+					z: 1.05,
+					duration: 1,
+					ease: 'elastic',
+				});
+				gsap.to(materialRef.current.uniforms.uNoiseStrength, {
+					value: 4,
+					duration: 2.5,
+					ease: 'elastic',
+				});
+				gsap.to(materialRef.current, {
+					iridescence: 1,
+					metalness: 1,
+					clearcoat: 1,
+					duration: 1,
+					ease: 'bounce.out',
+				});
+			} else {
+				gsap.to(ballRef.current.scale, {
+					x: 1,
+					y: 1,
+					z: 1,
+					duration: 1,
+					ease: 'elastic',
+				});
+				gsap.to(materialRef.current.uniforms.uNoiseStrength, {
+					value: 2,
+					duration: 2.5,
+					ease: 'elastic',
+				});
+				gsap.to(materialRef.current, {
+					iridescence: 0.1,
+					metalness: 0.1,
+					clearcoat: 0,
+					duration: 1,
+					ease: 'bounce.out',
+				});
+			}
+		}
+	}, [isBallPress]);
+
+	function updatePosition() {
+		if (ballRef.current) {
+			ballRef.current.position.lerp(new Vector3(0, 0, 0), 0.02);
+		}
+	}
 
 	function initializeGeometry(ref) {
 		if (ref?.current?.geometry) {
@@ -124,110 +177,66 @@ export default function Model({ position, children, vec = new Vector3(), scale, 
 		}
 	}
 
-	function updateMaterialTime(elapsedTime) {
+	function updateMaterialTime(elapsedTime: number) {
 		materialRef.current.uniforms.uTime.value = elapsedTime;
 		depthMaterialRef.current.uniforms.uTime.value = elapsedTime;
 	}
 
-	function updateNoiseStrength() {
-		const { uNoiseStrength } = materialRef.current.uniforms;
-		if (isBallPress.current && uNoiseStrength.value < 4) {
-			uNoiseStrength.value += 0.05;
-		} else if (!isBallPress.current && uNoiseStrength.value > 2) {
-			uNoiseStrength.value -= 0.025;
-		}
-	}
-
-	function updateIridescence() {
-		const targetIridescence = isBallPress.current ? 1 : 0;
-		materialRef.current.iridescence = lerp(materialRef.current.iridescence, targetIridescence, 0.05);
-	}
-
-	function updateMetalness() {
-		const targetMetalness = isBallPress.current ? 1 : 0;
-		materialRef.current.metalness = lerp(materialRef.current.metalness, targetMetalness, 0.1);
-	}
-
-	function updateClearcoat() {
-		const targetClearcoats = isBallPress.current ? 1 : 0;
-		materialRef.current.clearcoat = lerp(materialRef.current.clearcoat, targetClearcoats, 0.1);
-	}
-
-	function applyImpulseToApi() {
-		if (ballPhysicsApi.current) {
-			const impulse = vec.copy(ballPhysicsApi.current.translation()).negate().multiplyScalar(0.5);
-			ballPhysicsApi.current.applyImpulse(impulse);
-			if (isBallPress.current) {
-				const impulse = vec.copy(ballPhysicsApi.current.translation()).normalize().multiplyScalar(0.1);
-				ballPhysicsApi.current.applyTorqueImpulse(impulse);
-			}
-		}
-	}
-
 	return (
 		<>
-			<Physics gravity={[0, 0, 0]}>
-				<RigidBody
-					ref={ballPhysicsApi}
-					linearDamping={5}
-					angularDamping={1}
-					position={ballPos}
-					colliders={false}>
-					<BallCollider args={[1]} />
-					<mesh
-						name='main-character'
-						geometry={ballGeometry}
-						ref={ballRef}
-						frustumCulled={true}>
-						<CustomShaderMaterial
-							ref={materialRef}
-							baseMaterial={MeshPhysicalMaterial}
-							silent
-							vertexShader={vertexShader}
-							fragmentShader={fragmentShader}
-							roughness={roughness}
-							metalness={metalness}
-							reflectivity={reflectivity}
-							clearcoat={clearcoat}
-							ior={ior}
-							iridescence={iridescence}
-							iridescenceIOR={iridescenceIOR}
-							transmission={transmission}
-							thickness={thickness}
-							dispersion={dispersion}
-							uniforms={uniforms}
-							transparent
-						/>
-						<CustomShaderMaterial
-							ref={depthMaterialRef}
-							baseMaterial={MeshDepthMaterial}
-							vertexShader={vertexShader}
-							uniforms={uniforms}
-							silent
-							depthPacking={RGBADepthPacking}
-							attach='customDepthMaterial'
-						/>
-					</mesh>
-				</RigidBody>
+			<mesh
+				name='main-character'
+				geometry={ballGeometry}
+				ref={ballRef}
+				position={ballPos}
+				frustumCulled={true}>
+				<CustomShaderMaterial
+					ref={materialRef}
+					baseMaterial={MeshPhysicalMaterial}
+					silent
+					vertexShader={vertexShader}
+					fragmentShader={fragmentShader}
+					roughness={roughness}
+					metalness={metalness}
+					reflectivity={reflectivity}
+					clearcoat={clearcoat}
+					ior={ior}
+					iridescence={iridescence}
+					iridescenceIOR={iridescenceIOR}
+					transmission={transmission}
+					thickness={thickness}
+					dispersion={dispersion}
+					uniforms={uniformsRef.current}
+					transparent
+				/>
+				<CustomShaderMaterial
+					ref={depthMaterialRef}
+					baseMaterial={MeshDepthMaterial}
+					vertexShader={vertexShader}
+					uniforms={uniformsRef.current}
+					silent
+					depthPacking={RGBADepthPacking}
+					attach='customDepthMaterial'
+				/>
+			</mesh>
 
-				<mesh
-					ref={ballMaskRef}
-					position={[0, 0, 0]}
-					onPointerDown={e => (isBallPress.current = true)}
-					onPointerUp={e => (isBallPress.current = false)}
-					onPointerOver={e => (document.body.style.cursor = 'pointer')}
-					onPointerOut={e => {
-						isBallPress.current = false;
-						document.body.style.cursor = 'default';
-					}}
-					frustumCulled={true}>
-					<circleGeometry args={[2, 32]} />
-					<meshBasicMaterial
-						transparent={true}
-						opacity={1} // Adjust the opacity value (0.0 to 1.0) as needed
-					/>
-				</mesh>
-			</Physics>
+			<mesh
+				ref={ballMaskRef}
+				position={[0, 0, 0]}
+				onPointerDown={e => setIsBallPress(true)}
+				onPointerUp={e => setIsBallPress(false)}
+				onPointerOver={e => (document.body.style.cursor = 'pointer')}
+				onPointerOut={e => {
+					setIsBallPress(false);
+					document.body.style.cursor = 'default';
+				}}
+				frustumCulled={true}>
+				<circleGeometry args={[2, 32]} />
+				<meshBasicMaterial
+					transparent={true}
+					opacity={0}
+				/>
+			</mesh>
 		</>
 	);
 }

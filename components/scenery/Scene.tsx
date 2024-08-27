@@ -40,11 +40,11 @@ import { BallCollider, Physics, RigidBody } from '@react-three/rapier';
 
 import { suspend } from 'suspend-react';
 
-export default function Scene({ overallCtnRef }: SceneProps) {
+export default function Scene({ wrapperRef }: SceneProps) {
 	return (
 		<Canvas
 			gl={{
-				antialias: false,
+				antialias: true,
 				alpha: true,
 				stencil: false,
 				depth: true,
@@ -55,11 +55,7 @@ export default function Scene({ overallCtnRef }: SceneProps) {
 				top: 0,
 			}}
 			camera={{ fov: 100 }}
-			eventSource={overallCtnRef?.current}>
-			{/* <color
-				attach='background'
-				args={['#141414']}
-			/> */}
+			eventSource={wrapperRef?.current}>
 			{/* <OrbitControls /> */}
 
 			<Suspense>
@@ -67,7 +63,7 @@ export default function Scene({ overallCtnRef }: SceneProps) {
 				<Camera />
 				<Environment preset='warehouse'>
 					<Lightformer
-						intensity={8}
+						intensity={5}
 						position={[10, 5, 0]}
 						scale={[10, 50, 1]}
 						onUpdate={self => self.lookAt(0, 0, 0)}

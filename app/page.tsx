@@ -4,19 +4,18 @@ import dynamic from 'next/dynamic';
 import { Frame, Loader, Camera, Scene, Hero } from '@/components';
 import { useProgress } from '@react-three/drei';
 
-// const Scene = dynamic(() => import('@/components/scenery/Scene'), { ssr: false });
-
 export default function Home() {
-	const overallCtnRef = useRef(null);
+	const wrapperRef = useRef(null);
+	const contentRef = useRef(null);
 
 	return (
 		<>
-			<Loader />
+			{/* <Loader /> */}
 			<main
 				className={`overall-ctn`}
-				ref={overallCtnRef}>
-				<Hero />
-				<Scene overallCtnRef={overallCtnRef} />
+				ref={wrapperRef}>
+				<Hero contentRef={contentRef} />
+				<Scene wrapperRef={wrapperRef} />
 			</main>
 		</>
 	);

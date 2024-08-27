@@ -27,7 +27,7 @@ export default function Loader() {
 	return (
 		<div
 			ref={loaderRef}
-			className={`z-[100] absolute top-0 left-0 w-dvw h-dvh inset-0 bg-red-800 text-white flex items-center justify-center text-2xl font-bold bg-primary`}>
+			className={`z-[100] absolute top-0 left-0 w-dvw h-dvh inset-0 bg-red-800 flex items-center justify-center text-2xl font-bold bg-primary text-neutral`}>
 			<Indicator
 				progress={progress}
 				item={item}
