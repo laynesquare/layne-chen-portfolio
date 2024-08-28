@@ -1,7 +1,8 @@
 const fragmentShader = `
 #define TAU 6.28318530718
 #define MAX_ITER 5
-#define tau 6.2831853
+
+// #extension GL_OES_standard_derivatives : enable
 
 precision highp float;
 precision highp int;
@@ -19,6 +20,10 @@ uniform vec3 Noise_Ripples1477531959288_166_color;
 uniform float Noise_Ripples1477531959288_166_brightness;
 uniform sampler2D noiseImage;
 uniform vec2 Noise_Ripples1477531959288_166_resolution;
+uniform mat4 modelMatrix;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
 uniform float highlightIntensity;
 uniform vec3 highlightColor;
 uniform vec3 Wiggly_Improved1477532051339_181_color;
@@ -33,6 +38,12 @@ uniform float Glow_Effect1477532183055_216_alpha;
 
 varying vec2 Tiling_Caustic1477531952046_152_vUv;
 varying vec2 Noise_Ripples1477531959288_166_vUv;
+varying vec3 Wiggly_Improved1477532051339_181_vNormal;
+varying float light;
+varying vec3 Transparent_Glow1477532059126_201_fPosition;
+varying vec3 Transparent_Glow1477532059126_201_fNormal;
+varying vec3 Glow_Effect1477532183055_216_fPosition;
+varying vec3 Glow_Effect1477532183055_216_fNormal;
 
 mat2 makem2(in float theta) {
     float c = cos(theta);
@@ -63,13 +74,6 @@ float dualfbm(in vec2 p) {
     p += basis;
     return fbm(p * makem2(time * Noise_Ripples1477531959288_166_speed * 0.2));
 }
-
-varying vec3 Wiggly_Improved1477532051339_181_vNormal;
-varying float light;
-varying vec3 Transparent_Glow1477532059126_201_fPosition;
-varying vec3 Transparent_Glow1477532059126_201_fNormal;
-varying vec3 Glow_Effect1477532183055_216_fPosition;
-varying vec3 Glow_Effect1477532183055_216_fNormal;
 
 vec4 Tiling_Caustic1477531952046_152_main() {
     vec4 Tiling_Caustic1477531952046_152_gl_FragColor = vec4(0.0);
@@ -126,7 +130,11 @@ vec4 Glow_Effect1477532183055_216_main() {
 }
 
 void main() {
-    gl_FragColor = (Tiling_Caustic1477531952046_152_main() + Noise_Ripples1477531959288_166_main() + Transparent_Glow1477532059126_201_main() + Glow_Effect1477532183055_216_main() + Wiggly_Improved1477532051339_181_main());
+    csm_FragColor = Tiling_Caustic1477531952046_152_main() + 
+                   Noise_Ripples1477531959288_166_main() + 
+                   Transparent_Glow1477532059126_201_main() + 
+                   Glow_Effect1477532183055_216_main() + 
+                   Wiggly_Improved1477532051339_181_main();
 }
 `;
 

@@ -2,12 +2,20 @@ export default `
 precision highp float;
 precision highp int;
 
+// uniform mat4 modelMatrix;
+// uniform mat4 modelViewMatrix;
+// uniform mat4 projectionMatrix;
+// uniform mat4 viewMatrix;
+// uniform mat3 normalMatrix;
+// uniform vec3 cameraPosition;
 uniform float time;
 uniform float Wiggly_Improved1477532051339_181_speed;
 uniform float frequency;
 uniform float amplitude;
 
-
+// attribute vec3 position;
+// attribute vec3 normal;
+// attribute vec2 uv;
 attribute vec2 uv2;
 
 varying vec3 Tiling_Caustic1477531952046_152_vPosition;
@@ -53,7 +61,7 @@ vec4 Wiggly_Improved1477532051339_181_main() {
     light = amplitude * sin(Wiggly_Improved1477532051339_181_speed * time + 1.0 + position.y * frequency);
     Wiggly_Improved1477532051339_181_vPosition = newPosition;
     Wiggly_Improved1477532051339_181_gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
-    return Wiggly_Improved1477532051339_181_gl_Position *= 1.0;
+    return Wiggly_Improved1477532051339_181_gl_Position *= 0.2;
 }
 
 vec4 Transparent_Glow1477532059126_201_main() {
@@ -75,6 +83,11 @@ vec4 Glow_Effect1477532183055_216_main() {
 }
 
 void main() {
-    gl_Position = Tiling_Caustic1477531952046_152_main() + Noise_Ripples1477531959288_166_main() + Wiggly_Improved1477532051339_181_main() + Transparent_Glow1477532059126_201_main() + Glow_Effect1477532183055_216_main();
+    csm_PositionRaw = Tiling_Caustic1477531952046_152_main() + 
+                  Noise_Ripples1477531959288_166_main() + 
+                  Wiggly_Improved1477532051339_181_main() + 
+                  Transparent_Glow1477532059126_201_main() + 
+                  Glow_Effect1477532183055_216_main();
 }
+
 `;

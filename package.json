@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@14islands/r3f-scroll-rig": "^8.13.2",
     "@gsap/react": "^2.1.1",
     "@react-three/drei": "^9.109.2",
     "@react-three/fiber": "^8.16.8",

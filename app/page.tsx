@@ -11,9 +11,22 @@ export default function Home() {
 	return (
 		<>
 			{/* <Loader /> */}
-			<main
+			{/* <main
 				className={`overall-ctn`}
-				ref={wrapperRef}>
+				ref={wrapperRef}
+				style={{
+					transformOrigin: 'center',
+					transformStyle: 'preserve-3d',
+					transform: 'rotateX(10deg)',
+					backgroundColor: 'red',
+				}}>
+				<Hero contentRef={contentRef} />
+				<Scene wrapperRef={wrapperRef} />
+			</main> */}
+			<main
+				className={``}
+				ref={wrapperRef}
+				style={{}}>
 				{/* <Hero contentRef={contentRef} /> */}
 				<Scene wrapperRef={wrapperRef} />
 			</main>

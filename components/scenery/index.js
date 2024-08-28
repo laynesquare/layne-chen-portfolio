@@ -9,5 +9,6 @@ import Scene from './Scene';
 import Laser from './Laser';
 import Ray from './Ray';
 import Identity from './Identity';
+import Ripple from './Ripple';
 
-export { Cage, Model, Particles, Smoke, Floor, Loader, Camera, Scene, Laser, Ray, Identity };
+export { Cage, Model, Particles, Smoke, Floor, Loader, Camera, Scene, Laser, Ray, Identity, Ripple };

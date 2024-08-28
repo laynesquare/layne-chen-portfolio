@@ -43,12 +43,13 @@ body {
 	background-color: var(--background);
 	scrollbar-width: 0px;
 	-ms-overflow-style: none;
+	/* perspective: 100px; */
 }
 
 /* Hide Scrollbar */
 body::-webkit-scrollbar,
 ::-webkit-scrollbar {
-	display: none;
+	/* display: none; */
 }
 
 /* Custom Utilities */
@@ -87,5 +88,9 @@ body::-webkit-scrollbar,
 		backdrop-filter: blur(10px);
 		mix-blend-mode: color-burn;
 		isolation: isolate;
+	}
+
+	.position {
+		font-size: 10dvw;
 	}
 }
