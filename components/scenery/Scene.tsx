@@ -33,7 +33,20 @@ import { KernelSize, Resolution, BlendFunction } from 'postprocessing';
 import { Vector2, BackSide, Vector3 } from 'three';
 
 // Import custom components
-import { Floor, Cage, Particles, Model, Loader, Camera, Laser, Ray, Hero, Identity, Ripple } from '@/components';
+import {
+	Floor,
+	Cage,
+	Particles,
+	Model,
+	Loader,
+	Camera,
+	Laser,
+	Ray,
+	Hero,
+	Identity,
+	Ripple,
+	Banner,
+} from '@/components';
 
 // Import types
 import { SceneProps } from '@/types';
@@ -57,16 +70,17 @@ export default function Scene({ wrapperRef }: SceneProps) {
 				width: '100dvw',
 				height: '100dvh',
 			}}
-			camera={{ position: [0, 0, 5] }}
+			camera={{ position: [0, 0, 3.5] }}
 			eventSource={wrapperRef?.current}>
 			{/* <OrbitControls /> */}
 
 			<Suspense>
 				<ScrollControls
-					damping={0.1}
+					damping={0.25}
 					pages={5}>
 					<Ripple>
 						<Model />
+
 						{/* <Camera /> */}
 						<Environment preset='warehouse'>
 							<Lightformer
@@ -76,6 +90,10 @@ export default function Scene({ wrapperRef }: SceneProps) {
 								onUpdate={self => self.lookAt(0, 0, 0)}
 							/>
 						</Environment>
+
+						<Scroll>
+							<Banner />
+						</Scroll>
 						<Scroll html>
 							<h1 className='position'>123</h1>
 						</Scroll>

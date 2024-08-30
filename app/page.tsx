@@ -4,6 +4,8 @@ import dynamic from 'next/dynamic';
 import { Frame, Loader, Camera, Scene, Hero } from '@/components';
 import { useProgress } from '@react-three/drei';
 
+import SmoothScrolling from '@/components/SmoothScroll';
+
 export default function Home() {
 	const wrapperRef = useRef(null);
 	const contentRef = useRef(null);
@@ -23,12 +25,15 @@ export default function Home() {
 				<Hero contentRef={contentRef} />
 				<Scene wrapperRef={wrapperRef} />
 			</main> */}
+
 			<main
 				className={``}
 				ref={wrapperRef}
 				style={{}}>
+				{/* <SmoothScrolling> */}
 				{/* <Hero contentRef={contentRef} /> */}
 				<Scene wrapperRef={wrapperRef} />
+				{/* </SmoothScrolling> */}
 			</main>
 		</>
 	);
