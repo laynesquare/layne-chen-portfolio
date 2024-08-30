@@ -79,12 +79,10 @@ out vec2 vUvCover;
 
 
 vec3 deformationCurve(vec3 position, vec2 uv) {
-  float amplitude = 5.0; // Increase this value to make the curve more pronounced
-  position.y = position.y - (sin(uv.x * PI) * amplitude * min(abs(uScrollVelocity), 5.0) * sign(uScrollVelocity) * -0.01);
+  position.y = position.y - (sin(uv.x * PI) * min(abs(uScrollVelocity), 5.0) * sign(uScrollVelocity) * -0.01);
 
   return position;
 }
-
 
 void main() {
   vUv = uv;

@@ -7,6 +7,8 @@ import { easing } from 'maath';
 import vertexShader from '@/shaders/animated-scroll-warp/vertex';
 import fragmentShader from '@/shaders/animated-scroll-warp/fragment';
 
+import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
+
 // Create the shader material
 const RippleMaterial = shaderMaterial(
 	{
@@ -32,10 +34,13 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	const buffer = useFBO();
 	const viewport = useThree(state => state.viewport);
 	const [scene] = useState(() => new Scene());
-	const scroll = useScroll();
-	const previousScrollOffset = useRef(scroll.offset);
-	const scrollVelocityRef = useRef(0);
 	const waterNormals = useLoader(TextureLoader, '/scenery/textures/waternormals.jpg');
+	const scrollRef = useRef(0);
+	const velocityRef = useRef(0);
+	const scrollThree = useScroll();
+	const scrollLenis = useLenis(event => {
+		velocityRef.current = event.velocity;
+	});
 
 	const materialRef = useRef(
 		new ShaderMaterial({
@@ -59,11 +64,9 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 
 	useFrame(({ clock, gl, camera }, delta) => {
 		const elapsedTime = clock.getElapsedTime();
-		const currentScrollOffset = scroll.offset;
-		const scrollVelocity = (currentScrollOffset - previousScrollOffset.current) / delta;
+		const normalizedVelocity = velocityRef.current * delta * 60;
 
-		scrollVelocityRef.current = scrollVelocity;
-		previousScrollOffset.current = currentScrollOffset;
+		// scrollThree.offset = scrollRef.current;
 
 		gl.setRenderTarget(buffer);
 		gl.render(scene, camera);
@@ -72,7 +75,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 
 		if (materialRef.current) {
 			materialRef.current.uniforms.uTime.value = clock.getElapsedTime();
-			materialRef.current.uniforms.uScrollVelocity.value = scrollVelocity;
+			materialRef.current.uniforms.uScrollVelocity.value = velocityRef.current;
 			materialRef.current.uniforms.uTexture.value = buffer.texture;
 		}
 	});

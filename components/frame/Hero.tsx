@@ -202,7 +202,6 @@ export default function Hero({ contentRef }) {
 
 	return (
 		<div
-			id='smooth-content'
 			className='absolute w-full top-0 left-0 opacity-0'
 			ref={contentRef}>
 			<div className='h-dvh w-dvw relative'>
@@ -232,7 +231,7 @@ export default function Hero({ contentRef }) {
 				</div>
 			</div>
 
-			<h1 style={{ mixBlendMode: 'difference' }}>
+			<h1 className='h-dvh w-dvw relative'>
 				Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis in enim aliquid fugit error dignissimos
 				nostrum numquam eius. Ea provident ducimus sit eaque delectus expedita doloremque architecto nisi
 				deserunt recusandae rerum sunt reiciendis nemo debitis, ratione aperiam est nihil nesciunt commodi

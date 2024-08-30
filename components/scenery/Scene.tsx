@@ -53,12 +53,21 @@ import { SceneProps } from '@/types';
 
 import { suspend } from 'suspend-react';
 
+import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
+
 export default function Scene({ wrapperRef }: SceneProps) {
+	const scroll = useScroll();
+
+	// Example of scrolling to 50% of the scroll height
+	// useEffect(() => {
+	// 	scroll.el.scrollTop = 100;
+	// }, []);
+
 	return (
 		<Canvas
 			gl={{
 				antialias: true,
-				alpha: true,
+				alpha: false,
 				stencil: false,
 				depth: true,
 				powerPreference: 'high-performance',
@@ -76,9 +85,11 @@ export default function Scene({ wrapperRef }: SceneProps) {
 
 			<Suspense>
 				<ScrollControls
-					damping={0.25}
-					pages={5}>
+					enabled={true}
+					damping={0.1}
+					pages={2}>
 					<Ripple>
+						<Banner />
 						<Model />
 
 						{/* <Camera /> */}
@@ -91,12 +102,7 @@ export default function Scene({ wrapperRef }: SceneProps) {
 							/>
 						</Environment>
 
-						<Scroll>
-							<Banner />
-						</Scroll>
-						<Scroll html>
-							<h1 className='position'>123</h1>
-						</Scroll>
+						{/* <Scroll></Scroll> */}
 						<Preload />
 					</Ripple>
 				</ScrollControls>

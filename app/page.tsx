@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Frame, Loader, Camera, Scene, Hero } from '@/components';
 import { useProgress } from '@react-three/drei';
@@ -9,6 +9,10 @@ import SmoothScrolling from '@/components/SmoothScroll';
 export default function Home() {
 	const wrapperRef = useRef(null);
 	const contentRef = useRef(null);
+
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, []);
 
 	return (
 		<>
@@ -31,7 +35,7 @@ export default function Home() {
 				ref={wrapperRef}
 				style={{}}>
 				{/* <SmoothScrolling> */}
-				{/* <Hero contentRef={contentRef} /> */}
+				<Hero contentRef={contentRef} />
 				<Scene wrapperRef={wrapperRef} />
 				{/* </SmoothScrolling> */}
 			</main>

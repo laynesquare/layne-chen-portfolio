@@ -20,7 +20,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className={`${inter.className} ${kronaOne.className}`}>{children}</body>
+			<body className={`${inter.className} ${kronaOne.className}`}>
+				<SmoothScrolling>{children}</SmoothScrolling>
+				{/* {children} */}
+			</body>
 		</html>
 	);
 }
