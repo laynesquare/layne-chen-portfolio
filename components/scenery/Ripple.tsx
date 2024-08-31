@@ -9,6 +9,8 @@ import fragmentShader from '@/shaders/animated-scroll-warp/fragment';
 
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 
+import { lerp } from 'three/src/math/MathUtils.js';
+
 // Create the shader material
 const RippleMaterial = shaderMaterial(
 	{
@@ -34,7 +36,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	const buffer = useFBO();
 	const viewport = useThree(state => state.viewport);
 	const [scene] = useState(() => new Scene());
-	const waterNormals = useLoader(TextureLoader, '/scenery/textures/waternormals.jpg');
+	const waterNormals = useLoader(TextureLoader, '/scenery/textures/background-gradient.png');
 	const scrollRef = useRef(0);
 	const velocityRef = useRef(0);
 	const scrollThree = useScroll();
@@ -59,24 +61,22 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			vertexShader,
 			fragmentShader,
 			glslVersion: GLSL3,
+			// depthTest: true,
+			// depthWrite: false,
 		}),
 	);
 
 	useFrame(({ clock, gl, camera }, delta) => {
 		const elapsedTime = clock.getElapsedTime();
-		const normalizedVelocity = velocityRef.current * delta * 60;
-
-		// scrollThree.offset = scrollRef.current;
 
 		gl.setRenderTarget(buffer);
 		gl.render(scene, camera);
 		gl.setRenderTarget(null);
-		// gl.setClearColor('#d8d7d7');
 
 		if (materialRef.current) {
 			materialRef.current.uniforms.uTime.value = clock.getElapsedTime();
-			materialRef.current.uniforms.uScrollVelocity.value = velocityRef.current;
 			materialRef.current.uniforms.uTexture.value = buffer.texture;
+			materialRef.current.uniforms.uScrollVelocity.value = velocityRef.current;
 		}
 	});
 
@@ -84,9 +84,11 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		<>
 			{createPortal(children, scene)}
 			<mesh
-				scale={[viewport.width, viewport.height, 0]}
-				material={materialRef.current}>
-				<planeGeometry args={[1, 1, 100, 100]} />
+				ref={ref}
+				scale={[viewport.width, viewport.height, 1]}
+				material={materialRef.current}
+				position={[0, 0, 0]}>
+				<planeGeometry args={[1, 1, 128, 128]} />
 			</mesh>
 		</>
 	);
