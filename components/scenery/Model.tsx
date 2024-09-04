@@ -76,7 +76,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		dispersion,
 	} = useControls({
 		gradientStrength: { value: 1, min: 1, max: 3, step: 0.001 },
-		color: '#E0FB60',
+		color: '#EBFF8B',
 		speed: { min: 0, max: 20, step: 0.001, value: 4 },
 		noiseStrength: { value: 2, min: 0, max: 10, step: 0.001 },
 		displacementStrength: { min: 0, max: 10, step: 0.01, value: 1.2 },

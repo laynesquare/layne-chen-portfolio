@@ -46,6 +46,14 @@ body {
 	/* perspective: 100px; */
 }
 
+.font-krona {
+	font-family: var(--font-krona-one);
+}
+
+.font-clash {
+	font-family: var(--font-clash-display);
+}
+
 /* Hide Scrollbar */
 body::-webkit-scrollbar,
 ::-webkit-scrollbar {

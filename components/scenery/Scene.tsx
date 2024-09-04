@@ -28,6 +28,7 @@ import {
 	GodRays,
 	LensFlare,
 	N8AO,
+	FXAA,
 } from '@react-three/postprocessing';
 import { KernelSize, Resolution, BlendFunction } from 'postprocessing';
 import { Vector2, BackSide, Vector3 } from 'three';
@@ -67,10 +68,11 @@ export default function Scene({ wrapperRef }: SceneProps) {
 		<Canvas
 			gl={{
 				antialias: true,
-				alpha: false,
+				alpha: true,
 				stencil: true,
 				depth: true,
 				powerPreference: 'high-performance',
+				// pixelRatio: Math.min(1.5, window.devicePixelRatio),
 			}}
 			style={{
 				position: 'fixed',
@@ -79,6 +81,7 @@ export default function Scene({ wrapperRef }: SceneProps) {
 				width: '100dvw',
 				height: '100dvh',
 			}}
+			dpr={[1.5, 2]}
 			camera={{ position: [0, 0, 3.5] }}
 			eventSource={wrapperRef?.current}>
 			{/* <OrbitControls /> */}
@@ -91,18 +94,21 @@ export default function Scene({ wrapperRef }: SceneProps) {
 					<Ripple>
 						<Banner />
 						<Model />
+						<Scroll>
+							<Html>
+								<h1 style={{ fontSize: 100 }}>123</h1>
+							</Html>
+						</Scroll>
 
 						{/* <Camera /> */}
 						<Environment preset='warehouse'>
 							<Lightformer
-								intensity={4}
+								intensity={5}
 								position={[10, 5, 0]}
 								scale={[10, 50, 1]}
 								onUpdate={self => self.lookAt(0, 0, 0)}
 							/>
 						</Environment>
-
-						{/* <Scroll></Scroll> */}
 						<Preload />
 					</Ripple>
 				</ScrollControls>

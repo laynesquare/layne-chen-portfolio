@@ -93,7 +93,7 @@ function Menu() {
 	}, [isHover]);
 
 	return (
-		<div className='top-6 right-6 absolute flex justify-end flex-col items-end z-10'>
+		<div className='top-6 right-6 absolute flex justify-end flex-col items-end z-10 font-krona'>
 			<div className='relative'>
 				<button
 					ref={btnRef}
@@ -201,80 +201,77 @@ export default function Hero({ contentRef }) {
 	}, [progress]);
 
 	return (
-		<div
-			className='absolute w-full top-0 left-0 opacity-0'
-			ref={contentRef}>
-			<div className='h-dvh w-dvw relative'>
-				<Menu />
+		<>
+			<div className='absolute left-1/4 border-r border-stone-800 mix-blend-color-dodge pointer-events-none h-dvh z-10'></div>
+			<div className='absolute left-1/2 border-r border-stone-800 mix-blend-color-dodge pointer-events-none h-dvh z-10'></div>
+			<div className='absolute left-3/4 border-r border-stone-800 mix-blend-color-dodge pointer-events-none h-dvh z-10'></div>
+			<div
+				className='absolute w-full top-0 left-0 opacity-0'
+				ref={contentRef}>
+				<div className='h-dvh w-dvw relative'>
+					<Menu />
 
-				<div className='top-10 left-10 absolute'>
-					<Image
-						src={frameTopLeftIdentity}
-						alt='logo'
-						className='w-12'
-					/>
+					<div className='top-10 left-10 absolute z-10 text-2xl font-krona'>{'Layne Chen'}</div>
+
+					<div className='top-10 left-1/2 absolute z-10 text-xl -translate-x-1/2 font-krona'>
+						{'taiwan, 01:53AM'}
+					</div>
+
+					<div
+						className='top-1/2 left-1/2  -translate-x-1/2 -translate-y-1/2 absolute z-10 bg-transparent mix-blend-color-dodge font-clash font-semibold text-9xl flex flex-col items-center w-[max-content] gap-4'
+						style={{ color: '#93FB60' }}>
+						{/* <h2>{'Front-end Developer'}</h2>
+						<h2>{'Based in Taiwan'}</h2> */}
+					</div>
 				</div>
 
-				{/* <div className='bottom-10 left-10 absolute'>
-					<h2 className='kronaOne.className text-4xl max-w-screen-lg leading-snug'>
-						Engin€€ring High-Performance Web Experiences with Pre©ision and Expertise.
-					</h2>
-				</div> */}
-
-				<div className='bottom-10 absolute w-dvw z-10 pointer-events-none bg-transparent mix-blend-difference'>
-					<Image
-						className='origin-bottom scale-y-[1.1]'
-						style={{ width: '100%', height: '100%', padding: '0 3rem' }}
-						src={layneChen}
-						alt='Layne Chen'
-					/>
-				</div>
+				<h1 className='h-dvh w-dvw relative'>
+					Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis in enim aliquid fugit error
+					dignissimos nostrum numquam eius. Ea provident ducimus sit eaque delectus expedita doloremque
+					architecto nisi deserunt recusandae rerum sunt reiciendis nemo debitis, ratione aperiam est nihil
+					nesciunt commodi quidem. Ab, quas tempore? Obcaecati optio odio ut illum saepe, veniam quod omnis
+					dolor illo libero voluptatibus aliquid iusto error laborum sapiente soluta eveniet laudantium
+					consectetur labore incidunt quam temporibus! Illo est fugiat soluta laboriosam ex iusto at inventore
+					a iste vel, id laborum odit error? Voluptatum labore tenetur mollitia numquam, fuga maiores saepe
+					ad, maxime cupiditate culpa iste accusamus, eius nam a possimus quos facilis magnam laborum autem
+					nihil similique id. Debitis totam aperiam, maiores nam repellendus architecto incidunt voluptas
+					perferendis vitae soluta et necessitatibus? Quo obcaecati fuga magnam voluptas, aut aperiam velit
+					nostrum harum pariatur? Magnam, ipsam odio animi dolorem deleniti molestias enim aut quod maxime
+					dolor at sed illo dolores. Nulla, ea! Corrupti dolores eum voluptate tempora facere doloremque
+					perferendis hic accusamus porro cupiditate, laborum soluta voluptatibus dicta exercitationem neque
+					maxime aut alias qui, consectetur velit! Tempore laudantium reiciendis ipsam sit pariatur quas
+					perferendis voluptates nihil. Sequi voluptatum enim porro provident mollitia commodi ipsam. Earum
+					blanditiis iste sequi, quos error alias laboriosam eum aliquam corporis soluta repellendus
+					praesentium aliquid nostrum eveniet laborum. Tempore cumque voluptatum iste, alias optio illum,
+					quasi atque unde eos molestiae, tempora molestias maxime? Culpa, aliquam alias, amet officiis
+					molestiae nostrum ad numquam impedit voluptates delectus, odit obcaecati quam suscipit officia iste
+					fuga quas magnam! Enim nemo a ullam ea dignissimos, architecto corrupti magnam repellendus deleniti
+					sapiente soluta amet natus fugit non velit laudantium sint omnis corporis est nostrum! Libero
+					deleniti repellendus qui nisi quasi atque dolor eum. Esse architecto iusto consequatur aliquam
+					dolorem molestiae consectetur praesentium, magnam consequuntur dolore, laudantium quibusdam! Eaque
+					provident ipsum blanditiis error, repudiandae porro similique modi eos debitis vitae quidem enim
+					voluptatibus sunt culpa, fugiat quis consequuntur temporibus perspiciatis tenetur id voluptas
+					aspernatur accusantium non? Asperiores assumenda reprehenderit aliquam veritatis incidunt illo
+					iusto, laborum et neque minus explicabo, molestiae voluptate consectetur quia quasi officiis,
+					placeat corrupti iste. Harum corporis modi blanditiis dignissimos, quia nihil. Sunt fugit nesciunt
+					ullam eos! Molestiae fuga asperiores porro incidunt aliquam aut deserunt voluptates nisi repellendus
+					provident atque magni blanditiis, obcaecati exercitationem alias voluptatum cum adipisci doloremque.
+					Necessitatibus odit maiores eligendi illo labore expedita dolorem tempora, quae dolores deserunt
+					amet perspiciatis nihil tenetur quos maxime debitis aliquid porro ex rem quo veritatis quisquam.
+					Quod quae est inventore ut quo vitae minus officia animi fugit alias error sint eligendi atque porro
+					pariatur amet, deleniti sed, aliquid nihil! Similique ipsum totam dignissimos aperiam cumque quos
+					eius consectetur, eaque eligendi ipsam corrupti at esse minus, quia voluptate cum modi accusantium
+					vero. Autem, deserunt optio provident aut enim maxime molestias modi et, ut reiciendis architecto
+					libero incidunt nulla quis labore ex eaque odit numquam id earum doloremque repudiandae. Suscipit
+					unde nobis tempore. Ipsa eum iure deserunt corrupti illum? Fugit et, possimus quod velit qui
+					excepturi officia repellat soluta magni eos vel voluptatum atque cupiditate, aspernatur laborum
+					obcaecati inventore, magnam consequuntur. Soluta, ad? Voluptatum, nostrum, odio laudantium fugit
+					repudiandae iste architecto sunt exercitationem blanditiis quo labore aperiam totam libero est atque
+					iusto sequi nemo enim assumenda animi error illo vel. Dolores quibusdam similique temporibus veniam
+					hic culpa repudiandae magni atque minus animi voluptas pariatur, illo qui dolorum repellendus odit,
+					iusto sequi, repellat ab eius ipsam?
+				</h1>
 			</div>
-
-			<h1 className='h-dvh w-dvw relative'>
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis in enim aliquid fugit error dignissimos
-				nostrum numquam eius. Ea provident ducimus sit eaque delectus expedita doloremque architecto nisi
-				deserunt recusandae rerum sunt reiciendis nemo debitis, ratione aperiam est nihil nesciunt commodi
-				quidem. Ab, quas tempore? Obcaecati optio odio ut illum saepe, veniam quod omnis dolor illo libero
-				voluptatibus aliquid iusto error laborum sapiente soluta eveniet laudantium consectetur labore incidunt
-				quam temporibus! Illo est fugiat soluta laboriosam ex iusto at inventore a iste vel, id laborum odit
-				error? Voluptatum labore tenetur mollitia numquam, fuga maiores saepe ad, maxime cupiditate culpa iste
-				accusamus, eius nam a possimus quos facilis magnam laborum autem nihil similique id. Debitis totam
-				aperiam, maiores nam repellendus architecto incidunt voluptas perferendis vitae soluta et
-				necessitatibus? Quo obcaecati fuga magnam voluptas, aut aperiam velit nostrum harum pariatur? Magnam,
-				ipsam odio animi dolorem deleniti molestias enim aut quod maxime dolor at sed illo dolores. Nulla, ea!
-				Corrupti dolores eum voluptate tempora facere doloremque perferendis hic accusamus porro cupiditate,
-				laborum soluta voluptatibus dicta exercitationem neque maxime aut alias qui, consectetur velit! Tempore
-				laudantium reiciendis ipsam sit pariatur quas perferendis voluptates nihil. Sequi voluptatum enim porro
-				provident mollitia commodi ipsam. Earum blanditiis iste sequi, quos error alias laboriosam eum aliquam
-				corporis soluta repellendus praesentium aliquid nostrum eveniet laborum. Tempore cumque voluptatum iste,
-				alias optio illum, quasi atque unde eos molestiae, tempora molestias maxime? Culpa, aliquam alias, amet
-				officiis molestiae nostrum ad numquam impedit voluptates delectus, odit obcaecati quam suscipit officia
-				iste fuga quas magnam! Enim nemo a ullam ea dignissimos, architecto corrupti magnam repellendus deleniti
-				sapiente soluta amet natus fugit non velit laudantium sint omnis corporis est nostrum! Libero deleniti
-				repellendus qui nisi quasi atque dolor eum. Esse architecto iusto consequatur aliquam dolorem molestiae
-				consectetur praesentium, magnam consequuntur dolore, laudantium quibusdam! Eaque provident ipsum
-				blanditiis error, repudiandae porro similique modi eos debitis vitae quidem enim voluptatibus sunt
-				culpa, fugiat quis consequuntur temporibus perspiciatis tenetur id voluptas aspernatur accusantium non?
-				Asperiores assumenda reprehenderit aliquam veritatis incidunt illo iusto, laborum et neque minus
-				explicabo, molestiae voluptate consectetur quia quasi officiis, placeat corrupti iste. Harum corporis
-				modi blanditiis dignissimos, quia nihil. Sunt fugit nesciunt ullam eos! Molestiae fuga asperiores porro
-				incidunt aliquam aut deserunt voluptates nisi repellendus provident atque magni blanditiis, obcaecati
-				exercitationem alias voluptatum cum adipisci doloremque. Necessitatibus odit maiores eligendi illo
-				labore expedita dolorem tempora, quae dolores deserunt amet perspiciatis nihil tenetur quos maxime
-				debitis aliquid porro ex rem quo veritatis quisquam. Quod quae est inventore ut quo vitae minus officia
-				animi fugit alias error sint eligendi atque porro pariatur amet, deleniti sed, aliquid nihil! Similique
-				ipsum totam dignissimos aperiam cumque quos eius consectetur, eaque eligendi ipsam corrupti at esse
-				minus, quia voluptate cum modi accusantium vero. Autem, deserunt optio provident aut enim maxime
-				molestias modi et, ut reiciendis architecto libero incidunt nulla quis labore ex eaque odit numquam id
-				earum doloremque repudiandae. Suscipit unde nobis tempore. Ipsa eum iure deserunt corrupti illum? Fugit
-				et, possimus quod velit qui excepturi officia repellat soluta magni eos vel voluptatum atque cupiditate,
-				aspernatur laborum obcaecati inventore, magnam consequuntur. Soluta, ad? Voluptatum, nostrum, odio
-				laudantium fugit repudiandae iste architecto sunt exercitationem blanditiis quo labore aperiam totam
-				libero est atque iusto sequi nemo enim assumenda animi error illo vel. Dolores quibusdam similique
-				temporibus veniam hic culpa repudiandae magni atque minus animi voluptas pariatur, illo qui dolorum
-				repellendus odit, iusto sequi, repellat ab eius ipsam?
-			</h1>
-		</div>
+		</>
 	);
 }

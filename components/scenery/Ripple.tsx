@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { MeshTransmissionMaterial, shaderMaterial, useFBO, useScroll } from '@react-three/drei';
 import { createPortal, useFrame, useThree, extend, useLoader } from '@react-three/fiber';
-import { GLSL3, Scene, ShaderMaterial, TextureLoader, Vector2 } from 'three';
+import { GLSL3, Scene, ShaderMaterial, TextureLoader, Vector2, ACESFilmicToneMapping } from 'three';
 import { easing } from 'maath';
 
 import vertexShader from '@/shaders/animated-scroll-warp/vertex';
@@ -61,8 +61,6 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			vertexShader,
 			fragmentShader,
 			glslVersion: GLSL3,
-			// depthTest: true,
-			// depthWrite: false,
 		}),
 	);
 
@@ -74,9 +72,14 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		gl.setRenderTarget(null);
 
 		if (materialRef.current) {
-			materialRef.current.uniforms.uTime.value = clock.getElapsedTime();
+			materialRef.current.uniforms.uTime.value = elapsedTime;
 			materialRef.current.uniforms.uTexture.value = buffer.texture;
-			materialRef.current.uniforms.uScrollVelocity.value = velocityRef.current;
+
+			const currentVelocity = materialRef.current.uniforms.uScrollVelocity.value;
+			const targetVelocity = velocityRef.current;
+			const smoothingFactor = 0.025; // Adjust this value for more or less smoothing
+			const smoothedVelocity = lerp(currentVelocity, targetVelocity, smoothingFactor);
+			materialRef.current.uniforms.uScrollVelocity.value = smoothedVelocity;
 		}
 	});
 
@@ -84,6 +87,8 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		<>
 			{createPortal(children, scene)}
 			<mesh
+				castShadow={false}
+				receiveShadow={false}
 				ref={ref}
 				scale={[viewport.width, viewport.height, 1]}
 				material={materialRef.current}

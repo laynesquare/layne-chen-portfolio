@@ -22,8 +22,8 @@ function SmoothScrolling({ children }) {
 		<ReactLenis
 			root
 			options={{
-				lerp: 0.1,
-				duration: 2,
+				lerp: 0.08,
+				duration: 3,
 				smoothTouch: false,
 				smooth: true,
 			}}

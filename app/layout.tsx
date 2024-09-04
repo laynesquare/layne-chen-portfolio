@@ -2,11 +2,13 @@ import type { Metadata } from 'next';
 import { Inter, Krona_One } from 'next/font/google';
 import { ReactLenis } from '@studio-freight/react-lenis';
 import SmoothScrolling from '@/components/SmoothScroll';
+import localFont from 'next/font/local';
 
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
-const kronaOne = Krona_One({ weight: '400', subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const kronaOne = Krona_One({ weight: '400', subsets: ['latin'], variable: '--font-krona-one' });
+const clashDisplay = localFont({ src: '../public/font/ClashDisplay.ttf', variable: '--font-clash-display' });
 
 export const metadata: Metadata = {
 	title: 'Create Next App',
@@ -19,8 +21,10 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang='en'>
-			<body className={`${inter.className} ${kronaOne.className}`}>
+		<html
+			lang='en'
+			className={`${inter.variable} ${kronaOne.variable} ${clashDisplay.variable}`}>
+			<body>
 				<SmoothScrolling>{children}</SmoothScrolling>
 				{/* {children} */}
 			</body>

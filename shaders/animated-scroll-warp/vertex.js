@@ -77,16 +77,25 @@ vec2 rotate(vec2 uv, float rotation, vec2 mid) {
 out vec2 vUv;  // 0 (left) 0 (bottom) - 1 (top) 1 (right)
 out vec2 vUvCover;
 
+// vec3 deformationCurve(vec3 position, vec2 uv) {
+//   float absVelocity = min(abs(uScrollVelocity), 5.0);
+//   float uvFactor = (uScrollVelocity > 0.0) ? (1.0 - uv.y) : uv.y;
+//   float amplitude = 0.01;
+  
+//   position.z -= abs(sin(uvFactor * PI * 0.35) * absVelocity * sign(uScrollVelocity) * 0.075);
+//   position.y -= sin(uvFactor * PI * 0.35) * absVelocity * sign(uScrollVelocity) * 0.01;
+
+//   return position;
+// }
+
+float randomFreq(vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
 
 vec3 deformationCurve(vec3 position, vec2 uv) {
-  float absVelocity = min(abs(uScrollVelocity), 5.0);
-  float uvFactor = (uScrollVelocity > 0.0) ? (1.0 - uv.y) : uv.y;
-  float amplitude = 0.01;
-  
-  position.z -= abs(sin(uvFactor * PI * 0.35) * absVelocity * sign(uScrollVelocity) * 0.075);
-  position.y -= sin(uvFactor * PI * 0.35) * absVelocity * sign(uScrollVelocity) * 0.01;
+    position.x += sin(position.y * 15.0) * abs(uScrollVelocity) * sign(uScrollVelocity) * 0.005;
 
-  return position;
+    return position;
 }
 
 void main() {
