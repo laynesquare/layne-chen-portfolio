@@ -33,21 +33,9 @@ import {
 import { KernelSize, Resolution, BlendFunction } from 'postprocessing';
 import { Vector2, BackSide, Vector3 } from 'three';
 
-// Import custom components
-import {
-	Floor,
-	Cage,
-	Particles,
-	Model,
-	Loader,
-	Camera,
-	Laser,
-	Ray,
-	Hero,
-	Identity,
-	Ripple,
-	Banner,
-} from '@/components';
+import Ripple from '@/components/scenery/Ripple';
+import Banner from '@/components/scenery/Banner';
+import Model from '@/components/scenery/Model';
 
 // Import types
 import { SceneProps } from '@/types';
@@ -55,6 +43,9 @@ import { SceneProps } from '@/types';
 import { suspend } from 'suspend-react';
 
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
+import dynamic from 'next/dynamic';
+
+const Port = dynamic(() => import('@/components/scenery/Port'), { ssr: false });
 
 export default function Scene({ wrapperRef }: SceneProps) {
 	const scroll = useScroll();
@@ -84,44 +75,7 @@ export default function Scene({ wrapperRef }: SceneProps) {
 			dpr={[1.5, 2]}
 			camera={{ position: [0, 0, 3.5] }}
 			eventSource={wrapperRef?.current}>
-			{/* <OrbitControls /> */}
-
-			<Suspense>
-				<ScrollControls
-					enabled={true}
-					damping={0.1}
-					pages={2}>
-					<Ripple>
-						<Banner />
-						<Model />
-						<Scroll>
-							<Html>
-								<h1 style={{ fontSize: 100 }}>123</h1>
-							</Html>
-						</Scroll>
-
-						{/* <Camera /> */}
-						<Environment preset='warehouse'>
-							<Lightformer
-								intensity={5}
-								position={[10, 5, 0]}
-								scale={[10, 50, 1]}
-								onUpdate={self => self.lookAt(0, 0, 0)}
-							/>
-						</Environment>
-						<Preload />
-					</Ripple>
-				</ScrollControls>
-			</Suspense>
+			<Port />
 		</Canvas>
 	);
-}
-
-{
-	/* <Sparkles
-count={50}
-scale={10}
-size={0.5}
-speed={0.1}
-/> */
 }

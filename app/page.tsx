@@ -1,10 +1,15 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Frame, Loader, Camera, Scene, Hero } from '@/components';
+import Hero from '@/components/frame/Hero';
+import Scene from '@/components/scenery/Scene';
+
 import { useProgress } from '@react-three/drei';
 
 import SmoothScrolling from '@/components/SmoothScroll';
+import { ScrollScene } from '@14islands/r3f-scroll-rig';
+
+// const Scene = dynamic(() => import('@/components/scenery/Scene'), { ssr: false });
 
 export default function Home() {
 	const wrapperRef = useRef(null);
@@ -42,3 +47,22 @@ export default function Home() {
 		</>
 	);
 }
+
+// export const HtmlComponent = () => (
+// 	const el = useRef()
+// 	return (
+// 	  <>
+// 		<div ref={el}>Track me!</div>
+// 		<UseCanvas>
+// 		  <ScrollScene track={el}>
+// 			{(props) => (
+// 			  <mesh {...props}>
+// 				<planeGeometry />
+// 				<meshBasicMaterial color="turquoise" />
+// 			  </mesh>
+// 			)}
+// 		  </ScrollScene>
+// 		</UseCanvas>
+// 	  </>
+// 	)
+//   )
