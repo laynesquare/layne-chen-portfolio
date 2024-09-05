@@ -1,7 +1,15 @@
 // cSpell: ignore Raycaster, GLTF, metalness, clearcoat, matcap, drei
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { MeshTransmissionMaterial, useAnimations, useGLTF, Float, Sparkles, Billboard } from '@react-three/drei';
+import {
+	MeshTransmissionMaterial,
+	useAnimations,
+	useGLTF,
+	Float,
+	Sparkles,
+	Billboard,
+	RoundedBox,
+} from '@react-three/drei';
 import { Intersection, useFrame, useGraph, useThree } from '@react-three/fiber';
 import { BallCollider, Physics, RigidBody, CylinderCollider, RapierRigidBody } from '@react-three/rapier';
 import { MeshBVH, acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
@@ -54,6 +62,8 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		geometry.computeTangents();
 		return geometry;
 	}, []);
+
+	const viewport = useThree(state => state.viewport);
 
 	const ballMaskRef = useRef(null);
 

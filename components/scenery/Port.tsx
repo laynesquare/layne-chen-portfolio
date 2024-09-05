@@ -45,8 +45,8 @@ export default function Port() {
 					damping={0.1}
 					pages={2}>
 					<Ripple>
-						{/* <Banner /> */}
-						<Model />
+						<Banner />
+						{/* <Model /> */}
 						{/* <Camera /> */}
 						<Environment preset='warehouse'>
 							<Lightformer

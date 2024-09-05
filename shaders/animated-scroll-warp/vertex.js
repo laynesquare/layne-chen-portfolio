@@ -93,17 +93,22 @@ float randomFreq(vec2 st) {
 }
 
 vec3 deformationCurve(vec3 position, vec2 uv) {
-    position.x += sin(position.y * 15.0) * abs(uScrollVelocity) * sign(uScrollVelocity) * 0.005;
+    // Add a wobble effect based on time and the vertex position
+    position.x += sin(position.y * 15.0 + uTime * 5.0) * abs(uScrollVelocity) * sign(uScrollVelocity) * 0.005;
+    
+    // Add  wave to the y-axis based on uTime and position
+    position.z += sin(position.x * 10.0 + uTime * 3.0) * 0.01;
 
     return position;
 }
 
 void main() {
-  vUv = uv;
-  vUvCover = getCoverUvVert(uv, uTextureSize, uQuadSize);
+    vUv = uv;
+    vUvCover = getCoverUvVert(uv, uTextureSize, uQuadSize);
 
-  vec3 deformedPosition = deformationCurve(position, vUvCover);
+    // Apply deformation to the position with time-based wave effect
+    vec3 deformedPosition = deformationCurve(position, vUvCover);
 
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(deformedPosition, 1.0);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(deformedPosition, 1.0);
 }
 `;
