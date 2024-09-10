@@ -97,8 +97,8 @@ void main() {
   float noise = snoise(gl_FragCoord.xy);
 
   // modify texture coordinates
-  texCoords.x += mix(0.0, circle * noise * 0.001, uMouseEnter + uScrollVelocity * 0.4);
-  texCoords.y += mix(0.0, circle * noise * 0.001, uMouseEnter + uScrollVelocity * 0.4);
+  texCoords.x += mix(0.0, circle * noise * 0.001, uMouseEnter + uScrollVelocity * 0.01);
+  texCoords.y += mix(0.0, circle * noise * 0.001, uMouseEnter + uScrollVelocity * 0.01);
 
   // texture
   vec3 texture = vec3(texture(uTexture, texCoords));
