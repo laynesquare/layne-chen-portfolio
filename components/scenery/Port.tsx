@@ -29,7 +29,7 @@ import {
 	FXAA,
 } from '@react-three/postprocessing';
 import { KernelSize, Resolution, BlendFunction } from 'postprocessing';
-import { Vector2, BackSide, Vector3 } from 'three';
+import { Vector2, BackSide, Vector3, Color } from 'three';
 
 import Ripple from '@/components/scenery/Ripple';
 import Banner from '@/components/scenery/Banner';
@@ -50,10 +50,12 @@ export default function Port() {
 						{/* <Camera /> */}
 						<Environment preset='warehouse'>
 							<Lightformer
+								color='white'
 								intensity={5}
 								position={[10, 5, 0]}
 								scale={[10, 50, 1]}
 								onUpdate={self => self.lookAt(0, 0, 0)}
+								form='rect'
 							/>
 						</Environment>
 						<Preload />

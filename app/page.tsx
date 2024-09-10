@@ -40,8 +40,10 @@ export default function Home() {
 				ref={wrapperRef}
 				style={{}}>
 				{/* <SmoothScrolling> */}
-				<Hero contentRef={contentRef} />
+				{/* <Hero contentRef={contentRef} /> */}
 				<Scene wrapperRef={wrapperRef} />
+
+				<div className='h-[800dvh]'></div>
 				{/* </SmoothScrolling> */}
 			</main>
 		</>

@@ -114,8 +114,8 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	});
 
 	useEffect(() => {
-		initializeGeometry(ballRef);
-		initializeGeometry(ballMaskRef);
+		// initializeGeometry(ballRef);
+		// initializeGeometry(ballMaskRef);
 	}, [ballRef, ballMaskRef]);
 
 	useFrame(({ clock }) => {

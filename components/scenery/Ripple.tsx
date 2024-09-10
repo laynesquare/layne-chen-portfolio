@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { MeshTransmissionMaterial, shaderMaterial, useFBO, useScroll } from '@react-three/drei';
 import { createPortal, useFrame, useThree, extend, useLoader } from '@react-three/fiber';
-import { GLSL3, Scene, ShaderMaterial, TextureLoader, Vector2, ACESFilmicToneMapping } from 'three';
+import { GLSL3, Scene, ShaderMaterial, TextureLoader, Vector2, ACESFilmicToneMapping, Color } from 'three';
 import { easing } from 'maath';
 
 import vertexShader from '@/shaders/animated-scroll-warp/vertex';
@@ -67,10 +67,6 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	useFrame(({ clock, gl, camera }, delta) => {
 		const elapsedTime = clock.getElapsedTime();
 
-		gl.setRenderTarget(buffer);
-		gl.render(scene, camera);
-		gl.setRenderTarget(null);
-
 		if (materialRef.current) {
 			materialRef.current.uniforms.uTime.value = elapsedTime;
 			materialRef.current.uniforms.uTexture.value = buffer.texture;
@@ -81,6 +77,11 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			const smoothedVelocity = lerp(currentVelocity, targetVelocity, smoothingFactor);
 			materialRef.current.uniforms.uScrollVelocity.value = smoothedVelocity;
 		}
+
+		gl.setRenderTarget(buffer);
+		gl.setClearColor(new Color('#3A3A3A'));
+		gl.render(scene, camera);
+		gl.setRenderTarget(null);
 	});
 
 	return (
