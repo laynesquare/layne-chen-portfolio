@@ -1,11 +1,12 @@
 const fragmentShader = `
 precision highp float;
-
+float PI = 3.141592653589793;
 uniform vec2 uResolution; // in pixel
 uniform float uTime; // in s
 uniform vec2 uCursor; // 0 (left) 0 (top) / 1 (right) 1 (bottom)
 uniform float uScrollVelocity; // - (scroll up) / + (scroll down)
 uniform sampler2D uTexture; // texture
+uniform sampler2D uDisplacement;
 uniform vec2 uTextureSize; // size of texture
 uniform vec2 uQuadSize; // size of texture element
 uniform float uBorderRadius; // pixel value
@@ -99,6 +100,14 @@ void main() {
   // modify texture coordinates
   texCoords.x += mix(0.0, circle * noise * 0.001, uMouseEnter + uScrollVelocity * 0.01);
   texCoords.y += mix(0.0, circle * noise * 0.001, uMouseEnter + uScrollVelocity * 0.01);
+
+  // --- DISPLACEMENT SECTION ---
+  vec4 displacement = texture(uDisplacement, vUv); // Sample displacement texture
+  float theta = displacement.r * 2.0 * PI; // Rotation based on displacement
+  vec2 dir = vec2(sin(theta), cos(theta)); // Direction
+  texCoords += dir * displacement.r * 0.075; // Apply displacement to texture coordinates
+  // --- END OF DISPLACEMENT SECTION ---
+
 
   // texture
   vec3 texture = vec3(texture(uTexture, texCoords));

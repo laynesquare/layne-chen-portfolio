@@ -63,9 +63,9 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		return geometry;
 	}, []);
 
-	const viewport = useThree(state => state.viewport);
-
 	const ballMaskRef = useRef(null);
+
+	console.log('re render from ball');
 
 	const {
 		gradientStrength,
@@ -241,7 +241,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 					document.body.style.cursor = 'default';
 				}}
 				frustumCulled={true}>
-				<circleGeometry args={[2, 32]} />
+				<circleGeometry args={[2, 1]} />
 				<meshBasicMaterial
 					transparent={true}
 					opacity={0}

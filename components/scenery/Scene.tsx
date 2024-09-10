@@ -59,11 +59,11 @@ export default function Scene({ wrapperRef }: SceneProps) {
 		<Canvas
 			gl={{
 				antialias: true,
-				alpha: true,
+				alpha: false,
 				stencil: true,
 				depth: true,
 				powerPreference: 'high-performance',
-				// pixelRatio: Math.min(1.5, window.devicePixelRatio),
+				// pixelRatio: Math.min(2, window.devicePixelRatio),
 			}}
 			style={{
 				position: 'fixed',

@@ -20,6 +20,10 @@ import {
 	SubtractiveBlending,
 	MultiplyBlending,
 	NormalBlending,
+	LinearFilter,
+	RGBAFormat,
+	UnsignedShort4444Type,
+	FrontSide,
 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line } from '@react-three/drei';
@@ -27,16 +31,17 @@ import CustomShaderMaterial from 'three-custom-shader-material';
 import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
 const Banner = () => {
-	const viewport = useThree(state => state.viewport);
-	const background = useLoader(TextureLoader, '/scenery/textures/background-noise-medium.webp');
-	const texture = useLoader(
-		RGBELoader,
-		'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr',
-	);
+	const { viewport, size, camera, pointer } = useThree();
+
+	// const background = useLoader(TextureLoader, '/scenery/textures/background-noise-medium.webp');
+	// const texture = useLoader(
+	// 	RGBELoader,
+	// 	'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr',
+	// );
 
 	const metalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
 
-	const aspectRatio = background.image.width / background.image.height;
+	// const aspectRatio = background.image.width / background.image.height;
 
 	const offsetRef = useRef(0);
 	const groupRef = useRef(null);
@@ -61,7 +66,12 @@ const Banner = () => {
 
 	const shared = { font: '/font/ClashDisplay-Semibold.woff' };
 
-	const fbo = useFBO();
+	const fbo = useFBO(size.width * 0.1, size.height * 0.1, {
+		minFilter: LinearFilter,
+		magFilter: LinearFilter,
+		format: RGBAFormat,
+		type: UnsignedShort4444Type,
+	});
 	const frontEndTextRef = useRef(null);
 	const metalMeshRef = useRef(null);
 
@@ -182,6 +192,8 @@ const Banner = () => {
 		}),
 	);
 
+	console.log('banner re rendner');
+
 	return (
 		<>
 			<group ref={groupRef}>
@@ -223,7 +235,7 @@ const Banner = () => {
 					scale={[viewport.width, viewport.height * 8, 1]}
 					position={[0, -viewport.height * 3.5, 0]}
 					material={bgMaterial.current}>
-					<planeGeometry args={[1, 1, 100, 100]} />
+					<planeGeometry args={[1, 1, 1, 1]} />
 				</mesh>
 
 				<mesh
@@ -231,9 +243,9 @@ const Banner = () => {
 					position={[0, -viewport.height, 1]}>
 					<boxGeometry args={[1, 1, 1]} />
 					<meshMatcapMaterial
+						side={FrontSide}
 						bumpMap={fbo.texture}
 						bumpScale={0.5}
-						// blending={AdditiveBlending}
 						matcap={metalAnisotropic}
 						dithering={true}
 					/>
