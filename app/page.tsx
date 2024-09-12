@@ -9,6 +9,8 @@ import { useProgress } from '@react-three/drei';
 import SmoothScrolling from '@/components/SmoothScroll';
 import { ScrollScene } from '@14islands/r3f-scroll-rig';
 
+import { useDomStore } from '@/store';
+
 // const Scene = dynamic(() => import('@/components/scenery/Scene'), { ssr: false });
 
 export default function Home() {
@@ -39,13 +41,39 @@ export default function Home() {
 				className={``}
 				ref={wrapperRef}
 				style={{}}>
-				{/* <SmoothScrolling> */}
-				<Hero contentRef={contentRef} />
+				{/* <Hero contentRef={contentRef} /> */}
+
 				<Scene wrapperRef={wrapperRef} />
 
+				<PassEle />
+
 				<div className='h-[800dvh]'></div>
-				{/* </SmoothScrolling> */}
 			</main>
+		</>
+	);
+}
+
+function PassEle({}) {
+	const register = useDomStore(state => state.register);
+	const el = useDomStore(state => state.element);
+	const textRef = useRef(null);
+
+	function checkStore() {
+		console.log(el);
+	}
+
+	useEffect(() => {
+		register(textRef.current);
+	}, []);
+	return (
+		<>
+			<div
+				className='absolute z-10 font-clash font-semibold test-sync'
+				ref={textRef}>
+				{'Front-end'}
+			</div>
+
+			<button onClick={checkStore}>text</button>
 		</>
 	);
 }

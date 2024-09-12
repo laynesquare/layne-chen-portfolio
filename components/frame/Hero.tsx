@@ -209,9 +209,9 @@ export default function Hero({ contentRef }) {
 				className='absolute w-full top-0 left-0 opacity-0'
 				ref={contentRef}>
 				<div className='h-dvh w-dvw relative'>
-					<Menu />
+					{/* <Menu /> */}
 
-					<div className='absolute z-10 font-clash font-semibold test-sync'>{'Front-end'}</div>
+					<div className='absolute z-10 font-clash font-semibold text-3xl'>{'Front-end'}</div>
 
 					<div className='top-10 left-1/2 absolute z-10 text-xl -translate-x-1/2 font-krona'>
 						{'taiwan, 01:53AM'}

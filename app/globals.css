@@ -103,8 +103,9 @@ body::-webkit-scrollbar,
 	}
 
 	.test-sync {
-		font-size: calc(2vw + 2vh);
+		font-size: 15vw;
 		left: 25vw;
+		top: 200px;
 		color: red;
 	}
 }

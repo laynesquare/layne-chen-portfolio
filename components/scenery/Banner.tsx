@@ -32,8 +32,11 @@ import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line
 import CustomShaderMaterial from 'three-custom-shader-material';
 import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
+import { useDomStore } from '@/store';
+
 const Banner = () => {
 	const { viewport, size, camera, pointer } = useThree();
+	const el = useDomStore(state => state.element);
 
 	// const background = useLoader(TextureLoader, '/scenery/textures/background-noise-medium.webp');
 	// const texture = useLoader(
@@ -80,8 +83,8 @@ const Banner = () => {
 	useFrame(({ scene, camera, gl, clock }) => {
 		// Hide other objects
 
-		console.log(viewport);
-		console.log(size);
+		// console.log(viewport);
+		// console.log(size);
 
 		const originalPosition = groupRef.current.position.y;
 		groupRef.current.position.y = 0;
@@ -228,14 +231,14 @@ const Banner = () => {
 
 	/**
 	 *
-	 * viewport.factor: 1 unit === 173.887px
+	 * viewport.factor: 1 unit === 173.8874px
 	 *
-	 * viewport.factor: 1 unit = 304.303px
+	 * viewport.factor: 1 unit = 304.3031px
 	 *
 	 * 304.303px
 	 */
 
-	const offset = 0.43;
+	const offset = 1 - 173.8874 / 304.3031;
 
 	function calcPixel(ratio) {
 		const base = (viewport.width + viewport.height) * ratio * offset;
@@ -251,9 +254,44 @@ const Banner = () => {
 		return viewport.height * ratio * offset;
 	}
 
+	function calcFs(el) {
+		if (!el) return 0;
+		const cs = window.getComputedStyle(el);
+		const bounding = el.getBoundingClientRect();
+
+		console.log(cs.left);
+		console.log(cs.fontSize);
+		console.log(cs.top);
+		console.log(cs.lineHeight);
+		console.log(cs.letterSpacing);
+		console.log(cs.height);
+		console.log(cs.width);
+		const fs = parseFloat(cs.fontSize);
+
+		return (fs / 173) * offset;
+	}
+
 	return (
 		<>
 			<group ref={groupRef}>
+				<Text
+					ref={frontEndTextRef}
+					position={[
+						(-viewport.width / 2) * offset + (480 / 173.8874) * offset,
+						(viewport.height / 2) * offset - (200 / 173.8874) * offset,
+						2,
+					]}
+					{...shared}
+					anchorX={'left'}
+					anchorY={'top'}
+					material={blendedMaterial}
+					lineHeight={1.5}
+					overflowWrap='break-word'
+					maxWidth={(1425 / 173) * offset}
+					fontSize={calcFs(el)}>
+					{`Front-end`}
+				</Text>
+
 				<Text
 					ref={frontEndTextRef}
 					position={[calcX(-1 / 3.875), calcY(-1 / 5), 2]}
