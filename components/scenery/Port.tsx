@@ -46,7 +46,7 @@ export default function Port() {
 					pages={2}>
 					<Ripple>
 						<Banner />
-						<Model />
+						{/* <Model /> */}
 						{/* <Camera /> */}
 						<Environment preset='warehouse'>
 							<Lightformer

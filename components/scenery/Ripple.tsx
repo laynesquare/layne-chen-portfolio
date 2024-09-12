@@ -101,7 +101,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	});
 
 	const ripples = useMemo(() => {
-		const max = 50; // Number of planes
+		const max = 25; // Number of planes
 		const meshes = [];
 
 		for (let i = 0; i < max; i++) {
@@ -139,9 +139,9 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			const offsetX = Math.abs(preMousePos.current.x - event.clientX);
 			const offsetY = Math.abs(preMousePos.current.y - event.clientY);
 
-			if (offsetX < 0.1 && offsetY < 0.1) {
+			if (offsetX < 0.5 && offsetY < 0.5) {
 			} else {
-				rippleCurrIdx.current = (rippleCurrIdx.current + 1) % 50;
+				rippleCurrIdx.current = (rippleCurrIdx.current + 1) % 25;
 				rippleRefs.current[rippleCurrIdx.current].material.visible = true;
 				rippleRefs.current[rippleCurrIdx.current].material.opacity = 1;
 				rippleRefs.current[rippleCurrIdx.current].scale.x = rippleRefs.current[

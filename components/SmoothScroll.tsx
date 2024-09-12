@@ -24,7 +24,7 @@ function SmoothScrolling({ children }) {
 			options={{
 				lerp: 0.08,
 				duration: 3,
-				smoothTouch: false,
+				smoothTouch: true,
 				smooth: true,
 			}}
 			ref={lenisRef}

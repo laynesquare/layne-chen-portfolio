@@ -24,6 +24,8 @@ import {
 	RGBAFormat,
 	UnsignedShort4444Type,
 	FrontSide,
+	ACESFilmicToneMapping,
+	MultiplyOperation,
 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line } from '@react-three/drei';
@@ -51,8 +53,8 @@ const Banner = () => {
 	}
 
 	const blendedMaterial = useMemo(() => {
-		return new MeshPhysicalMaterial({
-			color: new Color('#93FB60'),
+		return new MeshBasicMaterial({
+			color: new Color('#FFFFF0'),
 			blending: AdditiveBlending,
 			dithering: true,
 		});
@@ -77,6 +79,9 @@ const Banner = () => {
 
 	useFrame(({ scene, camera, gl, clock }) => {
 		// Hide other objects
+
+		console.log(viewport);
+		console.log(size);
 
 		const originalPosition = groupRef.current.position.y;
 		groupRef.current.position.y = 0;
@@ -194,34 +199,112 @@ const Banner = () => {
 
 	console.log('banner re rendner');
 
+	const pixelFontSize = 16; // for example, 16px in CSS
+	const threeJsFontSize = pixelFontSize / viewport.factor; // Convert px to Three.js units
+
+	const camAt35 = {
+		initialDpr: 1.5,
+		dpr: 1.5,
+		width: 11.041621754215447,
+		height: 5.371288915852722,
+		top: 0,
+		left: 0,
+		aspect: 2.0556745182012848,
+		distance: 3.5,
+		factor: 173.88749974766944,
+	};
+
+	const camAt2 = {
+		initialDpr: 1.5,
+		dpr: 1.5,
+		width: 6.3094981452659695,
+		height: 3.0693079519158415,
+		top: 0,
+		left: 0,
+		aspect: 2.0556745182012848,
+		distance: 2,
+		factor: 304.30312455842153,
+	};
+
+	/**
+	 *
+	 * viewport.factor: 1 unit === 173.887px
+	 *
+	 * viewport.factor: 1 unit = 304.303px
+	 *
+	 * 304.303px
+	 */
+
+	const offset = 0.43;
+
+	function calcPixel(ratio) {
+		const base = (viewport.width + viewport.height) * ratio * offset;
+		// const weight = 0.052579;
+		return (viewport.width + viewport.height) * ratio * offset;
+	}
+
+	function calcX(ratio) {
+		return viewport.width * ratio * offset;
+	}
+
+	function calcY(ratio) {
+		return viewport.height * ratio * offset;
+	}
+
 	return (
 		<>
 			<group ref={groupRef}>
 				<Text
 					ref={frontEndTextRef}
-					children='Front-end'
-					position={[-viewport.width / 5, viewport.height / 10, 2]}
+					position={[calcX(-1 / 3.875), calcY(-1 / 5), 2]}
 					{...shared}
-					anchorX={'left'}
-					material={blendedMaterial}
-					fontSize={0.75}
-				/>
-				<Text
-					children='Developer'
-					position={[viewport.width / 5, -viewport.height / 30, 2]}
 					anchorX={'right'}
+					anchorY={'top'}
+					material={blendedMaterial}
+					fontSize={calcPixel(1 / 60)}>
+					{`[01.]`}
+				</Text>
+				<Text
+					ref={frontEndTextRef}
+					position={[calcX(-1 / 3), calcY(1 / 5), 2]}
+					{...shared}
+					anchorX={'left'}
+					anchorY={'middle'}
+					material={blendedMaterial}
+					fontSize={calcPixel(7 / 100)}>
+					{`Front-end`}
+				</Text>
+				<Text
+					position={[calcX(1 / 3), calcY(0), 2]}
+					anchorX={'right'}
+					anchorY={'middle'}
 					{...shared}
 					material={blendedMaterial}
-					fontSize={0.75}
-				/>
-				<Text
-					position={[-viewport.width / 9.25, -viewport.height / 7, 2]}
-					anchorX={'left'}
-					material={blendedMaterial}
-					fontSize={0.05}
-					font='/font/ClashDisplay-Regular.woff'>
-					{`Craft with a blend\nof technical expertise and\ndesign sensibility`}
+					fontSize={calcPixel(7 / 100)}>
+					{`Developer`}
 				</Text>
+				<Text
+					position={[calcX(-1 / 4.125), calcY(-1 / 5), 2]}
+					anchorX={'left'}
+					anchorY={'top'}
+					material={blendedMaterial}
+					fontSize={calcPixel(0.75 / 100)}
+					font='/font/ClashDisplay-Regular.woff'>
+					{`Craft with a blend\nof technical\nexpertise and\ndesign sensibility`}
+					{viewport.height}
+				</Text>
+
+				<Text
+					position={[calcX(-1 / 30), calcY(-1 / 5), 2]}
+					anchorX={'right'}
+					anchorY={'top'}
+					material={blendedMaterial}
+					fontSize={calcPixel(0.75 / 100)}
+					textAlign='right'
+					font='/font/ClashDisplay-Regular.woff'>
+					{`Click the\nball to\nglow up`}
+				</Text>
+
 				<Text
 					position={[viewport.width / 9.5, -viewport.height / 8, 2]}
 					anchorX={'right'}
@@ -230,25 +313,23 @@ const Banner = () => {
 					font='/font/ClashDisplay-Regular.woff'>
 					{`Based in Taipei, Taiwan`}
 				</Text>
-
 				<mesh
 					scale={[viewport.width, viewport.height * 8, 1]}
 					position={[0, -viewport.height * 3.5, 0]}
 					material={bgMaterial.current}>
 					<planeGeometry args={[1, 1, 1, 1]} />
 				</mesh>
-
 				<mesh
 					ref={metalMeshRef}
 					position={[0, -viewport.height, 1]}>
 					<boxGeometry args={[1, 1, 1]} />
-					<meshMatcapMaterial
+					{/* <meshMatcapMaterial
 						side={FrontSide}
 						bumpMap={fbo.texture}
 						bumpScale={0.5}
 						matcap={metalAnisotropic}
 						dithering={true}
-					/>
+					/> */}
 				</mesh>
 			</group>
 		</>

@@ -211,7 +211,7 @@ export default function Hero({ contentRef }) {
 				<div className='h-dvh w-dvw relative'>
 					<Menu />
 
-					<div className='top-10 left-10 absolute z-10 text-2xl font-krona'>{'Layne Chen'}</div>
+					<div className='absolute z-10 font-clash font-semibold test-sync'>{'Front-end'}</div>
 
 					<div className='top-10 left-1/2 absolute z-10 text-xl -translate-x-1/2 font-krona'>
 						{'taiwan, 01:53AM'}
