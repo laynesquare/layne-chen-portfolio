@@ -105,16 +105,22 @@ void main() {
   vec4 displacement = texture(uDisplacement, vUv); // Sample displacement texture
   float theta = displacement.r * 2.0 * PI; // Rotation based on displacement
   vec2 dir = vec2(sin(theta), cos(theta)); // Direction
-  texCoords += dir * displacement.r * 0.075; // Apply displacement to texture coordinates
+  texCoords += dir * displacement.r * 0.035; // Apply displacement to texture coordinates
   // --- END OF DISPLACEMENT SECTION ---
 
+  // Apply chromatic aberration where displacement occurs
+  vec2 aberrationOffset = dir * displacement.r * 0.01; // Smaller offset for chromatic aberration
 
-  // texture
-  vec3 texture = vec3(texture(uTexture, texCoords));
+  // Sample the texture for each RGB channel with a slight offset
+  vec3 color;
+  color.r = texture(uTexture, texCoords + aberrationOffset * 0.5).r;
+  color.g = texture(uTexture, texCoords).g;
+  color.b = texture(uTexture, texCoords - aberrationOffset * 0.5).b;
 
   // output
-  outColor = vec4(texture, 1.0);
+  outColor = vec4(color, 1.0);
 }
+
 `;
 
 export default fragmentShader;
