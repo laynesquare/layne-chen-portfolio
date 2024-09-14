@@ -210,3 +210,48 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		</>
 	);
 }
+
+const useCustomViewport = () => {
+	const { viewport, camera, pointer, size } = useThree();
+	const [custom, setCustom] = useState({ viewport, camera, pointer, size });
+
+	useEffect(() => {
+		const isMobile = () => {
+			const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+			// Mobile user agent detection
+			if (/android/i.test(userAgent)) {
+				return true;
+			}
+
+			if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+				return true;
+			}
+
+			// Tablets (Android, iOS)
+			if (/Tablet|PlayBook|Silk|Kindle|iPad/.test(userAgent)) {
+				return true;
+			}
+
+			// Windows phone
+			if (/Windows Phone|IEMobile|WPDesktop/.test(userAgent)) {
+				return true;
+			}
+
+			return false;
+		};
+
+		const handleSize = () => {
+			console.log('calling');
+			if (false) {
+				alert('resize from banner');
+				setCustom({ viewport, camera, pointer, size });
+			}
+		};
+
+		window.addEventListener('resize', handleSize);
+		return () => window.removeEventListener('resize', handleSize);
+	}, [viewport, camera, pointer, size]);
+
+	return { ...custom };
+};

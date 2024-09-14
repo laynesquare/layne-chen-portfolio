@@ -1,5 +1,5 @@
 import { extend, useFrame, useLoader, useThree } from '@react-three/fiber';
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useState } from 'react';
 import {
 	Color,
 	MeshBasicMaterial,
@@ -34,42 +34,43 @@ import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
 import { useDomStore } from '@/store';
 
+import vertexShader from '@/shaders/animated-underlay-acid-fluid/vertex';
+import fragmentShader from '@/shaders/animated-underlay-acid-fluid/fragment';
+
 const Banner = () => {
 	const { viewport, size, camera, pointer } = useThree();
-	const el = useDomStore(state => state.element);
+	const domTextEls = useDomStore(state => state.textEls);
+	const meshMetalRef = useRef(null);
 
-	// const background = useLoader(TextureLoader, '/scenery/textures/background-noise-medium.webp');
-	// const texture = useLoader(
-	// 	RGBELoader,
-	// 	'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr',
-	// );
+	const textureMetalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
 
-	const metalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
-
-	// const aspectRatio = background.image.width / background.image.height;
-
-	const offsetRef = useRef(0);
+	const scrollOffsetRef = useRef(0);
 	const groupRef = useRef(null);
 
-	function updatePosition(offset) {
-		groupRef.current.position.y += offset;
-	}
+	const OFFSET_Z_2 = 1 - viewport.factor / 304.3031;
 
-	const blendedMaterial = useMemo(() => {
-		return new MeshBasicMaterial({
+	const materialDomText = useRef(
+		new MeshBasicMaterial({
 			color: new Color('#FFFFF0'),
 			blending: AdditiveBlending,
 			dithering: true,
-		});
-	}, []);
+		}),
+	);
 
-	useLenis(event => {
-		const offset = Math.abs(event.scroll - offsetRef.current) / viewport.factor;
-		if (event.direction) updatePosition(event.direction * offset);
-		offsetRef.current = event.scroll;
-	});
+	const materialAcidBg = useRef(
+		new ShaderMaterial({
+			uniforms: { uTime: { value: 0 } },
+			vertexShader,
+			fragmentShader,
+		}),
+	);
 
-	const shared = { font: '/font/ClashDisplay-Semibold.woff' };
+	const domTextShared = {
+		font: '/font/ClashDisplay-Semibold.woff',
+		anchorX: 'left',
+		anchorY: 'top',
+		overflowWrap: 'break-word',
+	};
 
 	const fbo = useFBO(size.width * 0.1, size.height * 0.1, {
 		minFilter: LinearFilter,
@@ -77,15 +78,8 @@ const Banner = () => {
 		format: RGBAFormat,
 		type: UnsignedShort4444Type,
 	});
-	const frontEndTextRef = useRef(null);
-	const metalMeshRef = useRef(null);
 
 	useFrame(({ scene, camera, gl, clock }) => {
-		// Hide other objects
-
-		// console.log(viewport);
-		// console.log(size);
-
 		const originalPosition = groupRef.current.position.y;
 		groupRef.current.position.y = 0;
 
@@ -95,115 +89,33 @@ const Banner = () => {
 
 		groupRef.current.position.y = originalPosition;
 
-		metalMeshRef.current.rotation.x = Math.cos(clock.elapsedTime / 2);
-		metalMeshRef.current.rotation.y = Math.sin(clock.elapsedTime / 2);
-		metalMeshRef.current.rotation.z = Math.sin(clock.elapsedTime / 2);
-		if (bgMaterial.current) {
-			bgMaterial.current.uniforms.uTime.value = clock.elapsedTime;
+		if (meshMetalRef.current) {
+			meshMetalRef.current.rotation.x = Math.cos(clock.elapsedTime / 2);
+			meshMetalRef.current.rotation.y = Math.sin(clock.elapsedTime / 2);
+			meshMetalRef.current.rotation.z = Math.sin(clock.elapsedTime / 2);
+		}
+
+		if (materialAcidBg.current) {
+			materialAcidBg.current.uniforms.uTime.value = clock.elapsedTime;
 		}
 	});
 
-	const bgMaterial = useRef(
-		new ShaderMaterial({
-			uniforms: {
-				uTime: { value: 0 },
-			},
-			vertexShader: `
-				varying vec2 vUv;
-				varying vec3 vPosition;
-				
-				void main() {
-					vUv = uv;
-					vPosition = position;
-					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-				}
-			  `,
-			fragmentShader: `
-				uniform float uTime;
-				varying vec2 vUv;
-				varying vec3 vPosition;
+	useLenis(event => {
+		const offset = (Math.abs(event.scroll - scrollOffsetRef.current) / viewport.factor) * OFFSET_Z_2;
+		if (event.direction) updatePosition(event.direction * offset);
+		scrollOffsetRef.current = event.scroll;
+	});
 
-				// Simplex 2D noise
-				vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-
-				float snoise(vec2 v){
-					const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-										-0.577350269189626, 0.024390243902439);
-					vec2 i  = floor(v + dot(v, C.yy) );
-					vec2 x0 = v -   i + dot(i, C.xx);
-					vec2 i1;
-					i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-					vec4 x12 = x0.xyxy + C.xxzz;
-					x12.xy -= i1;
-					i = mod(i, 289.0);
-					vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
-									+ i.x + vec3(0.0, i1.x, 1.0 ));
-					vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
-											dot(x12.zw,x12.zw)), 0.0);
-					m = m*m ;
-					m = m*m ;
-					vec3 x = 2.0 * fract(p * C.www) - 2.0;
-					vec3 h = abs(x) - 0.5;
-					vec3 ox = floor(x + 0.5);
-					vec3 a0 = x - ox;
-					m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-					vec3 g;
-					g.x  = a0.x  * x0.x  + h.x  * x0.y;
-					g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-					return 130.0 * dot(m, g);
-				}
-
-				// Generate high-frequency noise for grain effect
-				float grainNoise(vec2 uv) {
-					return snoise(uv * 1800.0 + 1.0 * 10.0) * 0.05;
-				}
-
-				float curvedLines(vec2 uv, float offset, float curveAmount) {
-					// Apply curvature to the uv.x by using uv.y and curveAmount
-					uv.x += sin(uv.y * 3.14159) * curveAmount;
-
-					// Create the curved lines using the modified uv
-					return smoothstep(
-						0.0, 0.5 + offset * 0.5,
-						abs(0.5 * (sin(uv.x * 10.0) + offset * 2.0))
-					);
-				}
-
-				void main() {
-					// Create vertical gradient
-					float gradient = smoothstep(0.1, 8.0, abs(vUv.x - 0.5) * 80.0); // Adjust gradient smoothness
-					
-					// Generate low-frequency noise for pattern (scale down for larger shapes)
-					float noise = snoise(vUv * 8.0 + uTime * 0.05) * 0.5; // Lower the frequency of noise
-					
-					// Combine gradient and noise for base pattern
-					float pattern = mix(gradient, noise, 0.7); // Use more of the noise in blending
-
-					vec2 baseUV = vPosition.xy;
-					float basePattern = curvedLines(baseUV, 0.1, 1.0);
-					float baseSecondPattern = curvedLines(baseUV, noise, 1.0);
-					
-					// Define colors
-					vec3 darkColor = vec3(0.227, 0.227, 0.227);
-					vec3 brightColor = vec3(0.243, 0.639, 0.482);
-					
-					// Mix colors based on the pattern
-					vec3 finalColor = mix(brightColor, darkColor, baseSecondPattern);
-					
-					// Add grainy texture on top
-					float grain = grainNoise(vUv);
-					finalColor += grain;  // Adjust the strength of the grain effect here
-					
-					gl_FragColor = vec4(finalColor, 1.0);
-				}
-			`,
-		}),
-	);
+	function updatePosition(offset) {
+		groupRef.current.position.y += offset;
+	}
 
 	console.log('banner re rendner');
 
-	const pixelFontSize = 16; // for example, 16px in CSS
-	const threeJsFontSize = pixelFontSize / viewport.factor; // Convert px to Three.js units
+	/**
+	 * cam at 3.5 viewport.factor: 1 unit === 173.8874px
+	 * cam at 2 viewport.factor: 1 unit = 304.3031px
+	 */
 
 	const camAt35 = {
 		initialDpr: 1.5,
@@ -229,52 +141,38 @@ const Banner = () => {
 		factor: 304.30312455842153,
 	};
 
-	/**
-	 *
-	 * viewport.factor: 1 unit === 173.8874px
-	 *
-	 * viewport.factor: 1 unit = 304.3031px
-	 *
-	 * 304.303px
-	 */
-
-	const offset = 1 - 173.8874 / 304.3031;
-
-	function calcPixel(ratio) {
-		const base = (viewport.width + viewport.height) * ratio * offset;
-		// const weight = 0.052579;
-		return (viewport.width + viewport.height) * ratio * offset;
-	}
-
-	function calcX(ratio) {
-		return viewport.width * ratio * offset;
-	}
-
-	function calcY(ratio) {
-		return viewport.height * ratio * offset;
-	}
-
-	function calcFs(el) {
-		if (!el) return 0;
-		const cs = window.getComputedStyle(el);
-		const bounding = el.getBoundingClientRect();
-
-		console.log(cs.left);
-		console.log(cs.fontSize);
-		console.log(cs.top);
-		console.log(cs.lineHeight);
-		console.log(cs.letterSpacing);
-		console.log(cs.height);
-		console.log(cs.width);
-		const fs = parseFloat(cs.fontSize);
-
-		return (fs / 173) * offset;
-	}
-
 	return (
 		<>
 			<group ref={groupRef}>
-				<Text
+				{[...domTextEls].map((el, idx) => {
+					const { fontSize, lineHeight, height, width } = window.getComputedStyle(el);
+					const { left, top } = el.getBoundingClientRect();
+
+					console.log(lineHeight);
+					return (
+						<>
+							<Text
+								key={idx}
+								{...domTextShared}
+								position={[
+									(-viewport.width / 2) * OFFSET_Z_2 +
+										(parseFloat(left) / viewport.factor) * OFFSET_Z_2,
+									(viewport.height / 2) * OFFSET_Z_2 -
+										(parseFloat(top) / viewport.factor) * OFFSET_Z_2 +
+										scrollOffsetRef.current,
+									2,
+								]}
+								material={materialDomText.current}
+								lineHeight={parseFloat(lineHeight) / parseFloat(fontSize)}
+								maxWidth={(parseFloat(width) / viewport.factor) * OFFSET_Z_2}
+								fontSize={(parseFloat(fontSize) / viewport.factor) * OFFSET_Z_2}>
+								{el.textContent}
+							</Text>
+						</>
+					);
+				})}
+
+				{/* <Text
 					ref={frontEndTextRef}
 					position={[
 						(-viewport.width / 2) * offset + (480 / 173.8874) * offset,
@@ -350,16 +248,16 @@ const Banner = () => {
 					fontSize={0.05}
 					font='/font/ClashDisplay-Regular.woff'>
 					{`Based in Taipei, Taiwan`}
-				</Text>
+				</Text> */}
 				<mesh
 					scale={[viewport.width, viewport.height * 8, 1]}
 					position={[0, -viewport.height * 3.5, 0]}
-					material={bgMaterial.current}>
+					material={materialAcidBg.current}>
 					<planeGeometry args={[1, 1, 1, 1]} />
 				</mesh>
 				<mesh
-					ref={metalMeshRef}
-					position={[0, -viewport.height, 1]}>
+					ref={meshMetalRef}
+					position={[0, -viewport.height, 2]}>
 					<boxGeometry args={[1, 1, 1]} />
 					{/* <meshMatcapMaterial
 						side={FrontSide}
@@ -375,3 +273,67 @@ const Banner = () => {
 };
 
 export default Banner;
+
+/* -------------------------------------------------------------------------- */
+/*                                  later use                                 */
+/* -------------------------------------------------------------------------- */
+
+// const background = useLoader(TextureLoader, '/scenery/textures/background-noise-medium.webp');
+// const texture = useLoader(
+// 	RGBELoader,
+// 	'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr',
+// );
+
+// const background = useLoader(
+// 	THREE.TextureLoader,
+// 	'/scenery/textures/background-noise-medium.webp',
+// );
+// const texture = useLoader(
+// 	THREE.RGBELoader,
+// 	'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr',
+// );
+
+const useCustomViewport = () => {
+	const { viewport, camera, pointer, size } = useThree();
+	const [custom, setCustom] = useState({ viewport, camera, pointer, size });
+
+	useEffect(() => {
+		const isMobile = () => {
+			const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+			// Mobile user agent detection
+			if (/android/i.test(userAgent)) {
+				return true;
+			}
+
+			if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+				return true;
+			}
+
+			// Tablets (Android, iOS)
+			if (/Tablet|PlayBook|Silk|Kindle|iPad/.test(userAgent)) {
+				return true;
+			}
+
+			// Windows phone
+			if (/Windows Phone|IEMobile|WPDesktop/.test(userAgent)) {
+				return true;
+			}
+
+			return false;
+		};
+
+		const handleSize = () => {
+			console.log('calling');
+			if (false) {
+				alert('resize from banner');
+				setCustom({ viewport, camera, pointer, size });
+			}
+		};
+
+		window.addEventListener('resize', handleSize);
+		return () => window.removeEventListener('resize', handleSize);
+	}, [viewport, camera, pointer, size]);
+
+	return { ...custom };
+};

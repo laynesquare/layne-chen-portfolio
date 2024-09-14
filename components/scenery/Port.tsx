@@ -40,27 +40,27 @@ export default function Port() {
 		<>
 			{/* <OrbitControls /> */}
 			<Suspense>
-				<ScrollControls
-					enabled={true}
+				{/* <ScrollControls
+					enabled={false}
 					damping={0.1}
-					pages={2}>
-					<Ripple>
-						<Banner />
-						{/* <Model /> */}
-						{/* <Camera /> */}
-						<Environment preset='warehouse'>
-							<Lightformer
-								color='white'
-								intensity={5}
-								position={[10, 5, 0]}
-								scale={[10, 50, 1]}
-								onUpdate={self => self.lookAt(0, 0, 0)}
-								form='rect'
-							/>
-						</Environment>
-						<Preload />
-					</Ripple>
-				</ScrollControls>
+					pages={}> */}
+				<Ripple>
+					<Banner />
+					{/* <Model /> */}
+					{/* <Camera /> */}
+					<Environment preset='warehouse'>
+						<Lightformer
+							color='white'
+							intensity={5}
+							position={[10, 5, 0]}
+							scale={[10, 50, 1]}
+							onUpdate={self => self.lookAt(0, 0, 0)}
+							form='rect'
+						/>
+					</Environment>
+					<Preload />
+				</Ripple>
+				{/* </ScrollControls> */}
 			</Suspense>
 		</>
 	);

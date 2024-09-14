@@ -15,7 +15,6 @@ import { useDomStore } from '@/store';
 
 export default function Home() {
 	const wrapperRef = useRef(null);
-	const contentRef = useRef(null);
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -40,40 +39,10 @@ export default function Home() {
 			<main
 				className={``}
 				ref={wrapperRef}
-				style={{}}>
-				{/* <Hero contentRef={contentRef} /> */}
-
+				style={{ height: '200lvh' }}>
+				<Hero />
 				<Scene wrapperRef={wrapperRef} />
-
-				<PassEle />
-
-				<div className='h-[800dvh]'></div>
 			</main>
-		</>
-	);
-}
-
-function PassEle({}) {
-	const register = useDomStore(state => state.register);
-	const el = useDomStore(state => state.element);
-	const textRef = useRef(null);
-
-	function checkStore() {
-		console.log(el);
-	}
-
-	useEffect(() => {
-		register(textRef.current);
-	}, []);
-	return (
-		<>
-			<div
-				className='absolute z-10 font-clash font-semibold test-sync'
-				ref={textRef}>
-				{'Front-end'}
-			</div>
-
-			<button onClick={checkStore}>text</button>
 		</>
 	);
 }

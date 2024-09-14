@@ -43,7 +43,6 @@ body {
 	background-color: var(--background);
 	scrollbar-width: 0px;
 	-ms-overflow-style: none;
-	/* perspective: 100px; */
 }
 
 .font-krona {

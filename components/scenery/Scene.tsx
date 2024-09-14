@@ -69,8 +69,8 @@ export default function Scene({ wrapperRef }: SceneProps) {
 				position: 'fixed',
 				top: 0,
 				left: 0,
-				width: '100dvw',
-				height: '100dvh',
+				width: '100lvw',
+				height: '100lvh',
 			}}
 			dpr={[1.5, 2]}
 			camera={{ position: [0, 0, 3.5] }}
