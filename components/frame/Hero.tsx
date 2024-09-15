@@ -20,9 +20,8 @@ export default function Hero({}) {
 
 	const contentRef = useRef(null);
 
-	const textElsRef = useRef([]);
-	const countRef = useRef(0);
-	const textElRegister = useDomStore(state => state.textElRegister);
+	const textElStoreRegister = useDomStore(state => state.textElRegister);
+	const torsoElStoreRegister = useDomStore(state => state.torsoElRegister);
 
 	useGSAP(() => {
 		if (progress === 100) {
@@ -42,15 +41,19 @@ export default function Hero({}) {
 
 	return (
 		<>
-			<div className='absolute left-1/4 border-r border-stone-800 mix-blend-color-dodge pointer-events-none h-dvh z-10'></div>
-			<div className='absolute left-1/2 border-r border-stone-800 mix-blend-color-dodge pointer-events-none h-dvh z-10'></div>
-			<div className='absolute left-3/4 border-r border-stone-800 mix-blend-color-dodge pointer-events-none h-dvh z-10'></div>
-			<article
-				className='absolute w-full top-0 left-0 opacity-0 h-[800svh]'
-				ref={contentRef}>
-				<section className='h-svh w-full relative flex pointer-events-none'>
-					<div className='absolute z-10 flex flex-col leading-none top-1/4 left-1/2 -translate-x-1/2 font-clash font-semibold text-[13.75rem]'>
-						<h1 ref={el => textElsRef.current.push(el)}>{'Front-end'}</h1>
+			{/* <div className='absolute left-1/4 border-r border-stone-800 mix-blend-color-dodge pointer-events-none h-[800lvh] z-10'></div> */}
+			{/* <div className='absolute left-1/2 border-r border-stone-800 mix-blend-color-dodge pointer-events-none h-[800lvh] z-10'></div> */}
+			{/* <div className='absolute left-3/4 border-r border-stone-800 mix-blend-color-dodge pointer-events-none h-[800lvh] z-10'></div> */}
+			<div
+				className='absolute w-full top-0 left-0 font-clash font-semibold'
+				ref={torsoElStoreRegister}>
+				<section
+					/* -------------------------------------------------------------------------- */
+					/*                                 first page                                 */
+					/* -------------------------------------------------------------------------- */
+					className='h-lvh w-full relative flex pointer-events-none border-b-2 border-stone-800 z-10'>
+					<header className='absolute z-10 flex flex-col leading-none top-[20%] left-1/2 -translate-x-1/2 text-[13.75rem]'>
+						<h2 ref={textElStoreRegister}>{'Front-end'}</h2>
 						<span className='pl-40'>
 							<h1 ref={el => textElsRef.current.push(el)}>{'Developer'}</h1>
 						</span>

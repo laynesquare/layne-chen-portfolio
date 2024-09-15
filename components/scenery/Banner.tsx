@@ -237,15 +237,15 @@ const Banner = () => {
 					{`Based in Taipei, Taiwan`}
 				</Text> */}
 				<mesh
-					scale={[viewport.width, viewport.height * 8, 1]}
-					position={[0, -viewport.height * 3.5, 0]}
+					scale={[torsoEl.offsetWidth / viewport.factor + 0.1, torsoEl.offsetHeight / viewport.factor, 1]}
+					position={[0, 0, 0]}
 					material={materialAcidBg.current}>
 					<planeGeometry args={[1, 1, 1, 1]} />
 				</mesh>
 				<mesh
 					ref={meshMetalRef}
 					position={[0, -viewport.height, 2]}>
-					<boxGeometry args={[1, 1, 1]} />
+					{/* <boxGeometry args={[1, 1, 1]} /> */}
 					{/* <meshMatcapMaterial
 						side={FrontSide}
 						bumpMap={fbo.texture}
