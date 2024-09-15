@@ -26,6 +26,7 @@ import {
 	FrontSide,
 	ACESFilmicToneMapping,
 	MultiplyOperation,
+	PerspectiveCamera,
 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line } from '@react-three/drei';
@@ -44,10 +45,18 @@ const Banner = () => {
 
 	const textureMetalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
 
-	const scrollOffsetRef = useRef(0);
+	const scrollOffsetRef = useRef(0); // pixel
 	const groupRef = useRef(null);
 
-	const OFFSET_Z_2 = 1 - viewport.factor / 304.3031;
+	const textMeshRatio = 1 - viewport.factor / calcFactorCamZ(2);
+
+	function calcFactorCamZ(zPosition: number) {
+		const fov = (camera.fov * Math.PI) / 180;
+		const h = 2 * Math.tan(fov / 2) * zPosition;
+		const w = h * (size.width / size.height);
+		const factor = size.width / w;
+		return factor;
+	}
 
 	const materialDomText = useRef(
 		new MeshBasicMaterial({
@@ -81,6 +90,7 @@ const Banner = () => {
 
 	useFrame(({ scene, camera, gl, clock }) => {
 		const originalPosition = groupRef.current.position.y;
+
 		groupRef.current.position.y = 0;
 
 		gl.setRenderTarget(fbo); // Render to FBO
@@ -100,46 +110,23 @@ const Banner = () => {
 		}
 	});
 
-	useLenis(event => {
-		const offset = (Math.abs(event.scroll - scrollOffsetRef.current) / viewport.factor) * OFFSET_Z_2;
-		if (event.direction) updatePosition(event.direction * offset);
+	useLenis(
+		event => {
+			const offset = (Math.abs(event.scroll - scrollOffsetRef.current) / viewport.factor) * textMeshRatio;
+			if (event.direction) {
+				updatePosition(event.direction * offset);
 		scrollOffsetRef.current = event.scroll;
-	});
+			}
+		},
+		[size],
+	);
 
-	function updatePosition(offset) {
+	function updatePosition(offset: number) {
+		if (groupRef.current) {
 		groupRef.current.position.y += offset;
 	}
 
 	console.log('banner re rendner');
-
-	/**
-	 * cam at 3.5 viewport.factor: 1 unit === 173.8874px
-	 * cam at 2 viewport.factor: 1 unit = 304.3031px
-	 */
-
-	const camAt35 = {
-		initialDpr: 1.5,
-		dpr: 1.5,
-		width: 11.041621754215447,
-		height: 5.371288915852722,
-		top: 0,
-		left: 0,
-		aspect: 2.0556745182012848,
-		distance: 3.5,
-		factor: 173.88749974766944,
-	};
-
-	const camAt2 = {
-		initialDpr: 1.5,
-		dpr: 1.5,
-		width: 6.3094981452659695,
-		height: 3.0693079519158415,
-		top: 0,
-		left: 0,
-		aspect: 2.0556745182012848,
-		distance: 2,
-		factor: 304.30312455842153,
-	};
 
 	return (
 		<>
