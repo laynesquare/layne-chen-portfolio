@@ -36,32 +36,10 @@ export default function Home() {
 				<Scene wrapperRef={wrapperRef} />
 			</main> */}
 
-			<main
-				className={``}
-				ref={wrapperRef}
-				style={{ height: '200lvh' }}>
+			<main ref={wrapperRef}>
 				<Hero />
 				<Scene wrapperRef={wrapperRef} />
 			</main>
 		</>
 	);
 }
-
-// export const HtmlComponent = () => (
-// 	const el = useRef()
-// 	return (
-// 	  <>
-// 		<div ref={el}>Track me!</div>
-// 		<UseCanvas>
-// 		  <ScrollScene track={el}>
-// 			{(props) => (
-// 			  <mesh {...props}>
-// 				<planeGeometry />
-// 				<meshBasicMaterial color="turquoise" />
-// 			  </mesh>
-// 			)}
-// 		  </ScrollScene>
-// 		</UseCanvas>
-// 	  </>
-// 	)
-//   )

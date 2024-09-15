@@ -17,6 +17,7 @@ import {
 	Lightformer,
 	Scroll,
 	Sparkles,
+	OrthographicCamera,
 } from '@react-three/drei';
 import {
 	EffectComposer,
@@ -75,6 +76,11 @@ export default function Scene({ wrapperRef }: SceneProps) {
 			dpr={[1.5, 2]}
 			camera={{ position: [0, 0, 3.5] }}
 			eventSource={wrapperRef?.current}>
+			{/* <OrthographicCamera
+				makeDefault
+				position={[0, 0, 3.5]}
+				zoom={100}
+			/> */}
 			<Port />
 		</Canvas>
 	);
