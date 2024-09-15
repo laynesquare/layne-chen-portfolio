@@ -41,6 +41,7 @@ import fragmentShader from '@/shaders/animated-underlay-acid-fluid/fragment';
 const Banner = () => {
 	const { viewport, size, camera, pointer } = useThree();
 	const domTextEls = useDomStore(state => state.textEls);
+	const torsoEl = useDomStore(state => state.torsoEl);
 	const meshMetalRef = useRef(null);
 
 	const textureMetalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
@@ -115,7 +116,7 @@ const Banner = () => {
 			const offset = (Math.abs(event.scroll - scrollOffsetRef.current) / viewport.factor) * textMeshRatio;
 			if (event.direction) {
 				updatePosition(event.direction * offset);
-		scrollOffsetRef.current = event.scroll;
+				scrollOffsetRef.current = event.scroll;
 			}
 		},
 		[size],
@@ -123,8 +124,15 @@ const Banner = () => {
 
 	function updatePosition(offset: number) {
 		if (groupRef.current) {
-		groupRef.current.position.y += offset;
+			groupRef.current.position.y += offset;
+		}
 	}
+
+	useEffect(() => {
+		if (groupRef.current) {
+			groupRef.current.position.y = (scrollOffsetRef.current / viewport.factor) * textMeshRatio;
+		}
+	}, [size, viewport, textMeshRatio]);
 
 	console.log('banner re rendner');
 
@@ -132,30 +140,40 @@ const Banner = () => {
 		<>
 			<group ref={groupRef}>
 				{[...domTextEls].map((el, idx) => {
-					const { fontSize, lineHeight, height, width } = window.getComputedStyle(el);
-					const { left, top } = el.getBoundingClientRect();
+					const { fontSize, lineHeight, height, width, textAlign, maxWidth, letterSpacing } =
+						window.getComputedStyle(el);
 
-					console.log(lineHeight);
+					const { left, top } = el.getBoundingClientRect();
+					const baseX = (-viewport.width / 2) * textMeshRatio;
+					const baseY = (viewport.height / 2) * textMeshRatio;
+					const isFlip = el.dataset.flip;
+					let x = baseX + (parseFloat(left) / viewport.factor) * textMeshRatio;
+
+					const y =
+						baseY -
+						(parseFloat(top) / viewport.factor) * textMeshRatio -
+						Math.abs((scrollOffsetRef.current / viewport.factor) * textMeshRatio);
+
+					const z = 2;
+
+					if (isFlip) {
+						x += (parseFloat(width) / viewport.factor) * textMeshRatio;
+					}
+
 					return (
-						<>
-							<Text
-								key={idx}
-								{...domTextShared}
-								position={[
-									(-viewport.width / 2) * OFFSET_Z_2 +
-										(parseFloat(left) / viewport.factor) * OFFSET_Z_2,
-									(viewport.height / 2) * OFFSET_Z_2 -
-										(parseFloat(top) / viewport.factor) * OFFSET_Z_2 +
-										scrollOffsetRef.current,
-									2,
-								]}
-								material={materialDomText.current}
-								lineHeight={parseFloat(lineHeight) / parseFloat(fontSize)}
-								maxWidth={(parseFloat(width) / viewport.factor) * OFFSET_Z_2}
-								fontSize={(parseFloat(fontSize) / viewport.factor) * OFFSET_Z_2}>
-								{el.textContent}
-							</Text>
-						</>
+						<Text
+							key={idx}
+							{...domTextShared}
+							position={[x, y, z]}
+							material={materialDomText.current}
+							lineHeight={parseFloat(lineHeight) / parseFloat(fontSize)}
+							maxWidth={(parseFloat(width) / viewport.factor) * textMeshRatio + 0.01}
+							scale={isFlip ? [-1, 1, 1] : [1, 1, 1]}
+							textAlign={textAlign}
+							overflowWrap='break-word'
+							fontSize={(parseFloat(fontSize) / viewport.factor) * textMeshRatio}>
+							{el.textContent}
+						</Text>
 					);
 				})}
 
@@ -323,4 +341,28 @@ const useCustomViewport = () => {
 	}, [viewport, camera, pointer, size]);
 
 	return { ...custom };
+};
+
+const camAt35 = {
+	initialDpr: 1.5,
+	dpr: 1.5,
+	width: 11.041621754215447,
+	height: 5.371288915852722,
+	top: 0,
+	left: 0,
+	aspect: 2.0556745182012848,
+	distance: 3.5,
+	factor: 173.88749974766944,
+};
+
+const camAt2 = {
+	initialDpr: 1.5,
+	dpr: 1.5,
+	width: 6.3094981452659695,
+	height: 3.0693079519158415,
+	top: 0,
+	left: 0,
+	aspect: 2.0556745182012848,
+	distance: 2,
+	factor: 304.30312455842153,
 };
