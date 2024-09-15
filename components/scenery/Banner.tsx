@@ -37,12 +37,19 @@ import { useDomStore } from '@/store';
 
 import vertexShader from '@/shaders/animated-underlay-acid-fluid/vertex';
 import fragmentShader from '@/shaders/animated-underlay-acid-fluid/fragment';
+import { useGSAP } from '@gsap/react';
+
+import gsap from 'gsap';
+
+gsap.registerPlugin(useGSAP);
 
 const Banner = () => {
 	const { viewport, size, camera, pointer } = useThree();
 	const domTextEls = useDomStore(state => state.textEls);
 	const torsoEl = useDomStore(state => state.torsoEl);
+
 	const meshMetalRef = useRef(null);
+	const [isHover, setIsHover] = useState(false);
 
 	const textureMetalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
 
@@ -134,12 +141,23 @@ const Banner = () => {
 		}
 	}, [size, viewport, textMeshRatio]);
 
-	console.log('banner re rendner');
+	// useGSAP(() => {
+	// 	if (isHover) {
+	// 		gsap.to(groupRef.current.position, {
+	// 			z: -10,
+	// 			duration: 5,
+	// 			ease: 'power2.inOut',
+	// 		});
+	// 	}
+	// }, [isHover]);
+
+	// console.log('banner re rendner');
 
 	return (
 		<>
 			<group ref={groupRef}>
 				{[...domTextEls].map((el, idx) => {
+					// console.log(el);
 					const { fontSize, lineHeight, height, width, textAlign, maxWidth, letterSpacing } =
 						window.getComputedStyle(el);
 
@@ -164,6 +182,8 @@ const Banner = () => {
 						<Text
 							key={idx}
 							{...domTextShared}
+							onPointerEnter={() => setIsHover(true)}
+							onPointerLeave={() => setIsHover(false)}
 							position={[x, y, z]}
 							material={materialDomText.current}
 							lineHeight={parseFloat(lineHeight) / parseFloat(fontSize)}

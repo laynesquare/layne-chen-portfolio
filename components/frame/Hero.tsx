@@ -11,7 +11,7 @@ import frameTopLeftIdentity from '@/public/frame/frame-top-left-identity.png';
 import { useDomStore } from '@/store';
 import { useThree } from '@react-three/fiber';
 
-// gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(useGSAP);
 
 // z-index: 10 => 在球上面
 
@@ -22,17 +22,33 @@ export default function Hero({}) {
 	const textElStoreRegister = useDomStore(state => state.textElRegister);
 	const torsoElStoreRegister = useDomStore(state => state.torsoElRegister);
 
+	const someRef = useRef(null);
+
 	useGSAP(() => {
-		if (progress === 100) {
-			gsap.to(torsoRef.current, {
-				opacity: 1,
-				duration: 1.5,
-				ease: 'power2.inOut',
-			});
+		if (progress === 100 && someRef.current) {
+			gsap.fromTo(
+				someRef.current,
+				{ opacity: 0, scale: 0.5, color: 'red', transform: 'none' },
+				{ opacity: 1, scale: 1, color: 'green', duration: 5, transform: 'none', ease: 'elastic.out(1, 0.5)' },
+			);
 		}
 	}, [progress]);
 
-	console.log('re render from hero');
+	function register(el) {
+		if (el) {
+			torsoRef.current = el;
+			torsoElStoreRegister(el);
+		}
+	}
+
+	function register2(el) {
+		if (el) {
+			textElStoreRegister(el);
+			someRef.current = el;
+		}
+	}
+
+	console.log('hero rerender');
 
 	return (
 		<>
@@ -41,7 +57,7 @@ export default function Hero({}) {
 			{/* <div className='absolute left-3/4 border-r border-stone-800 mix-blend-color-dodge pointer-events-none h-[800lvh] z-10'></div> */}
 			<div
 				className='absolute w-full top-0 left-0 font-clash font-semibold'
-				ref={torsoElStoreRegister}>
+				ref={register}>
 				<section
 					/* -------------------------------------------------------------------------- */
 					/*                                 first page                                 */
@@ -54,15 +70,13 @@ export default function Hero({}) {
 						</span>
 					</header>
 
-					<span
+					{/* <span
 						className='absolute z-10 top-[65%] right-[76%] text-6xl'
-						ref={textElStoreRegister}>{`[01.]`}</span>
+						ref={textElStoreRegister}>{`[01.]`}</span> */}
 
 					<h3
 						className='absolute z-10 left-[26%] top-[65%] text-2xl whitespace-pre-line'
-						ref={
-							textElStoreRegister
-						}>{`Craft with a blend\nof technical\nexpertise and\nesign sensibility`}</h3>
+						ref={register2}>{`Craft with a blend\nof technical\nexpertise and\nesign sensibility`}</h3>
 
 					<p
 						className='absolute z-10 right-[51%] top-[65%] text-2xl whitespace-pre-line text-right'
@@ -255,7 +269,7 @@ export default function Hero({}) {
 					/* -------------------------------------------------------------------------- */
 					/* -------------------------------------------------------------------------- */
 					/* -------------------------------------------------------------------------- */
-					className='w-full max-w-[1920px] relative flex border-b-2 border-stone-800 z-10 flex-col gap-32 py-9 px-20 m-auto'>
+					className='w-full max-w-[1920px] relative flex border-b-2 border-stone-800 z-10 flex-col gap-32 py-9 px-20 m-auto pointer-events-none'>
 					<header className='text-[13.75rem] leading-none flex gap-14 items-baseline'>
 						<h2 ref={textElStoreRegister}>{`project`}</h2>
 						<span
@@ -502,6 +516,8 @@ export default function Hero({}) {
 						</figcaption>
 					</figure>
 				</section>
+
+				<section className='w-full h-svh max-w-[1920px] relative flex border-b-2 border-stone-800 z-10 flex-col gap-32 py-9 px-20 m-auto'></section>
 			</div>
 		</>
 	);
