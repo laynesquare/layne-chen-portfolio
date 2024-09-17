@@ -169,37 +169,44 @@ const Banner = () => {
 		<>
 			<group ref={textGroupRef}>
 				{[...textDomEls].map((el, idx) => {
-					const { fontSize, lineHeight, height, width, textAlign, maxWidth, letterSpacing } =
-						window.getComputedStyle(el);
-					const { left, top } = el.getBoundingClientRect();
-					const baseX = (-viewport.width / 2) * textMeshRatio;
-					const baseY = (viewport.height / 2) * textMeshRatio;
-					const isFlip = el.dataset.flip;
-					let x = baseX + (parseFloat(left) / viewport.factor) * textMeshRatio;
+					const { fontSize, lineHeight, textAlign } = window.getComputedStyle(el);
+					const { left, top, height, width } = el.getBoundingClientRect();
+					const { fontFamily, scaleY } = el.dataset;
+					const { factor } = viewport;
+					const parsedL = parseFloat(left);
+					const parsedT = parseFloat(top);
+					const parsedFontSize = parseFloat(fontSize);
+					const parsedLineHeight = parseFloat(lineHeight);
+					const parsedH = parseFloat(height);
+					const parsedW = parseFloat(width);
+					const ratio = textMeshRatio;
+					const baseX = (-viewport.width / 2) * ratio;
+					const baseY = (viewport.height / 2) * ratio;
+					const scrollOffset = Math.abs((scrollOffsetRef.current / factor) * ratio);
 
-					const y =
-						baseY -
-						(parseFloat(top) / viewport.factor) * textMeshRatio -
-						Math.abs((scrollOffsetRef.current / viewport.factor) * textMeshRatio);
+					let pX = baseX + (parsedL / factor) * ratio;
+					let pY = baseY - (parsedT / factor) * ratio - scrollOffset;
+					let pZ = 2;
 
-					const z = 2;
+					let sX = 1;
+					let sY = 1;
+					let sZ = 1;
 
-					if (isFlip) {
-						x += (parseFloat(width) / viewport.factor) * textMeshRatio;
+					if (scaleY) {
+						sY = parseFloat(scaleY);
 					}
 
 					return (
 						<Text
 							key={idx}
-							{...domTextShared}
-							position={[x, y, z]}
+							{...domTextShared(fontFamily)}
+							position={[pX, pY, pZ]}
 							material={materialDomText.current}
-							lineHeight={parseFloat(lineHeight) / parseFloat(fontSize)}
-							maxWidth={(parseFloat(width) / viewport.factor) * textMeshRatio + 0.01}
-							scale={isFlip ? [-1, 1, 1] : [1, 1, 1]}
+							lineHeight={parsedLineHeight / parsedFontSize}
+							maxWidth={(parsedW / factor) * ratio + 0.01}
+							scale={[sX, sY, sZ]}
 							textAlign={textAlign}
-							overflowWrap='break-word'
-							fontSize={(parseFloat(fontSize) / viewport.factor) * textMeshRatio}>
+							fontSize={(parsedFontSize / factor) * ratio}>
 							{el.textContent}
 						</Text>
 					);
