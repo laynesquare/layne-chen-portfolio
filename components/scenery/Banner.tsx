@@ -1,3 +1,5 @@
+// cSpell: ignore Raycaster, GLTF, metalness, clearcoat, matcap, drei, RGBE, GSAP, Satoshi
+
 import { extend, useFrame, useLoader, useThree } from '@react-three/fiber';
 import React, { useRef, useEffect, useMemo, useState } from 'react';
 import {
@@ -75,7 +77,6 @@ const Banner = () => {
 	const materialDomText = useRef(
 		new MeshBasicMaterial({
 			color: new Color('#FFFFF0'),
-			blending: AdditiveBlending,
 			dithering: true,
 		}),
 	);
@@ -88,12 +89,28 @@ const Banner = () => {
 		}),
 	);
 
-	const domTextShared = {
-		font: '/font/ClashDisplay-Semibold.woff',
-		anchorX: 'left',
-		anchorY: 'top',
-		overflowWrap: 'break-word',
-	};
+	// const domTextShared = {
+	// 	font: '/font/ClashDisplay-Semibold.woff',
+	// 	fontBoxing: '/font/Boxing-Regular.woff2',
+	// 	fontSatoshi: '/font/Satoshi-Bold.woff2',
+	// 	anchorX: 'left',
+	// 	anchorY: 'top',
+	// 	overflowWrap: 'break-word',
+	// };
+
+	function domTextShared(type: 'boxing' | 'satoshi') {
+		const fontFamily = {
+			boxing: '/font/Boxing-Regular.woff',
+			satoshi: '/font/Satoshi-Bold.woff',
+		};
+
+		return {
+			font: fontFamily[type],
+			anchorX: 'left',
+			anchorY: 'top',
+			overflowWrap: 'break-word',
+		};
+	}
 
 	const fbo = useFBO(size.width * 0.1, size.height * 0.1, {
 		minFilter: LinearFilter,
@@ -238,40 +255,46 @@ const Banner = () => {
 
 			<group ref={containerGroupRef}>
 				{[...containerDomEls].map((el, idx) => {
-					const { width, height } = window.getComputedStyle(el);
+					const {
+						width,
+						height,
+						borderBottomLeftRadius: rbl,
+						borderBottomRightRadius: rbr,
+						borderTopLeftRadius: rtl,
+						borderTopRightRadius: rtr,
+					} = window.getComputedStyle(el);
 					const { left, top } = el.getBoundingClientRect();
-					const baseX = (-viewport.width / 2) * containerMeshRatio;
-					const baseY = (viewport.height / 2) * containerMeshRatio;
-					const shiftHalfWidth = parseFloat(width) / 2;
-					const shiftHalfHeight = parseFloat(height) / 2;
-					let x = baseX + ((parseFloat(left) + shiftHalfWidth) / viewport.factor) * containerMeshRatio;
+					const { factor } = viewport;
+					const ratio = containerMeshRatio;
+					const baseX = (-viewport.width / 2) * ratio;
+					const baseY = (viewport.height / 2) * ratio;
+					const parsedW = parseFloat(width);
+					const parsedH = parseFloat(height);
+					const parseL = parseFloat(left);
+					const parseT = parseFloat(top);
+					const shiftHalfW = parsedW / 2;
+					const shiftHalfH = parsedH / 2;
+					const scrollOffset = Math.abs((scrollOffsetRef.current / factor) * ratio);
 
-					const y =
-						baseY -
-						((parseFloat(top) + shiftHalfHeight) / viewport.factor) * containerMeshRatio -
-						Math.abs((scrollOffsetRef.current / viewport.factor) * containerMeshRatio);
-					const z = 1.5;
+					let x = baseX + ((parseL + shiftHalfW) / factor) * ratio;
+					let y = baseY - ((parseT + shiftHalfH) / factor) * ratio - scrollOffset;
+					let z = 1.5;
+
+					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
 					return (
 						<mesh
 							key={idx}
 							position={[x, y, z]}>
-							<planeGeometry
-								args={[
-									(parseFloat(width) / viewport.factor) * containerMeshRatio,
-									(parseFloat(height) / viewport.factor) * containerMeshRatio,
-									1,
-									1,
-								]}
-							/>
+							<planeGeometry args={[(parsedW / factor) * ratio, (parsedH / factor) * ratio, 1, 1]} />
 							<CustomShaderMaterial
 								baseMaterial={MeshBasicMaterial}
 								silent
 								vertexShader={vertexShaderRoundedRec}
 								fragmentShader={fragmentShaderRoundedRec}
 								uniforms={{
-									uResolution: { value: new Vector2(300, 200) },
-									uRadii: { value: new Vector4(0, 20, 20, 20) },
+									uResolution: { value: new Vector2(parsedW, parsedH) },
+									uRadii: { value: new Vector4(...radius) },
 								}}
 								transparent
 							/>
