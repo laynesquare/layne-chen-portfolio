@@ -52,11 +52,13 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	const memory = navigator.deviceMemory || 4;
 	const resolutionScale = devicePixelRatio > 1.5 || memory <= 4 ? 0.5 : 0.75;
 
-	const portBuffer = useFBO(size.width, size.height, {
-		minFilter: LinearFilter,
-		magFilter: LinearFilter,
-		format: RGBAFormat,
-	});
+	// const portBuffer = useFBO(size.width, size.height, {
+	// 	minFilter: LinearFilter,
+	// 	magFilter: LinearFilter,
+	// 	format: RGBAFormat,
+	// });
+	const portBuffer = useFBO();
+
 	const rippleBuffer = useFBO(size.width * 0.1, size.height * 0.1, {
 		minFilter: LinearFilter,
 		magFilter: LinearFilter,
@@ -76,7 +78,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	const portMaterialRef = useRef(
 		new ShaderMaterial({
 			uniforms: {
-				uResolution: { value: new Vector2(window.innerWidth, window.innerHeight) },
+				uResolution: { value: new Vector2(size.width, size.height) },
 				uTime: { value: 0 },
 				uCursor: { value: new Vector2(0.5, 0.5) },
 				uScrollVelocity: { value: 0 },
@@ -93,8 +95,6 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			glslVersion: GLSL3,
 		}),
 	);
-
-	console.log('re-render!!');
 
 	useLenis(event => {
 		velocityRef.current = event.velocity;
