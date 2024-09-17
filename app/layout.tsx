@@ -9,6 +9,10 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const kronaOne = Krona_One({ weight: '400', subsets: ['latin'], variable: '--font-krona-one' });
 const clashDisplay = localFont({ src: '../public/font/ClashDisplay.ttf', variable: '--font-clash-display' });
+const boxing = localFont({ src: '../public/font/Boxing-Regular.woff', variable: '--font-boxing' });
+const satoshi = localFont({ src: '../public/font/Satoshi-Bold.woff', variable: '--font-satoshi' });
+
+const fonts = `${inter.variable} ${kronaOne.variable} ${clashDisplay.variable} ${boxing.variable} ${satoshi.variable}`;
 
 export const metadata: Metadata = {
 	title: 'Create Next App',
@@ -23,10 +27,9 @@ export default function RootLayout({
 	return (
 		<html
 			lang='en'
-			className={`${inter.variable} ${kronaOne.variable} ${clashDisplay.variable}`}>
+			className={fonts}>
 			<body>
 				<SmoothScrolling>{children}</SmoothScrolling>
-				{/* {children} */}
 			</body>
 		</html>
 	);

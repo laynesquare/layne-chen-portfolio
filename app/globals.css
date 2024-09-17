@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-	--font-primary: 'Krona One', sans-serif;
-}
-
 /* Dark Mode Variables */
 @media (prefers-color-scheme: dark) {
 	:root {
@@ -57,6 +53,14 @@ body {
 
 .font-clash {
 	font-family: var(--font-clash-display);
+}
+
+.font-boxing {
+	font-family: var(--font-boxing);
+}
+
+.font-satoshi {
+	font-family: var(--font-satoshi);
 }
 
 /* Hide Scrollbar */
