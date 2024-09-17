@@ -21,12 +21,18 @@
 		--color-font-secondary: var(--color-secondary);
 		--color-font-neutral: var(--color--ivory);
 		--color-font-neutral-contrast: var(--color-abysmal);
+
+		--font-base: 0.8333vw;
 	}
 }
 
 /* Global Styles */
 * {
 	box-sizing: border-box;
+}
+
+html {
+	font-size: var(--font-base);
 }
 
 html,
