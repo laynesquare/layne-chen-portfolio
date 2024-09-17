@@ -27,6 +27,7 @@ import {
 	ACESFilmicToneMapping,
 	MultiplyOperation,
 	PerspectiveCamera,
+	Vector4,
 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line } from '@react-three/drei';
@@ -35,28 +36,33 @@ import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
 import { useDomStore } from '@/store';
 
-import vertexShader from '@/shaders/animated-underlay-acid-fluid/vertex';
-import fragmentShader from '@/shaders/animated-underlay-acid-fluid/fragment';
 import { useGSAP } from '@gsap/react';
 
 import gsap from 'gsap';
+
+import vertexShaderRoundedRec from '@/shaders/rounded-rectangle/vertex';
+import fragmentShaderRoundedRec from '@/shaders/rounded-rectangle/fragment';
+import vertexShaderAcidBg from '@/shaders/animated-underlay-acid-fluid/vertex';
+import fragmentShaderAcidBg from '@/shaders/animated-underlay-acid-fluid/fragment';
 
 gsap.registerPlugin(useGSAP);
 
 const Banner = () => {
 	const { viewport, size, camera, pointer } = useThree();
-	const domTextEls = useDomStore(state => state.textEls);
-	const torsoEl = useDomStore(state => state.torsoEl);
-
-	const meshMetalRef = useRef(null);
-	const [isHover, setIsHover] = useState(false);
-
-	const textureMetalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
+	const torsoDomEl = useDomStore(state => state.torsoEl);
+	const containerDomEls = useDomStore(state => state.containerEls);
+	const textDomEls = useDomStore(state => state.textEls);
 
 	const scrollOffsetRef = useRef(0); // pixel
-	const groupRef = useRef(null);
 
+	const textGroupRef = useRef(null);
 	const textMeshRatio = 1 - viewport.factor / calcFactorCamZ(2);
+
+	const containerGroupRef = useRef(null);
+	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(1.5);
+
+	const meshMetalRef = useRef(null);
+	const textureMetalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
 
 	function calcFactorCamZ(zPosition: number) {
 		const fov = (camera.fov * Math.PI) / 180;
@@ -77,8 +83,8 @@ const Banner = () => {
 	const materialAcidBg = useRef(
 		new ShaderMaterial({
 			uniforms: { uTime: { value: 0 } },
-			vertexShader,
-			fragmentShader,
+			vertexShader: vertexShaderAcidBg,
+			fragmentShader: fragmentShaderAcidBg,
 		}),
 	);
 
@@ -97,15 +103,15 @@ const Banner = () => {
 	});
 
 	useFrame(({ scene, camera, gl, clock }) => {
-		const originalPosition = groupRef.current.position.y;
+		const originalPosition = textGroupRef.current.position.y;
 
-		groupRef.current.position.y = 0;
+		textGroupRef.current.position.y = 0;
 
 		gl.setRenderTarget(fbo); // Render to FBO
 		gl.render(scene, camera); // Render the scene from the camera's perspective
 		gl.setRenderTarget(null); // Reset the render target to default
 
-		groupRef.current.position.y = originalPosition;
+		textGroupRef.current.position.y = originalPosition;
 
 		if (meshMetalRef.current) {
 			meshMetalRef.current.rotation.x = Math.cos(clock.elapsedTime / 2);
@@ -120,9 +126,9 @@ const Banner = () => {
 
 	useLenis(
 		event => {
-			const offset = (Math.abs(event.scroll - scrollOffsetRef.current) / viewport.factor) * textMeshRatio;
+			const baseOffset = Math.abs(event.scroll - scrollOffsetRef.current) / viewport.factor;
 			if (event.direction) {
-				updatePosition(event.direction * offset);
+				updatePosition(event.direction * baseOffset);
 				scrollOffsetRef.current = event.scroll;
 			}
 		},
@@ -130,16 +136,24 @@ const Banner = () => {
 	);
 
 	function updatePosition(offset: number) {
-		if (groupRef.current) {
-			groupRef.current.position.y += offset;
+		if (textGroupRef.current) {
+			textGroupRef.current.position.y += offset * textMeshRatio;
+		}
+
+		if (containerGroupRef.current) {
+			containerGroupRef.current.position.y += offset * containerMeshRatio;
 		}
 	}
 
 	useEffect(() => {
-		if (groupRef.current) {
-			groupRef.current.position.y = (scrollOffsetRef.current / viewport.factor) * textMeshRatio;
+		if (textGroupRef.current) {
+			textGroupRef.current.position.y = (scrollOffsetRef.current / viewport.factor) * textMeshRatio;
 		}
-	}, [size, viewport, textMeshRatio]);
+
+		if (containerGroupRef.current) {
+			containerGroupRef.current.position.y = (scrollOffsetRef.current / viewport.factor) * containerMeshRatio;
+		}
+	}, [size, viewport, textMeshRatio, containerMeshRatio]);
 
 	// useGSAP(() => {
 	// 	if (isHover) {
@@ -151,16 +165,12 @@ const Banner = () => {
 	// 	}
 	// }, [isHover]);
 
-	// console.log('banner re rendner');
-
 	return (
 		<>
-			<group ref={groupRef}>
-				{[...domTextEls].map((el, idx) => {
-					// console.log(el);
+			<group ref={textGroupRef}>
+				{[...textDomEls].map((el, idx) => {
 					const { fontSize, lineHeight, height, width, textAlign, maxWidth, letterSpacing } =
 						window.getComputedStyle(el);
-
 					const { left, top } = el.getBoundingClientRect();
 					const baseX = (-viewport.width / 2) * textMeshRatio;
 					const baseY = (viewport.height / 2) * textMeshRatio;
@@ -182,8 +192,6 @@ const Banner = () => {
 						<Text
 							key={idx}
 							{...domTextShared}
-							onPointerEnter={() => setIsHover(true)}
-							onPointerLeave={() => setIsHover(false)}
 							position={[x, y, z]}
 							material={materialDomText.current}
 							lineHeight={parseFloat(lineHeight) / parseFloat(fontSize)}
@@ -197,85 +205,12 @@ const Banner = () => {
 					);
 				})}
 
-				{/* <Text
-					ref={frontEndTextRef}
-					position={[
-						(-viewport.width / 2) * offset + (480 / 173.8874) * offset,
-						(viewport.height / 2) * offset - (200 / 173.8874) * offset,
-						2,
-					]}
-					{...shared}
-					anchorX={'left'}
-					anchorY={'top'}
-					material={blendedMaterial}
-					lineHeight={1.5}
-					overflowWrap='break-word'
-					maxWidth={(1425 / 173) * offset}
-					fontSize={calcFs(el)}>
-					{`Front-end`}
-				</Text>
-
-				<Text
-					ref={frontEndTextRef}
-					position={[calcX(-1 / 3.875), calcY(-1 / 5), 2]}
-					{...shared}
-					anchorX={'right'}
-					anchorY={'top'}
-					material={blendedMaterial}
-					fontSize={calcPixel(1 / 60)}>
-					{`[01.]`}
-				</Text>
-				<Text
-					ref={frontEndTextRef}
-					position={[calcX(-1 / 3), calcY(1 / 5), 2]}
-					{...shared}
-					anchorX={'left'}
-					anchorY={'middle'}
-					material={blendedMaterial}
-					fontSize={calcPixel(7 / 100)}>
-					{`Front-end`}
-				</Text>
-				<Text
-					position={[calcX(1 / 3), calcY(0), 2]}
-					anchorX={'right'}
-					anchorY={'middle'}
-					{...shared}
-					material={blendedMaterial}
-					fontSize={calcPixel(7 / 100)}>
-					{`Developer`}
-				</Text>
-				<Text
-					position={[calcX(-1 / 4.125), calcY(-1 / 5), 2]}
-					anchorX={'left'}
-					anchorY={'top'}
-					material={blendedMaterial}
-					fontSize={calcPixel(0.75 / 100)}
-					font='/font/ClashDisplay-Regular.woff'>
-					{`Craft with a blend\nof technical\nexpertise and\ndesign sensibility`}
-					{viewport.height}
-				</Text>
-
-				<Text
-					position={[calcX(-1 / 30), calcY(-1 / 5), 2]}
-					anchorX={'right'}
-					anchorY={'top'}
-					material={blendedMaterial}
-					fontSize={calcPixel(0.75 / 100)}
-					textAlign='right'
-					font='/font/ClashDisplay-Regular.woff'>
-					{`Click the\nball to\nglow up`}
-				</Text>
-
-				<Text
-					position={[viewport.width / 9.5, -viewport.height / 8, 2]}
-					anchorX={'right'}
-					material={blendedMaterial}
-					fontSize={0.05}
-					font='/font/ClashDisplay-Regular.woff'>
-					{`Based in Taipei, Taiwan`}
-				</Text> */}
 				<mesh
-					scale={[torsoEl.offsetWidth / viewport.factor + 0.1, torsoEl.offsetHeight / viewport.factor, 1]}
+					scale={[
+						torsoDomEl.offsetWidth / viewport.factor + 0.1,
+						torsoDomEl.offsetHeight / viewport.factor,
+						1,
+					]}
 					position={[0, 0, 0]}
 					material={materialAcidBg.current}>
 					<planeGeometry args={[1, 1, 1, 1]} />
@@ -292,6 +227,50 @@ const Banner = () => {
 						dithering={true}
 					/> */}
 				</mesh>
+			</group>
+
+			<group ref={containerGroupRef}>
+				{[...containerDomEls].map((el, idx) => {
+					const { width, height } = window.getComputedStyle(el);
+					const { left, top } = el.getBoundingClientRect();
+					const baseX = (-viewport.width / 2) * containerMeshRatio;
+					const baseY = (viewport.height / 2) * containerMeshRatio;
+					const shiftHalfWidth = parseFloat(width) / 2;
+					const shiftHalfHeight = parseFloat(height) / 2;
+					let x = baseX + ((parseFloat(left) + shiftHalfWidth) / viewport.factor) * containerMeshRatio;
+
+					const y =
+						baseY -
+						((parseFloat(top) + shiftHalfHeight) / viewport.factor) * containerMeshRatio -
+						Math.abs((scrollOffsetRef.current / viewport.factor) * containerMeshRatio);
+					const z = 1.5;
+
+					return (
+						<mesh
+							key={idx}
+							position={[x, y, z]}>
+							<planeGeometry
+								args={[
+									(parseFloat(width) / viewport.factor) * containerMeshRatio,
+									(parseFloat(height) / viewport.factor) * containerMeshRatio,
+									1,
+									1,
+								]}
+							/>
+							<CustomShaderMaterial
+								baseMaterial={MeshBasicMaterial}
+								silent
+								vertexShader={vertexShaderRoundedRec}
+								fragmentShader={fragmentShaderRoundedRec}
+								uniforms={{
+									uResolution: { value: new Vector2(300, 200) },
+									uRadii: { value: new Vector4(0, 20, 20, 20) },
+								}}
+								transparent
+							/>
+						</mesh>
+					);
+				})}
 			</group>
 		</>
 	);
