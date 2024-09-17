@@ -21,11 +21,11 @@ vec2 size = uResolution * 0.5 - borderWidth;
 float distance = roundedBoxSDF(centerPosition, size, uRadii);
 
 // Smooth alpha for the border and the fill
-float smoothedAlpha = 1.0 - smoothstep(-1.0, 1.0, distance);
+float smoothedAlpha = 1.0 - smoothstep(0.0, 1.0, distance);
 
 // Colors
-vec3 borderColor = vec3(1.0); // White border
-vec3 fillColor = vec3(0.0);   // Black fill, but we want to make this transparent
+vec3 borderColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
+vec3 fillColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
 
 // Determine the alpha for fill and border
 float fillAlpha = 0.0;        // Make the fill fully transparent
