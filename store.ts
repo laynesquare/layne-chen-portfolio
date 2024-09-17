@@ -18,6 +18,7 @@ import { create } from 'zustand';
 const useDomStore = create(set => ({
 	textEls: new Set(),
 	torsoEl: null,
+	containerEls: new Set(),
 	textElRegister: el => {
 		set(state => {
 			if (state) {
@@ -30,6 +31,14 @@ const useDomStore = create(set => ({
 		set(state => {
 			if (state) {
 				state.torsoEl = el;
+			}
+			return state;
+		});
+	},
+	containerElRegister: el => {
+		set(state => {
+			if (state) {
+				state.containerEls.add(el);
 			}
 			return state;
 		});
