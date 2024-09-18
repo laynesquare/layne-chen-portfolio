@@ -46,7 +46,7 @@ extend({ RippleMaterial });
 
 export default function Ripple({ children, damping = 0.15, ...props }) {
 	const ref = useRef();
-	const { viewport, size, camera, pointer } = useThree();
+	const { viewport, size, camera, pointer, gl } = useThree();
 
 	const devicePixelRatio = window.devicePixelRatio || 1;
 	const memory = navigator.deviceMemory || 4;
@@ -196,17 +196,17 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	return (
 		<>
 			{createPortal(children, portScene)}
+			{createPortal(ripples, rippleScene)}
 			<mesh
 				castShadow={false}
 				receiveShadow={false}
 				ref={ref}
+				onPointerOver={() => null}
 				scale={[viewport.width, viewport.height, 1]}
 				material={portMaterialRef.current}
 				position={[0, 0, 0]}>
 				<planeGeometry args={[1, 1, 64, 64]} />
 			</mesh>
-
-			{createPortal(ripples, rippleScene)}
 		</>
 	);
 }

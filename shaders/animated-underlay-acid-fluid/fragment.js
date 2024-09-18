@@ -2,6 +2,7 @@ const fragmentShader = `
 uniform float uTime;
 varying vec2 vUv;
 varying vec3 vPosition;
+uniform sampler2D uTexture; // texture
 
 // Simplex 2D noise
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }

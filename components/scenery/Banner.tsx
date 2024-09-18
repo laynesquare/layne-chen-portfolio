@@ -5,6 +5,8 @@ import React, { useRef, useEffect, useMemo, useState } from 'react';
 import {
 	Color,
 	MeshBasicMaterial,
+	MeshStandardMaterial,
+	MeshPhysicalMaterial,
 	ShaderMaterial,
 	TextureLoader,
 	Vector2,
@@ -12,13 +14,11 @@ import {
 	OneMinusSrcAlphaFactor,
 	AddEquation,
 	SrcAlphaFactor,
-	MeshPhysicalMaterial,
 	OneFactor,
 	DstColorFactor,
 	OneMinusDstColorFactor,
 	OneMinusSrcColorFactor,
 	AdditiveBlending,
-	MeshStandardMaterial,
 	SubtractiveBlending,
 	MultiplyBlending,
 	NormalBlending,
@@ -46,6 +46,8 @@ import vertexShaderRoundedRec from '@/shaders/rounded-rectangle/vertex';
 import fragmentShaderRoundedRec from '@/shaders/rounded-rectangle/fragment';
 import vertexShaderAcidBg from '@/shaders/animated-underlay-acid-fluid/vertex';
 import fragmentShaderAcidBg from '@/shaders/animated-underlay-acid-fluid/fragment';
+import fragmentShaderParallaxDepth from '@/shaders/animated-parallax-depth/fragment';
+import vertexShaderParallaxDepth from '@/shaders/animated-parallax-depth/vertex';
 
 gsap.registerPlugin(useGSAP);
 
@@ -65,6 +67,8 @@ const Banner = () => {
 
 	const meshMetalRef = useRef(null);
 	const textureMetalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
+	const testHeightMapOriginal = useLoader(TextureLoader, '/frame/home.webp');
+	const testHeightMapOriginalHeightMap = useLoader(TextureLoader, '/frame/home_depth.webp');
 
 	function calcFactorCamZ(zPosition: number) {
 		const fov = (camera.fov * Math.PI) / 180;
@@ -86,6 +90,18 @@ const Banner = () => {
 			uniforms: { uTime: { value: 0 } },
 			vertexShader: vertexShaderAcidBg,
 			fragmentShader: fragmentShaderAcidBg,
+		}),
+	);
+
+	const materialParallaxDepth = useRef(
+		new ShaderMaterial({
+			uniforms: {
+				uTexture: { value: testHeightMapOriginal },
+				uTextureDepth: { value: testHeightMapOriginalHeightMap },
+				uMouse: { value: new Vector2(0.5, 0.5) },
+			},
+			vertexShader: vertexShaderParallaxDepth,
+			fragmentShader: fragmentShaderParallaxDepth,
 		}),
 	);
 
@@ -138,6 +154,10 @@ const Banner = () => {
 
 		if (materialAcidBg.current) {
 			materialAcidBg.current.uniforms.uTime.value = clock.elapsedTime;
+		}
+
+		if (materialParallaxDepth.current) {
+			materialParallaxDepth.current.uniforms.uMouse.value = new Vector2(pointer.x, pointer.y);
 		}
 	});
 
@@ -301,6 +321,15 @@ const Banner = () => {
 						</mesh>
 					);
 				})}
+			</group>
+
+			<group>
+				<mesh
+					position={[0, 0, 1]}
+					material={materialParallaxDepth.current}
+					onPointerEnter={() => console.log('enter')}>
+					<planeGeometry args={[5, 3, 1, 1]} />
+				</mesh>
 			</group>
 		</>
 	);
