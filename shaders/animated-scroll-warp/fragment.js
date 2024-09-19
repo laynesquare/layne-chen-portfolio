@@ -81,9 +81,26 @@ float snoise(vec2 v)
 
 out vec4 outColor;
 
+// - center curve (smoothness strength)
+const float radius = 1.0;
+// - main content will lean towards center
+const float strength = 1.2;
+
+vec2 bulge(vec2 uv, vec2 center) {
+  uv -= center;
+  float dist = length(uv) / radius; // distance from UVs divided by radius
+  float distPow = pow(dist, 2.25);
+  float strengthAmount = strength / (1.0 + distPow); // Invert bulge and add a minimum of 1)
+  uv *= strengthAmount;
+  uv += center;
+
+  return uv;
+}
+
 
 void main() {
-  vec2 texCoords = vUvCover;
+  vec2 center = vec2(0.5, 0.5);
+  vec2 texCoords = bulge(vUv, center);
 
   // aspect ratio needed to create a real circle when quadSize is not 1:1 ratio
   float aspectRatio = uQuadSize.y / uQuadSize.x;
@@ -102,7 +119,7 @@ void main() {
   texCoords.y += mix(0.0, circle * noise * 0.001, uMouseEnter + uScrollVelocity * 0.01);
 
   // --- DISPLACEMENT SECTION ---
-  vec4 displacement = texture(uDisplacement, vUv); // Sample displacement texture
+  vec4 displacement = texture(uDisplacement, texCoords); // Sample displacement texture
   float theta = displacement.r * 2.0 * PI; // Rotation based on displacement
   vec2 dir = vec2(sin(theta), cos(theta)); // Direction
   texCoords += dir * displacement.r * 0.035; // Apply displacement to texture coordinates
