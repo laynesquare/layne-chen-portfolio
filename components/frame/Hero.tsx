@@ -19,7 +19,7 @@ export default function Hero({}) {
 	const { progress, item } = useProgress();
 	const torsoRef = useRef(null);
 
-	const [isVisible, setIsVisible] = useState(true);
+	const [isVisible, setIsVisible] = useState(false);
 
 	const textElStoreRegister = useDomStore(state => state.textElRegister);
 	const torsoElStoreRegister = useDomStore(state => state.torsoElRegister);
@@ -52,21 +52,15 @@ export default function Hero({}) {
 	// }
 
 	return (
-		<article
-			className={`absolute w-full h-lvh top-0 left-0 font-boxing z-10 pointer-events-none ${
-				isVisible ? 'opacity-100' : 'opacity-0'
-			}`}
-			ref={torsoElStoreRegister}></article>
-	);
-
-	return (
 		<>
 			{/* <div className='absolute left-1/4 border-r border-stone-800 mix-blend-color-dodge h-[800lvh] z-10'></div> */}
 			{/* <div className='absolute left-1/2 border-r border-stone-800 mix-blend-color-dodge h-[800lvh] z-10'></div> */}
 			{/* <div className='absolute left-3/4 border-r border-stone-800 mix-blend-color-dodge h-[800lvh] z-10'></div> */}
 
 			<article
-				className={`absolute w-full top-0 left-0 font-boxing z-10 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+				className={`absolute w-full top-0 left-0 font-boxing z-10 pointer-events-none ${
+					isVisible ? 'opacity-100' : 'opacity-0'
+				}`}
 				ref={torsoElStoreRegister}
 				onClick={() => setIsVisible(pre => !pre)}>
 				{/* -------------------------------------------------------------------------- */
@@ -649,13 +643,12 @@ export default function Hero({}) {
 
 						<div
 							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
-							ref={containerElStoreRegister}>
+							ref={containerElStoreRegister}
+							data-parallax='home.webp'>
 							<h2
 								data-font-family='satoshi'
 								className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'
-								ref={textElStoreRegister}>
-								img
-							</h2>
+								ref={textElStoreRegister}></h2>
 						</div>
 
 						{/* -------------------------------------------------------------------------- */
