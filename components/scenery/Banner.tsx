@@ -304,20 +304,36 @@ const Banner = () => {
 
 					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
+					const vs = parallax ? vertexShaderParallaxDepth : vertexShaderRoundedRec;
+					const fs = parallax ? fragmentShaderParallaxDepth : fragmentShaderRoundedRec;
+
+					const uniforms = parallax
+						? {
+								uTexture: { value: testHeightMapOriginal },
+								uTextureDepth: { value: testHeightMapOriginalHeightMap },
+								uResolution: { value: new Vector2(parsedW, parsedH) },
+								uRadii: { value: new Vector4(...radius) },
+								uMouse: { value: new Vector2(0.5, 0.5) },
+						  }
+						: {
+								uResolution: { value: new Vector2(parsedW, parsedH) },
+								uRadii: { value: new Vector4(...radius) },
+						  };
+
+					const materialRef = parallax ? el => (containerMaterialParallaxRefs.current[idx] = el) : null;
+
 					return (
 						<mesh
 							key={idx}
 							position={[x, y, z]}>
 							<planeGeometry args={[(parsedW / factor) * ratio, (parsedH / factor) * ratio, 1, 1]} />
 							<CustomShaderMaterial
+								ref={materialRef}
 								baseMaterial={MeshBasicMaterial}
 								silent
-								vertexShader={vertexShaderRoundedRec}
-								fragmentShader={fragmentShaderRoundedRec}
-								uniforms={{
-									uResolution: { value: new Vector2(parsedW, parsedH) },
-									uRadii: { value: new Vector4(...radius) },
-								}}
+								vertexShader={vs}
+								fragmentShader={fs}
+								uniforms={uniforms}
 								transparent
 							/>
 						</mesh>
