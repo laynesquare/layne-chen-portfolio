@@ -204,7 +204,9 @@ const Banner = () => {
 
 	return (
 		<>
-			<group ref={textGroupRef}>
+			<group
+				ref={textGroupRef}
+				onPointerOver={() => null}>
 				{[...textDomEls].map((el, idx) => {
 					const { fontSize, lineHeight, textAlign } = window.getComputedStyle(el);
 					const { left, top, height, width } = el.getBoundingClientRect();
