@@ -64,6 +64,7 @@ const Banner = () => {
 
 	const containerGroupRef = useRef(null);
 	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(1.5);
+	const containerMaterialParallaxRefs = useRef([]);
 
 	const meshMetalRef = useRef(null);
 	const textureMetalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
@@ -156,8 +157,11 @@ const Banner = () => {
 			materialAcidBg.current.uniforms.uTime.value = clock.elapsedTime;
 		}
 
-		if (materialParallaxDepth.current) {
-			materialParallaxDepth.current.uniforms.uMouse.value = new Vector2(pointer.x, pointer.y);
+		if (containerMaterialParallaxRefs.current.length) {
+			const mousePos = new Vector2(pointer.x, pointer.y);
+			containerMaterialParallaxRefs.current.forEach((ref, index) => {
+				ref.uniforms.uMouse.value.lerp(mousePos, 0.02);
+			});
 		}
 	});
 
@@ -286,6 +290,7 @@ const Banner = () => {
 						borderTopRightRadius: rtr,
 					} = window.getComputedStyle(el);
 					const { left, top } = el.getBoundingClientRect();
+					const { parallax } = el.dataset;
 					const { factor } = viewport;
 					const ratio = containerMeshRatio;
 					const baseX = (-viewport.width / 2) * ratio;
@@ -341,14 +346,14 @@ const Banner = () => {
 				})}
 			</group>
 
-			<group>
+			{/* <group>
 				<mesh
 					position={[0, 0, 1]}
 					material={materialParallaxDepth.current}
 					onPointerEnter={() => console.log('enter')}>
 					<planeGeometry args={[5, 3, 1, 1]} />
 				</mesh>
-			</group>
+			</group> */}
 		</>
 	);
 };
