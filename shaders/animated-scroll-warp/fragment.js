@@ -82,16 +82,22 @@ float snoise(vec2 v)
 out vec4 outColor;
 
 // - center curve (smoothness strength)
-const float radius = 1.0;
+// const float radius = 0.75;
+const float radius = 0.5;
 // - main content will lean towards center
-const float strength = 1.2;
+const float strength = 2.0;
 
 vec2 bulge(vec2 uv, vec2 center) {
   uv -= center;
   float dist = length(uv) / radius; // distance from UVs divided by radius
   float distPow = pow(dist, 2.25);
   float strengthAmount = strength / (1.0 + distPow); // Invert bulge and add a minimum of 1)
-  uv *= strengthAmount;
+
+  float scrollSpeed = abs(uScrollVelocity); // ranges from 0.0 to 50.0
+  float scrollFactor = clamp(scrollSpeed / 100.0, 0.0, 1.0);
+
+  // uv *= strengthAmount;
+  uv *= (1. - scrollFactor) + scrollFactor * strengthAmount;
   uv += center;
 
   return uv;
