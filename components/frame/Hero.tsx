@@ -25,8 +25,6 @@ export default function Hero({}) {
 	const torsoElStoreRegister = useDomStore(state => state.torsoElRegister);
 	const containerElStoreRegister = useDomStore(state => state.containerElRegister);
 
-	const someRef = useRef(null);
-
 	// useGSAP(() => {
 	// 	if (progress === 100 && someRef.current) {
 	// 		gsap.fromTo(
@@ -53,20 +51,19 @@ export default function Hero({}) {
 
 	return (
 		<>
-			{/* <div className='absolute left-1/4 border-r border-stone-800 mix-blend-color-dodge h-[800lvh] z-10'></div> */}
-			{/* <div className='absolute left-1/2 border-r border-stone-800 mix-blend-color-dodge h-[800lvh] z-10'></div> */}
-			{/* <div className='absolute left-3/4 border-r border-stone-800 mix-blend-color-dodge h-[800lvh] z-10'></div> */}
-
+			{/* <div className='absolute left-1/4 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
+			{/* <div className='absolute left-1/2 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
+			{/* <div className='absolute left-3/4 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
 			<article
-				className={`absolute w-full top-0 left-0 font-boxing z-10 pointer-events-none ${
+				className={`absolute w-full top-0 left-0 font-boxing pointer-events-none z-10 ${
 					isVisible ? 'opacity-100' : 'opacity-0'
 				}`}
 				ref={torsoElStoreRegister}
 				onClick={() => setIsVisible(pre => !pre)}>
 				{/* -------------------------------------------------------------------------- */
-				/*                                 first page                                 */
+				/*                                first page                                 */
 				/* -------------------------------------------------------------------------- */}
-				<section className='h-lvh w-full relative flex flex-col border-b-2 border-stone-800 overflow-hidden'>
+				<section className='h-lvh w-full relative flex flex-col overflow-hidden'>
 					<div className='text-xl flex flex-1 justify-between items-center px-12'>
 						<h2
 							data-font-family='boxing'
@@ -634,7 +631,7 @@ export default function Hero({}) {
 						<div className='flex-[1_0_100%]'></div>
 
 						{/* -------------------------------------------------------------------------- */
-						/*                                    content                                   */
+						/*                                    content - port                           */
 						/* -------------------------------------------------------------------------- */}
 
 						{/* -------------------------------------------------------------------------- */
@@ -648,14 +645,19 @@ export default function Hero({}) {
 							<h2
 								data-font-family='satoshi'
 								className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'
-								ref={textElStoreRegister}></h2>
+								ref={textElStoreRegister}>
+								<Image
+									alt=''
+									className='frame-left-item-icon'
+								/>
+							</h2>
 						</div>
 
 						{/* -------------------------------------------------------------------------- */
-						/*                                    1st row right                              */
+						/*                                    1st row right                            */
 						/* -------------------------------------------------------------------------- */}
 
-						<div className='flex flex-[1] flex-col gap-12 w-full'>
+						<div className='flex flex-[1] flex-col gap-12'>
 							<div
 								className='border border-[--color-font-neutral] h-72 flex flex-col'
 								ref={containerElStoreRegister}>
@@ -719,8 +721,414 @@ export default function Hero({}) {
 								</div>
 							</div>
 						</div>
+
+						<div className='flex-[1_0_100%]'></div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    2st row left                            */
+						/* -------------------------------------------------------------------------- */}
+
+						<div
+							className='flex flex-[2] gap-12'
+							ref={containerElStoreRegister}>
+							<div className='border border-[--color-font-neutral] h-72 flex px-12 gap-12'>
+								<h3 className='m-auto text-center'>
+									<span
+										className='text-4xl'
+										data-font-family='boxing'
+										ref={textElStoreRegister}>
+										{`overview`}
+									</span>
+								</h3>
+
+								<p
+									className='m-auto text-xl font-satoshi whitespace-pre-line'
+									data-font-family='satoshi'
+									ref={textElStoreRegister}>
+									{`Showcases my work and expertise as a fron tend developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for lightning-fast load times while improving crawlability for better SEO.`}
+								</p>
+							</div>
+						</div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    2st row right                            */
+						/* -------------------------------------------------------------------------- */}
+
+						<div
+							className='border border-[--color-font-neutral] h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
+							ref={containerElStoreRegister}>
+							<a
+								ref={textElStoreRegister}
+								data-font-family='boxing'>{`[ demo ]`}</a>
+							<a
+								ref={textElStoreRegister}
+								data-font-family='boxing'>{`[ code ]`}</a>
+						</div>
+
+						<div className='flex-[1_0_100%]'></div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    content - share                         */
+						/* -------------------------------------------------------------------------- */}
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    1st row left                              */
+						/* -------------------------------------------------------------------------- */}
+
+						<div
+							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
+							ref={containerElStoreRegister}
+							data-parallax='home.webp'>
+							<h2
+								data-font-family='satoshi'
+								className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'
+								ref={textElStoreRegister}>
+								<Image
+									alt=''
+									className='frame-left-item-icon'
+								/>
+							</h2>
+						</div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    1st row right                            */
+						/* -------------------------------------------------------------------------- */}
+
+						<div className='flex flex-[1] flex-col gap-12'>
+							<div
+								className='border border-[--color-font-neutral] h-72 flex flex-col'
+								ref={containerElStoreRegister}>
+								<h3 className='m-auto text-center px-6'>
+									<span
+										className='text-5xl'
+										data-font-family='boxing'
+										ref={textElStoreRegister}>
+										{`Share Your Memories`}
+									</span>
+								</h3>
+							</div>
+
+							<div
+								className='border border-[--color-font-neutral] h-[39rem] flex flex-col'
+								ref={containerElStoreRegister}>
+								<div className='m-auto text-center'>
+									<h3
+										className='text-4xl mb-6'
+										data-font-family='boxing'
+										ref={textElStoreRegister}>{`# full stack`}</h3>
+									<ul className='font-satoshi text-xl leading-[1.5]'>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Javascript`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>
+												{`HTML`}
+											</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`CSS`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`React (hooks)`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`React Router`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`React Redux`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Material UI`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Node.js`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Express`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Mongoose`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`MongoDB`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`RESTful API`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Axios`}</span>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<div className='flex-[1_0_100%]'></div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    2st row left                            */
+						/* -------------------------------------------------------------------------- */}
+
+						<div
+							className='flex flex-[2] gap-12'
+							ref={containerElStoreRegister}>
+							<div className='border border-[--color-font-neutral] h-72 flex px-12 gap-12'>
+								<h3 className='m-auto text-center'>
+									<span
+										className='text-4xl'
+										data-font-family='boxing'
+										ref={textElStoreRegister}>
+										{`overview`}
+									</span>
+								</h3>
+
+								<p
+									className='m-auto text-xl font-satoshi whitespace-pre-line'
+									data-font-family='satoshi'
+									ref={textElStoreRegister}>
+									{`Create a platform where people could share treasured memories with anyone throughout the globe. Each user can register a whole new account to enable full functionality coming with the application, or just simply log in via Google Oauth 2.0 to enjoy the full access.\n\nYou can create, delete, edit your posts, and bookmark, comment on, or give a thumbs-up to other users' posts. Each post delivers Youtube video recommendations based on respective content. You can venture around further if any posts pique your interest.`}
+								</p>
+							</div>
+						</div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    2st row right                            */
+						/* -------------------------------------------------------------------------- */}
+
+						<div
+							className='border border-[--color-font-neutral] h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
+							ref={containerElStoreRegister}>
+							<a
+								ref={textElStoreRegister}
+								data-font-family='boxing'>{`[ demo ]`}</a>
+							<a
+								ref={textElStoreRegister}
+								data-font-family='boxing'>{`[ code ]`}</a>
+						</div>
+
+						<div className='flex-[1_0_100%]'></div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    content - eng                           */
+						/* -------------------------------------------------------------------------- */}
+						{/* -------------------------------------------------------------------------- */
+						/*                                    1st row left                              */
+						/* -------------------------------------------------------------------------- */}
+						<div
+							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
+							ref={containerElStoreRegister}
+							data-parallax='home.webp'>
+							<h2
+								data-font-family='satoshi'
+								className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'
+								ref={textElStoreRegister}>
+								<Image
+									alt=''
+									className='frame-left-item-icon'
+								/>
+							</h2>
+						</div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    1st row right                             */
+						/* -------------------------------------------------------------------------- */}
+
+						<div className='flex flex-[1] flex-col gap-12'>
+							<div
+								className='border border-[--color-font-neutral] h-72 flex flex-col'
+								ref={containerElStoreRegister}>
+								<h3 className='m-auto text-center px-6'>
+									<span
+										className='text-5xl'
+										data-font-family='boxing'
+										ref={textElStoreRegister}>
+										{`Learn English with Dictionary`}
+									</span>
+								</h3>
+							</div>
+
+							<div
+								className='border border-[--color-font-neutral] h-[39rem] flex flex-col'
+								ref={containerElStoreRegister}>
+								<div className='m-auto text-center'>
+									<h3
+										className='text-4xl mb-6'
+										data-font-family='boxing'
+										ref={textElStoreRegister}>{`# frontend`}</h3>
+									<ul className='font-satoshi text-xl leading-[1.5]'>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Javascript`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>
+												{`HTML`}
+											</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`CSS`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`React (hooks)`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`React Redux`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Material UI`}</span>
+										</li>
+										{/* <li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Node.js`}</span>
+										</li>
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Express`}</span>
+										</li> */}
+										<li>
+											<span
+												data-font-family='satoshi'
+												ref={textElStoreRegister}>{`Axios`}</span>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<div className='flex-[1_0_100%]'></div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    2st row left                            */
+						/* -------------------------------------------------------------------------- */}
+
+						<div
+							className='flex flex-[2] gap-12'
+							ref={containerElStoreRegister}>
+							<div className='border border-[--color-font-neutral] h-72 flex px-12 gap-12'>
+								<h3 className='m-auto text-center'>
+									<span
+										className='text-4xl'
+										data-font-family='boxing'
+										ref={textElStoreRegister}>
+										{`overview`}
+									</span>
+								</h3>
+
+								<p
+									className='m-auto text-xl font-satoshi whitespace-pre-line'
+									data-font-family='satoshi'
+									ref={textElStoreRegister}>
+									{`Solve the inconvenience of encountering unknown words upon reading an English passage and having to look up elsewhere. Read multiple professional-written passages fetched via New York Times API with a juxtaposed dictionary to facilitate English learning. Co-located design of text and relevant keyword tags. You can explore more in a topic-oriented way.`}
+								</p>
+							</div>
+						</div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                    2st row right                            */
+						/* -------------------------------------------------------------------------- */}
+
+						<div
+							className='border border-[--color-font-neutral] h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
+							ref={containerElStoreRegister}>
+							<a
+								ref={textElStoreRegister}
+								data-font-family='boxing'>{`[ demo ]`}</a>
+							<a
+								ref={textElStoreRegister}
+								data-font-family='boxing'>{`[ code ]`}</a>
+						</div>
 					</section>
 				</div>
+
+				<footer className='h-lvh w-full relative flex flex-col overflow-hidden'>
+					<div className='flex flex-col px-12 pt-6'>
+						<h3
+							data-font-family='boxing'
+							ref={textElStoreRegister}
+							className='whitespace-pre-line text-7xl mb-6'>
+							{`Let's connect.`}
+						</h3>
+						<h4
+							data-font-family='boxing'
+							ref={textElStoreRegister}
+							className='whitespace-pre-line text-3xl'>{`Open for new challenges\nand collaborations.`}</h4>
+					</div>
+					<div className='text-xl flex flex-1 justify-between items-end px-12 -translate-y-36 leading-none'>
+						<nav className='flex flex-col gap-6'>
+							<a
+								data-font-family='boxing'
+								ref={textElStoreRegister}
+								href=''>{`[ github ]`}</a>
+							<a
+								data-font-family='boxing'
+								ref={textElStoreRegister}
+								href=''>{`[ linkedin ]`}</a>
+							<a
+								data-font-family='boxing'
+								ref={textElStoreRegister}
+								href=''>{`[ resume ]`}</a>
+							<a
+								data-font-family='boxing'
+								ref={textElStoreRegister}
+								href=''>{`[ laynechensquare@gmail.com ]`}</a>
+						</nav>
+						<button
+							data-font-family='boxing'
+							ref={textElStoreRegister}
+							className='text-right'>
+							{'[ Back to top ]'}
+						</button>
+					</div>
+					<header>
+						<h1 className='text-center scale-y-[2] origin-bottom translate-y-11 text-[12.625rem] leading-none'>
+							<span
+								data-font-family='boxing'
+								data-scale-y='2'
+								ref={textElStoreRegister}>
+								{'GET IN TOUCH'}
+							</span>
+						</h1>
+					</header>
+				</footer>
 			</article>
 		</>
 	);
