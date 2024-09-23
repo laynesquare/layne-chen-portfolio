@@ -10,15 +10,16 @@
 		--color-secondary: #7b60fb;
 		--color-abysmal: #1a1a1a;
 		--color-white: #fff;
-		--color-green: #25fea8;
+		--color-primary-green: #25fea8;
 
 		--color--ivory: #fffff0;
+		--color-mayonnaise: #ffffde;
 
 		--color-font-primary: var(--color-primary);
 		--color-font-secondary: var(--color-secondary);
-		--color-font-neutral: var(--color--ivory);
+		--color-font-neutral: var(--color-mayonnaise);
 		--color-font-neutral-contrast: var(--color-abysmal);
-		--color-font-highlight: var(--color-green);
+		--color-font-highlight: var(--color-primary-green);
 
 		--font-base: 0.8333vw;
 	}

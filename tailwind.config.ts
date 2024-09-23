@@ -15,8 +15,7 @@ const config: Config = {
 			highlight: 'var(--color-font-highlight)',
 		},
 		backgroundColor: {
-			primary: 'var(--color-primary)',
-			secondary: 'var(--color-secondary)',
+			primary: 'var(--color-primary-green)',
 		},
 		screens: {
 			sm: '375px',
