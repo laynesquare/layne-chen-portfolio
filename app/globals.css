@@ -104,20 +104,12 @@ body::-webkit-scrollbar,
 		background-color: var(--color-secondary);
 	}
 
-	.logo-name {
-		backdrop-filter: blur(10px);
-		mix-blend-mode: color-burn;
-		isolation: isolate;
-	}
-
-	.position {
-		font-size: 10dvw;
-	}
-
-	.test-sync {
-		font-size: 15vw;
-		left: 25vw;
-		top: 200px;
-		color: red;
+	.bar1,
+	.bar2,
+	.bar3 {
+		width: 1.25rem;
+		height: 2px;
+		background-color: white;
+		transition: 0.4s;
 	}
 }

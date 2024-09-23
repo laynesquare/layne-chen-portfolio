@@ -13,13 +13,11 @@ import { useThree } from '@react-three/fiber';
 
 gsap.registerPlugin(useGSAP);
 
-// z-index: 10 => 在球上面
-
 export default function Hero({}) {
 	const { progress, item } = useProgress();
 	const torsoRef = useRef(null);
 
-	const [isVisible, setIsVisible] = useState(false);
+	const [isVisible, setIsVisible] = useState(true);
 
 	const textElStoreRegister = useDomStore(state => state.textElRegister);
 	const torsoElStoreRegister = useDomStore(state => state.torsoElRegister);
@@ -54,10 +52,10 @@ export default function Hero({}) {
 			{/* <div className='absolute left-1/4 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
 			{/* <div className='absolute left-1/2 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
 			{/* <div className='absolute left-3/4 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
+			<Menu />
+
 			<article
-				className={`absolute w-full top-0 left-0 font-boxing z-10 pointer-events-none ${
-					isVisible ? 'opacity-100' : 'opacity-0'
-				}`}
+				className={`w-full top-0 left-0 font-boxing z-10 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
 				ref={torsoElStoreRegister}
 				onClick={() => setIsVisible(pre => !pre)}>
 				{/* -------------------------------------------------------------------------- */
@@ -78,7 +76,7 @@ export default function Hero({}) {
 						</h2>
 					</div>
 					<header>
-						<h1 className='text-center scale-y-[2] origin-bottom translate-y-11 text-[13.5rem] leading-none'>
+						<h1 className='text-center scale-y-[2] origin-bottom text-[13.5rem] leading-none'>
 							<span
 								data-font-family='boxing'
 								data-scale-y='2'
@@ -1160,165 +1158,101 @@ function Menu() {
 	const navRef = useRef(null);
 	const cornerRef = useRef(null);
 
-	useGSAP(() => {
-		gsap.to(btnRef.current, {
-			backgroundColor: isOpen ? 'var(--color-secondary)' : 'transparent',
-			padding: isOpen ? '0.75rem 1rem 0.75rem 1rem' : '0.75rem 1rem 0.75rem 1rem',
-			border: isOpen ? '1px solid var(--color-white)' : '1px solid var(--color-font-neutral)',
-			color: isOpen ? 'var(--color-font-neutral)' : 'var(--color-font-neutral)',
-			ease: 'linear',
-			duration: 0.1,
-		});
+	// useGSAP(() => {
+	// 	gsap.to(btnRef.current, {
+	// 		backgroundColor: isOpen ? 'var(--color-secondary)' : 'transparent',
+	// 		padding: isOpen ? '0.75rem 1rem 0.75rem 1rem' : '0.75rem 1rem 0.75rem 1rem',
+	// 		border: isOpen ? '1px solid var(--color-white)' : '1px solid var(--color-font-neutral)',
+	// 		color: isOpen ? 'var(--color-font-neutral)' : 'var(--color-font-neutral)',
+	// 		ease: 'linear',
+	// 		duration: 0.1,
+	// 	});
 
-		const tl = gsap.timeline();
+	// 	const tl = gsap.timeline();
 
-		tl.to(btnUnderlayRef.current, {
-			opacity: isOpen ? '1' : '0',
-			width: isOpen ? '100%' : '0%',
-			borderRadius: isOpen ? '1.5rem 1.5rem 0 0' : '0',
-			padding: isOpen ? '0.5rem' : '0',
-			ease: 'power1.in',
-			duration: 0.15,
-		}).to(
-			navRef.current,
-			{
-				opacity: isOpen ? '1' : '0',
-				width: isOpen ? '100%' : '0%',
-				height: isOpen ? '100%' : '0%',
-				borderRadius: isOpen ? '2rem 0 2rem 2rem' : '0',
-				padding: isOpen ? '1rem 1.5rem 2.5rem 1.5rem' : '0',
-				duration: 0.15,
-				ease: 'power1.in',
-			},
-			'<',
-		);
+	// 	tl.to(btnUnderlayRef.current, {
+	// 		opacity: isOpen ? '1' : '0',
+	// 		width: isOpen ? '100%' : '0%',
+	// 		borderRadius: isOpen ? '1.5rem 1.5rem 0 0' : '0',
+	// 		padding: isOpen ? '0.5rem' : '0',
+	// 		ease: 'power1.in',
+	// 		duration: 0.15,
+	// 	}).to(
+	// 		navRef.current,
+	// 		{
+	// 			opacity: isOpen ? '1' : '0',
+	// 			width: isOpen ? '100%' : '0%',
+	// 			height: isOpen ? '100%' : '0%',
+	// 			borderRadius: isOpen ? '2rem 0 2rem 2rem' : '0',
+	// 			padding: isOpen ? '1rem 1.5rem 2.5rem 1.5rem' : '0',
+	// 			duration: 0.15,
+	// 			ease: 'power1.in',
+	// 		},
+	// 		'<',
+	// 	);
 
-		gsap.to(cornerRef.current, {
-			opacity: isOpen ? '1' : '0',
-			right: isOpen ? '141' : '0',
-			duration: isOpen ? 0.15 : 0.05,
-			ease: 'power1.in',
-		});
+	// 	gsap.to(cornerRef.current, {
+	// 		opacity: isOpen ? '1' : '0',
+	// 		right: isOpen ? '141' : '0',
+	// 		duration: isOpen ? 0.15 : 0.05,
+	// 		ease: 'power1.in',
+	// 	});
 
-		gsap.fromTo(
-			iconRef.current,
-			{ opacity: 0, y: 10 },
-			{ opacity: 1, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' },
-		);
+	// 	gsap.fromTo(
+	// 		iconRef.current,
+	// 		{ opacity: 0, y: 10 },
+	// 		{ opacity: 1, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' },
+	// 	);
 
-		gsap.fromTo(
-			textRef.current,
-			{ opacity: 0, y: 10 },
-			{ opacity: 1, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' },
-		);
-	}, [isOpen]);
+	// 	gsap.fromTo(
+	// 		textRef.current,
+	// 		{ opacity: 0, y: 10 },
+	// 		{ opacity: 1, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' },
+	// 	);
+	// }, [isOpen]);
 
-	useGSAP(() => {
-		if (isHover) {
-			gsap.fromTo(
-				textRef.current,
-				{ opacity: 0, x: 10 },
-				{ opacity: 1, x: 0, duration: 1, ease: 'elastic.out(1, 0.5)' },
-			);
-			gsap.fromTo(
-				iconRef.current,
-				{ opacity: 0, x: 10 },
-				{ opacity: 1, x: 0, duration: 1, ease: 'elastic.out(1, 0.5)' },
-			);
-		}
-	}, [isHover]);
+	// useGSAP(() => {
+	// 	if (isHover) {
+	// 		gsap.fromTo(
+	// 			textRef.current,
+	// 			{ opacity: 0, x: 10 },
+	// 			{ opacity: 1, x: 0, duration: 1, ease: 'elastic.out(1, 0.5)' },
+	// 		);
+	// 		gsap.fromTo(
+	// 			iconRef.current,
+	// 			{ opacity: 0, x: 10 },
+	// 			{ opacity: 1, x: 0, duration: 1, ease: 'elastic.out(1, 0.5)' },
+	// 		);
+	// 	}
+	// }, [isHover]);
 
 	return (
-		<div className='top-6 right-6 absolute flex justify-end flex-col items-end z-10 font-krona'>
-			<div className='relative'>
-				<button
-					ref={btnRef}
-					className='flex items-center gap-2 leading-none rounded-full w-max mx-4 mt-4 mb-4'
-					onClick={() => setIsOpen(!isOpen)}
-					onMouseOver={() => setIsHover(true)}
-					onMouseLeave={() => setIsHover(false)}>
-					<p
-						ref={textRef}
-						className='pt-[2px]'>
-						{isOpen ? 'CLOSE' : 'MENU'}
-					</p>
-					<div ref={iconRef}>
-						{isOpen ? <RiCloseLargeFill className='text-base' /> : <VscMenu className='text-base' />}
-					</div>
-				</button>
-
-				<div
-					className='menu-btn-underlay'
-					ref={btnUnderlayRef}></div>
+		<nav
+			className='flex py-3 px-7 border border-[--color-font-neutral] rounded-full justify-between items-center top-8 sticky text-sm z-20 max-w-[80rem] m-auto leading-none font-boxing'
+			style={{
+				backdropFilter: `blur(10px) saturate(200%)`,
+				backgroundColor: `#0000007a`,
+				boxShadow: `0 3px 20px -5px #00000026`,
+			}}>
+			<div>
+				<a href=''>{`layne chen`}</a>
 			</div>
-
-			<div
-				ref={navRef}
-				className='bg-secondary w-full overflow-hidden'>
-				<nav className='text-3xl'>
-					<ul className='flex flex-col'>
-						<li>
-							<a
-								className='py-4 pr-4 block border-b border-b-1-neutral'
-								href=''>
-								About
-							</a>
-						</li>
-						<li>
-							<a
-								className='py-4 pr-4 block border-b border-b-1-neutral'
-								href=''>
-								Skills
-							</a>
-						</li>
-						<li>
-							<a
-								className='py-4 pr-4 block border-b border-b-1-neutral'
-								href=''>
-								Experience
-							</a>
-						</li>
-						<li>
-							<a
-								className='py-4 pr-4 block border-b border-b-1-neutral'
-								href=''>
-								Projects
-							</a>
-						</li>
-						<li>
-							<a
-								className='py-4 pr-4 block border-b border-b-1-neutral'
-								href=''>
-								Contact
-							</a>
-						</li>
-					</ul>
-				</nav>
+			<div>
+				<p>{`portfolio#2024`}</p>
 			</div>
-
-			<svg
-				ref={cornerRef}
-				className='top-[36px] absolute'
-				style={{ transform: 'rotate(-180deg)' }}
-				width='32'
-				height='32'
-				viewBox='0 0 32 32'
-				fill='none'
-				xmlns='http://www.w3.org/2000/svg'>
-				<g clip-path='url(#clip0_310_2)'>
-					<path
-						d='M30 0H0V30C0 13.431 13.431 0 30 0Z'
-						fill='var(--color-secondary)'></path>
-				</g>
-				<defs>
-					<clipPath id='clip0_310_2'>
-						<rect
-							width='30'
-							height='30'
-							fill='white'></rect>
-					</clipPath>
-				</defs>
-			</svg>
-		</div>
+			<div className='flex gap-8 items-center'>
+				<div className='flex gap-4'>
+					<a href=''>{`[ github ]`}</a>
+					<a href=''>{`[ linkedin ]`}</a>
+					<a href=''>{`[ resume ]`}</a>
+					<a href=''>{`[ mail ]`}</a>
+				</div>
+				<div className='rounded-full aspect-square border border-[--color-font-neutral] flex flex-col gap-0.5 justify-center p-3'>
+					<div className='bar1'></div>
+					<div className='bar2'></div>
+					<div className='bar3'></div>
+				</div>
+			</div>
+		</nav>
 	);
 }
