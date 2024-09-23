@@ -58,6 +58,8 @@ const Banner = () => {
 	const textDomEls = useDomStore(state => state.textEls);
 
 	const scrollOffsetRef = useRef(0); // pixel
+	const pointerRef = useRef(new Vector2(0, 0));
+	const pointerCenterRef = useRef(new Vector2(0, 0));
 
 	const textGroupRef = useRef(null);
 	const textMeshRatio = 1 - viewport.factor / calcFactorCamZ(2);
@@ -67,9 +69,17 @@ const Banner = () => {
 	const containerMaterialParallaxRefs = useRef([]);
 
 	const meshMetalRef = useRef(null);
-	const textureMetalAnisotropic = useLoader(TextureLoader, '/scenery/textures/metal_anisotropic.jpg');
-	const testHeightMapOriginal = useLoader(TextureLoader, '/frame/home.webp');
-	const testHeightMapOriginalHeightMap = useLoader(TextureLoader, '/frame/home_depth.webp');
+
+	const previewShareYourMemories = useLoader(TextureLoader, '/frame/project-preview-share-your-memories.jpg');
+	const previewLearnEnglishDictionary = useLoader(
+		TextureLoader,
+		'/frame/project-preview-learn-english-dictionary.jpg',
+	);
+
+	const previewMap = {
+		previewShareYourMemories: previewShareYourMemories,
+		previewLearnEnglishDictionary: previewLearnEnglishDictionary,
+	};
 
 	function calcFactorCamZ(zPosition: number) {
 		const fov = (camera.fov * Math.PI) / 180;
@@ -86,6 +96,13 @@ const Banner = () => {
 		}),
 	);
 
+	const materialDomTextHighlight = useRef(
+		new MeshBasicMaterial({
+			color: new Color('#25fed3'),
+			dithering: true,
+		}),
+	);
+
 	const materialAcidBg = useRef(
 		new ShaderMaterial({
 			uniforms: { uTime: { value: 0 } },
@@ -93,27 +110,6 @@ const Banner = () => {
 			fragmentShader: fragmentShaderAcidBg,
 		}),
 	);
-
-	const materialParallaxDepth = useRef(
-		new ShaderMaterial({
-			uniforms: {
-				uTexture: { value: testHeightMapOriginal },
-				uTextureDepth: { value: testHeightMapOriginalHeightMap },
-				uMouse: { value: new Vector2(0.5, 0.5) },
-			},
-			vertexShader: vertexShaderParallaxDepth,
-			fragmentShader: fragmentShaderParallaxDepth,
-		}),
-	);
-
-	// const domTextShared = {
-	// 	font: '/font/ClashDisplay-Semibold.woff',
-	// 	fontBoxing: '/font/Boxing-Regular.woff2',
-	// 	fontSatoshi: '/font/Satoshi-Bold.woff2',
-	// 	anchorX: 'left',
-	// 	anchorY: 'top',
-	// 	overflowWrap: 'break-word',
-	// };
 
 	function domTextShared(type: 'boxing' | 'satoshi') {
 		const fontFamily = {
@@ -158,9 +154,14 @@ const Banner = () => {
 		}
 
 		if (containerMaterialParallaxRefs.current.length) {
-			const mousePos = new Vector2(pointer.x, pointer.y);
-			containerMaterialParallaxRefs.current.forEach((ref, index) => {
-				ref.uniforms.uMouse.value.lerp(mousePos, 0.02);
+			const target =
+				pointerRef.current.distanceTo(pointer) > 0
+					? pointerRef.current.clone().sub(pointer).negate()
+					: pointerCenterRef.current;
+
+			pointerRef.current.copy(pointer);
+			containerMaterialParallaxRefs.current.forEach(ref => {
+				ref.uniforms.uMouse.value.lerp(target, 0.05);
 			});
 		}
 	});
@@ -214,7 +215,7 @@ const Banner = () => {
 				{[...textDomEls].map((el, idx) => {
 					const { fontSize, lineHeight, textAlign } = window.getComputedStyle(el);
 					const { left, top, height, width } = el.getBoundingClientRect();
-					const { fontFamily, scaleY } = el.dataset;
+					const { fontFamily, scaleY, fontHighlight } = el.dataset;
 					const { factor } = viewport;
 					const parsedL = parseFloat(left);
 					const parsedT = parseFloat(top);
@@ -226,6 +227,7 @@ const Banner = () => {
 					const baseX = (-viewport.width / 2) * ratio;
 					const baseY = (viewport.height / 2) * ratio;
 					const scrollOffset = Math.abs((scrollOffsetRef.current / factor) * ratio);
+					const material = fontHighlight ? materialDomTextHighlight.current : materialDomText.current;
 
 					let pX = baseX + (parsedL / factor) * ratio;
 					let pY = baseY - (parsedT / factor) * ratio - scrollOffset;
@@ -244,7 +246,7 @@ const Banner = () => {
 							key={idx}
 							{...domTextShared(fontFamily)}
 							position={[pX, pY, pZ]}
-							material={materialDomText.current}
+							material={material}
 							lineHeight={parsedLineHeight / parsedFontSize}
 							maxWidth={(parsedW / factor) * ratio + 0.01}
 							scale={[sX, sY, sZ]}
@@ -314,8 +316,7 @@ const Banner = () => {
 
 					const uniforms = parallax
 						? {
-								uTexture: { value: testHeightMapOriginal },
-								uTextureDepth: { value: testHeightMapOriginalHeightMap },
+								uTexture: { value: previewMap[parallax] },
 								uResolution: { value: new Vector2(parsedW, parsedH) },
 								uRadii: { value: new Vector4(...radius) },
 								uMouse: { value: new Vector2(0.5, 0.5) },
