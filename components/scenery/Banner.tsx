@@ -161,7 +161,7 @@ const Banner = () => {
 
 			pointerRef.current.copy(pointer);
 			containerMaterialParallaxRefs.current.forEach(ref => {
-				ref.uniforms.uMouse.value.lerp(target, 0.05);
+				ref.uniforms.uMouse.value.lerp(target, 0.025);
 			});
 		}
 	});
