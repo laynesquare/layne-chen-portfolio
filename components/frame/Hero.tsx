@@ -55,7 +55,7 @@ export default function Hero({}) {
 			{/* <div className='absolute left-1/2 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
 			{/* <div className='absolute left-3/4 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
 			<article
-				className={`absolute w-full top-0 left-0 font-boxing pointer-events-none z-10 ${
+				className={`absolute w-full top-0 left-0 font-boxing z-10 pointer-events-none ${
 					isVisible ? 'opacity-100' : 'opacity-0'
 				}`}
 				ref={torsoElStoreRegister}
@@ -755,13 +755,15 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-[--color-font-neutral] h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
+							className='border border-[--color-font-neutral] h-72 flex flex-[1] items-center justify-center gap-12 text-4xl text-highlight'
 							ref={containerElStoreRegister}>
 							<a
 								ref={textElStoreRegister}
-								data-font-family='boxing'>{`[ demo ]`}</a>
+								data-font-family='boxing'
+								data-font-highlight>{`[ demo ]`}</a>
 							<a
 								ref={textElStoreRegister}
+								data-font-highlight
 								data-font-family='boxing'>{`[ code ]`}</a>
 						</div>
 
@@ -778,7 +780,7 @@ export default function Hero({}) {
 						<div
 							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
 							ref={containerElStoreRegister}
-							data-parallax='home.webp'>
+							data-parallax='previewShareYourMemories'>
 							<h2
 								data-font-family='satoshi'
 								className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'
@@ -926,9 +928,11 @@ export default function Hero({}) {
 							ref={containerElStoreRegister}>
 							<a
 								ref={textElStoreRegister}
+								data-font-highlight
 								data-font-family='boxing'>{`[ demo ]`}</a>
 							<a
 								ref={textElStoreRegister}
+								data-font-highlight
 								data-font-family='boxing'>{`[ code ]`}</a>
 						</div>
 
@@ -943,7 +947,7 @@ export default function Hero({}) {
 						<div
 							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
 							ref={containerElStoreRegister}
-							data-parallax='home.webp'>
+							data-parallax='previewLearnEnglishDictionary'>
 							<h2
 								data-font-family='satoshi'
 								className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'
@@ -1071,9 +1075,11 @@ export default function Hero({}) {
 							ref={containerElStoreRegister}>
 							<a
 								ref={textElStoreRegister}
+								data-font-highlight
 								data-font-family='boxing'>{`[ demo ]`}</a>
 							<a
 								ref={textElStoreRegister}
+								data-font-highlight
 								data-font-family='boxing'>{`[ code ]`}</a>
 						</div>
 					</section>
@@ -1097,23 +1103,28 @@ export default function Hero({}) {
 							<a
 								data-font-family='boxing'
 								ref={textElStoreRegister}
+								data-font-highlight
 								href=''>{`[ github ]`}</a>
 							<a
 								data-font-family='boxing'
 								ref={textElStoreRegister}
+								data-font-highlight
 								href=''>{`[ linkedin ]`}</a>
 							<a
 								data-font-family='boxing'
 								ref={textElStoreRegister}
+								data-font-highlight
 								href=''>{`[ resume ]`}</a>
 							<a
 								data-font-family='boxing'
 								ref={textElStoreRegister}
+								data-font-highlight
 								href=''>{`[ laynechensquare@gmail.com ]`}</a>
 						</nav>
 						<button
 							data-font-family='boxing'
 							ref={textElStoreRegister}
+							data-font-highlight
 							className='text-right'>
 							{'[ Back to top ]'}
 						</button>
