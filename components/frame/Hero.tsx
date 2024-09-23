@@ -76,7 +76,7 @@ export default function Hero({}) {
 						</h2>
 					</div>
 					<header>
-						<h1 className='text-center scale-y-[2] origin-bottom text-[13.5rem] leading-none'>
+						<h1 className='text-center scale-y-[2] origin-bottom text-[13.5rem] leading-none -translate-y-3'>
 							<span
 								data-font-family='boxing'
 								data-scale-y='2'
@@ -1228,31 +1228,50 @@ function Menu() {
 
 	return (
 		<nav
-			className='flex py-3 px-7 border border-[--color-font-neutral] rounded-full justify-between items-center top-8 sticky text-sm z-20 max-w-[80rem] m-auto leading-none font-boxing'
+			className='flex py-2 pl-12 pr-2 rounded-full justify-between items-center top-6 sticky text-sm z-20 max-w-[60rem] m-auto leading-none font-boxing'
 			style={{
-				backdropFilter: `blur(10px) saturate(200%)`,
-				backgroundColor: `#0000007a`,
-				boxShadow: `0 3px 20px -5px #00000026`,
+				backdropFilter: `blur(1rem) saturate(250%) hue-rotate(9deg)`,
+				// backgroundColor: `#0000007a`,
+				// boxShadow: `0 3px 180px 15px #000000`,
+				textShadow: `0 0 .5rem green`,
+				border: `1px solid #ffffff17`,
 			}}>
-			<div>
-				<a href=''>{`layne chen`}</a>
+			<a
+				href=''
+				className=''>{`layne chen`}</a>
+
+			<div
+				style={{
+					height: `2rem`,
+					borderRight: `1px solid white`,
+				}}></div>
+
+			<p className=''>{`portfolio#2024`}</p>
+
+			<div
+				style={{
+					height: `2rem`,
+					borderRight: `1px solid white`,
+				}}></div>
+
+			<div className='flex gap-4'>
+				<a href=''>{`[ github ]`}</a>
+				<a href=''>{`[ linkedin ]`}</a>
+				<a href=''>{`[ resume ]`}</a>
+				<a href=''>{`[ mail ]`}</a>
 			</div>
-			<div>
-				<p>{`portfolio#2024`}</p>
-			</div>
-			<div className='flex gap-8 items-center'>
-				<div className='flex gap-4'>
-					<a href=''>{`[ github ]`}</a>
-					<a href=''>{`[ linkedin ]`}</a>
-					<a href=''>{`[ resume ]`}</a>
-					<a href=''>{`[ mail ]`}</a>
-				</div>
-				<div className='rounded-full aspect-square border border-[--color-font-neutral] flex flex-col gap-0.5 justify-center p-3'>
-					<div className='bar1'></div>
-					<div className='bar2'></div>
-					<div className='bar3'></div>
-				</div>
-			</div>
+
+			<div
+				style={{
+					height: `2rem`,
+					borderRight: `1px solid white`,
+				}}></div>
+
+			<button className='rounded-full aspect-square border border-[--color-font-neutral] flex flex-col gap-0.5 justify-center p-3'>
+				<div className='bar1'></div>
+				<div className='bar2'></div>
+				<div className='bar3'></div>
+			</button>
 		</nav>
 	);
 }
