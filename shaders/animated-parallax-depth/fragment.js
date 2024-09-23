@@ -1,5 +1,4 @@
 const fragmentShader = `
-varying vec3 position;
 varying vec2 vUv;
 uniform vec2 uResolution;
 uniform vec4 uRadii;
@@ -16,18 +15,30 @@ float roundedBoxSDF(vec2 centerPosition, vec2 size, vec4 radius) {
 }
 
 void main() {
-    // ! parallax handling
-    float frequency = 100.0;
-    float amplitude = 0.003;
-    float distortion = sin(vUv.y * frequency) * amplitude;
+    vec2 mouseNormalized = (uMouse + 1.0) / 2.0;
 
-    // - sample the depth texture
-    float depth = texture(uTextureDepth, vUv).r;
-    float shiftX = uMouse.x * 0.05;
-    float shiftY = uMouse.y * 0.05;
+    // Compute the view direction from the fragment to the mouse position
 
-    vec2 parallaxPosition= vec2(vUv.x + shiftX * depth, vUv.y + shiftY * depth);
-    vec4 textureColorWithParallax = texture(uTexture, parallaxPosition);
+    // Parallax mapping parameters
+    float parallaxScale = 2.0; // Controls the strength of the parallax effect
+    float numLayers = 30.0;
+    float layerDepth = 1.0 / numLayers;
+    float currentLayerDepth = 0.0;
+    vec2 deltaTexCoords = uMouse * parallaxScale / numLayers;
+    vec2 currentTexCoords = vUv;
+
+    // Perform parallax occlusion mapping
+    for (int i = 0; i < 30; i++) {
+        currentTexCoords -= deltaTexCoords;
+        currentLayerDepth += layerDepth;
+        float depthFromTexture = 1.0 - texture2D(uTexture, currentTexCoords).r;
+        if (currentLayerDepth > depthFromTexture) {
+            break;
+        }
+    }
+
+    // Sample the texture with the adjusted UV coordinates
+    vec4 textureColorWithParallax = texture2D(uTexture, currentTexCoords);
 
     // ! border handling
     vec2 pixelPosition = vUv * uResolution;
