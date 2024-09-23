@@ -12,6 +12,7 @@ const config: Config = {
 			secondary: 'var(--color-font-secondary)',
 			neutral: 'var(--color-font-neutral)',
 			neutralContrast: 'var(--color-font-neutral-contrast)',
+			highlight: 'var(--color-font-highlight)',
 		},
 		backgroundColor: {
 			primary: 'var(--color-primary)',
