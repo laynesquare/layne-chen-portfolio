@@ -20,6 +20,7 @@ const config: Config = {
 			neutralContrast: 'var(--color-bg-neutral-contrast)',
 		},
 		borderColor: {
+			primary: 'var(--color-border-primary)',
 			neutral: 'var(--color-border-neutral)',
 			neutralContrast: 'var(--color-border-neutral-contrast)',
 		},
