@@ -1159,7 +1159,6 @@ function mapRange(value, start1, stop1, start2, stop2) {
 
 function Menu() {
 	const [isOpen, setIsOpen] = useState(false);
-	const closeButtonRef = useRef(null);
 
 	return (
 		<>
@@ -1183,13 +1182,7 @@ function Menu() {
 					<NavLinkBtn label={`[ mail ]`} />
 				</div>
 
-				<button
-					className='rounded-full aspect-square border border-neutral flex flex-col gap-0.5 justify-center p-2'
-					onClick={() => setIsOpen(!isOpen)}>
-					<div className='bg-neutral w-5 h-0.5'></div>
-					<div className='bg-neutral w-5 h-0.5'></div>
-					<div className='bg-neutral w-5 h-0.5'></div>
-				</button>
+				<NavOpenBtn setIsOpen={setIsOpen} />
 			</nav>
 
 			<OverlayNav
@@ -1271,7 +1264,7 @@ function OverlayNav({ isOpen, setIsOpen }) {
 				data-action-row>
 				<button
 					className='px-6 rounded-full border border-neutralContrast aspect-square h-[min-content] flex flex-col justify-center items-center origin-center'
-					onClick={() => setIsOpen(!isOpen)}
+					onClick={() => setIsOpen(false)}
 					onPointerEnter={() => setIsOverlayCloseHover(true)}
 					onPointerLeave={() => setIsOverlayCloseHover(false)}>
 					<div
@@ -1618,5 +1611,56 @@ function NavLinkBtn({ label }) {
 				{label}
 			</span>
 		</a>
+	);
+}
+
+function NavOpenBtn({ setIsOpen }) {
+	const [isHover, setIsHover] = useState(false);
+	const ctnRef = useRef(null);
+	useGSAP(
+		() => {
+			if (isHover) {
+				gsap.to('[data-open-1st-bar]', {
+					width: '1rem',
+					duration: 0.2,
+					ease: 'sine.in',
+				});
+				gsap.to('[data-open-3st-bar]', {
+					width: '0.5rem',
+					duration: 0.2,
+					ease: 'sine.in',
+				});
+			} else {
+				gsap.to('[data-open-1st-bar]', {
+					width: '1.25rem',
+					duration: 0.2,
+					ease: 'sine.in',
+				});
+				gsap.to('[data-open-3st-bar]', {
+					width: '1.25rem',
+					duration: 0.2,
+					ease: 'sine.in',
+				});
+			}
+		},
+		{ dependencies: [isHover], scope: ctnRef },
+	);
+	return (
+		<button
+			ref={ctnRef}
+			className='rounded-full aspect-square border border-neutral flex flex-col gap-1 justify-center p-3'
+			onClick={() => setIsOpen(true)}
+			onPointerEnter={() => setIsHover(true)}
+			onPointerLeave={() => setIsHover(false)}>
+			<div
+				data-open-1st-bar
+				className='bg-neutral w-5 h-0.5'></div>
+			<div
+				data-open-2st-bar
+				className='bg-neutral w-5 h-0.5'></div>
+			<div
+				data-open-3st-bar
+				className='bg-neutral w-5 h-0.5'></div>
+		</button>
 	);
 }
