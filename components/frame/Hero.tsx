@@ -1159,8 +1159,50 @@ function mapRange(value, start1, stop1, start2, stop2) {
 
 function Menu() {
 	const [isOpen, setIsOpen] = useState(false);
-	const [isOverlayCloseHover, setIsOverlayCloseHover] = useState(false);
+	const closeButtonRef = useRef(null);
+
+	return (
+		<>
+			<nav
+				className='flex gap-6 py-2 pl-12 pr-2 rounded-full items-center top-6 fixed text-sm z-20 max-w-[60rem] m-auto leading-none font-boxing backdrop-blur-lg backdrop-saturate-[250%] backdrop-hue-rotate-[9deg] border border-[#ffffff15] left-1/2 -translate-x-1/2'
+				style={{ textShadow: `0 0 1px black` }}>
+				<a
+					href=''
+					className=''>{`layne chen`}</a>
+
+				<div className={`border-r border-neutral h-7`}></div>
+
+				<p className='flex-1 text-center'>{`portfolio#2024`}</p>
+
+				<div className={`border-r border-neutral h-7`}></div>
+
+				<div className='flex gap-4 self-stretch'>
+					<NavLinkBtn label={`[ github ]`} />
+					<NavLinkBtn label={`[ linkedin ]`} />
+					<NavLinkBtn label={`[ resume ]`} />
+					<NavLinkBtn label={`[ mail ]`} />
+				</div>
+
+				<button
+					className='rounded-full aspect-square border border-neutral flex flex-col gap-0.5 justify-center p-2'
+					onClick={() => setIsOpen(!isOpen)}>
+					<div className='bg-neutral w-5 h-0.5'></div>
+					<div className='bg-neutral w-5 h-0.5'></div>
+					<div className='bg-neutral w-5 h-0.5'></div>
+				</button>
+			</nav>
+
+			<OverlayNav
+				isOpen={isOpen}
+				setIsOpen={setIsOpen}
+			/>
+		</>
+	);
+}
+
+function OverlayNav({ isOpen, setIsOpen }) {
 	const overlayNavRef = useRef(null);
+	const [isOverlayCloseHover, setIsOverlayCloseHover] = useState(false);
 
 	useGSAP(
 		() => {
@@ -1220,155 +1262,122 @@ function Menu() {
 		{ dependencies: [isOverlayCloseHover], scope: overlayNavRef },
 	);
 
-	console.log('re render');
-
 	return (
-		<>
-			<nav
-				className='flex gap-6 py-2 pl-12 pr-2 rounded-full items-center top-6 fixed text-sm z-20 max-w-[60rem] m-auto leading-none font-boxing backdrop-blur-lg backdrop-saturate-[250%] backdrop-hue-rotate-[9deg] border border-[#ffffff15] left-1/2 -translate-x-1/2'
-				style={{ textShadow: `0 0 1px black` }}>
-				<a
-					href=''
-					className=''>{`layne chen`}</a>
-
-				<div className={`border-r border-neutral h-7`}></div>
-
-				<p className='flex-1 text-center'>{`portfolio#2024`}</p>
-
-				<div className={`border-r border-neutral h-7`}></div>
-
-				<div className='flex gap-4 self-stretch'>
-					<NavLinkButton label={`[ github ]`} />
-					<NavLinkButton label={`[ linkedin ]`} />
-					<NavLinkButton label={`[ resume ]`} />
-					<NavLinkButton label={`[ mail ]`} />
-				</div>
-
+		<nav
+			className={`fixed z-30 top-0 right-0 h-lvh w-full font-boxing text-neutralContrast opacity-0 flex flex-col backdrop-blur-md backdrop-saturate-200 backdrop-hue-rotate-15`}
+			ref={overlayNavRef}>
+			<div
+				className='bg-primary border border-primary text-4xl flex-[1] w-[max-content] flex px-12 py-4 items-center gap-20'
+				data-action-row>
 				<button
-					className='rounded-full aspect-square border border-neutral flex flex-col gap-0.5 justify-center p-2'
-					onClick={() => setIsOpen(!isOpen)}>
-					<div className='bg-neutral w-5 h-0.5'></div>
-					<div className='bg-neutral w-5 h-0.5'></div>
-					<div className='bg-neutral w-5 h-0.5'></div>
+					className='px-6 rounded-full border border-neutralContrast aspect-square h-[min-content] flex flex-col justify-center items-center origin-center'
+					onClick={() => setIsOpen(!isOpen)}
+					onPointerEnter={() => setIsOverlayCloseHover(true)}
+					onPointerLeave={() => setIsOverlayCloseHover(false)}>
+					<div
+						className={`w-[3rem] h-[2px] bg-neutralContrast origin-center translate-y-1/2`}
+						data-close-up-bar></div>
+					<div
+						className={`w-[3rem] h-[2px] bg-neutralContrast origin-center -translate-y-1/2`}
+						data-close-btm-bar></div>
 				</button>
-			</nav>
-
-			<nav
-				className={`fixed z-30 top-0 right-0 h-lvh w-full font-boxing text-neutralContrast opacity-0 flex flex-col backdrop-blur-md backdrop-saturate-200 backdrop-hue-rotate-15`}
-				ref={overlayNavRef}>
-				<div
-					className='bg-primary border border-primary text-4xl flex-[1] w-[max-content] flex px-12 py-4 items-center gap-20'
-					data-action-row>
-					<button
-						className='px-6 rounded-full border border-neutralContrast aspect-square h-[min-content] flex flex-col justify-center items-center origin-center'
-						onClick={() => setIsOpen(!isOpen)}
-						onPointerEnter={() => setIsOverlayCloseHover(true)}
-						onPointerLeave={() => setIsOverlayCloseHover(false)}>
-						<div
-							className={`w-[3rem] h-[2px] bg-neutralContrast origin-center translate-y-1/2`}
-							data-close-up-bar></div>
-						<div
-							className={`w-[3rem] h-[2px] bg-neutralContrast origin-center -translate-y-1/2`}
-							data-close-btm-bar></div>
-					</button>
-					<div className='flex gap-8 items-center'>
-						<OverlayNavLinkButton label={`github`} />
-						<OverlayNavLinkButton label={`linkedin`} />
-						<OverlayNavLinkButton label={`resume`} />
-						<OverlayNavLinkButton label={`mail`} />
-					</div>
+				<div className='flex gap-8 items-center'>
+					<OverlayNavLinkBtn label={`github`} />
+					<OverlayNavLinkBtn label={`linkedin`} />
+					<OverlayNavLinkBtn label={`resume`} />
+					<OverlayNavLinkBtn label={`mail`} />
 				</div>
-				<div
-					className='bg-primary border border-primary flex-[1] w-[55rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-					data-home-row>
-					<OverlayNavLinkChapter
-						label={`home`}
-						chapter={`[00.]`}
-						container={`data-home-row`}
-					/>
+			</div>
+			<div
+				className='bg-primary border border-primary flex-[1] w-[55rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
+				data-home-row>
+				<OverlayNavLinkChapter
+					label={`home`}
+					chapter={`[00.]`}
+					container={`data-home-row`}
+				/>
+			</div>
+			<div
+				className='bg-primary border border-primary flex-[1] w-[47.5rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
+				data-about-row>
+				<OverlayNavLinkChapter
+					label={`about`}
+					chapter={`[01.]`}
+					container={`data-about-row`}
+				/>
+			</div>
+			<div
+				className='bg-primary border border-primary flex-[1] w-[42rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
+				data-skill-row>
+				<OverlayNavLinkChapter
+					label={`skill`}
+					chapter={`[02.]`}
+					container={`data-skill-row`}
+				/>
+			</div>
+			<div
+				className='bg-primary border border-primary flex-[1] w-[75rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
+				data-experience-row>
+				<OverlayNavLinkChapter
+					label={`experience`}
+					chapter={`[03.]`}
+					container={`data-experience-row`}
+				/>
+			</div>
+			<div
+				className='bg-primary border border-primary flex-[1] w-[85rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
+				data-project-row>
+				<OverlayNavLinkChapter
+					label={`project`}
+					chapter={`[04.]`}
+					container={`data-project-row`}
+				/>
+			</div>
+			<div
+				className='bg-primary border border-primary flex-[1] w-[95rem] flex items-center px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
+				data-contact-row>
+				<div className='flex gap-8 flex-wrap max-w-[34rem] mr-auto'>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
 				</div>
-				<div
-					className='bg-primary border border-primary flex-[1] w-[47.5rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-					data-about-row>
-					<OverlayNavLinkChapter
-						label={`about`}
-						chapter={`[01.]`}
-						container={`data-about-row`}
-					/>
-				</div>
-				<div
-					className='bg-primary border border-primary flex-[1] w-[42rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-					data-skill-row>
-					<OverlayNavLinkChapter
-						label={`skill`}
-						chapter={`[02.]`}
-						container={`data-skill-row`}
-					/>
-				</div>
-				<div
-					className='bg-primary border border-primary flex-[1] w-[75rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-					data-experience-row>
-					<OverlayNavLinkChapter
-						label={`experience`}
-						chapter={`[03.]`}
-						container={`data-experience-row`}
-					/>
-				</div>
-				<div
-					className='bg-primary border border-primary flex-[1] w-[85rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-					data-project-row>
-					<OverlayNavLinkChapter
-						label={`project`}
-						chapter={`[04.]`}
-						container={`data-project-row`}
-					/>
-				</div>
-				<div
-					className='bg-primary border border-primary flex-[1] w-[95rem] flex items-center px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-					data-contact-row>
-					<div className='flex gap-8 flex-wrap max-w-[34rem] mr-auto'>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					</div>
-					<OverlayNavLinkChapter
-						label={`contact`}
-						chapter={`[99.]`}
-						container={`data-contact-row`}
-					/>
-				</div>
-			</nav>
-		</>
+				<OverlayNavLinkChapter
+					label={`contact`}
+					chapter={`[99.]`}
+					container={`data-contact-row`}
+				/>
+			</div>
+		</nav>
 	);
 }
 
-function OverlayNavLinkButton({ label }) {
+function OverlayNavLinkBtn({ label }) {
 	const [isHover, setIsHover] = useState(false);
 	const pointerRef = useRef({ xPercent: 0, yPercent: 0 });
-	const buttonRef = useRef(null);
+	const btnRef = useRef(null);
 	const labelRef = useRef(null);
 	const flairRef = useRef(null);
 
 	function handlePointerEnter(e) {
 		const { clientX, clientY } = e;
-		const { left, top, width, height } = buttonRef.current.getBoundingClientRect();
+		const { left, top, width, height } = btnRef.current.getBoundingClientRect();
 		const originX = clientX - left;
 		const originY = clientY - top;
 		const mapOriginX = mapRange(originX, 0, width, 0, 100);
@@ -1413,18 +1422,18 @@ function OverlayNavLinkButton({ label }) {
 			if (isHover) {
 				tl.to(flairRef.current, configPositioningCircle)
 					.to(flairRef.current, configScale)
-					.to(buttonRef.current, configDisplace, '<');
+					.to(btnRef.current, configDisplace, '<');
 			} else {
-				tl.to(flairRef.current, configScale).to(buttonRef.current, configDisplace, '<');
+				tl.to(flairRef.current, configScale).to(btnRef.current, configDisplace, '<');
 			}
 		},
-		{ dependencies: [isHover], scope: buttonRef },
+		{ dependencies: [isHover], scope: btnRef },
 	);
 
 	return (
 		<>
 			<a
-				ref={buttonRef}
+				ref={btnRef}
 				onPointerEnter={e => handlePointerEnter(e)}
 				onPointerLeave={() => setIsHover(false)}
 				className='px-9 py-3.5 text-2xl rounded-full border border-neutralContrast bg-neutral h-[min-content] relative overflow-hidden cursor-pointer'>
@@ -1559,7 +1568,7 @@ function OverlayNavLinkChapter({ chapter, label, container }) {
 	);
 }
 
-function NavLinkButton({ label }) {
+function NavLinkBtn({ label }) {
 	const ctnRef = useRef(null);
 	const [isHover, setIsHover] = useState(false);
 
