@@ -76,7 +76,7 @@ export default function Hero({}) {
 						</h2>
 					</div>
 					<header>
-						<h1 className='text-center scale-y-[2] origin-bottom text-[13.5rem] leading-none -translate-y-3'>
+						<h1 className='text-center scale-y-[2] origin-bottom text-[13.5rem] leading-none translate-y-11'>
 							<span
 								data-font-family='boxing'
 								data-scale-y='2'
@@ -97,7 +97,7 @@ export default function Hero({}) {
 						/*                                    upper                                   */
 						/* -------------------------------------------------------------------------- */}
 						<div
-							className='flex-[0.3] text-6xl flex border border-[--color-font-neutral] h-72 rounded-[9rem_9rem_9rem_0rem]'
+							className='flex-[0.3] text-6xl flex border border-neutral h-72 rounded-[9rem_9rem_9rem_0rem]'
 							ref={containerElStoreRegister}>
 							<span
 								className='m-auto'
@@ -107,7 +107,7 @@ export default function Hero({}) {
 							</span>
 						</div>
 						<header
-							className='flex-[1] text-[13.75rem] border border-[--color-font-neutral] h-72 flex rounded-[9rem_9rem_0rem_9rem]'
+							className='flex-[1] text-[13.75rem] border border-neutral h-72 flex rounded-[9rem_9rem_0rem_9rem]'
 							ref={containerElStoreRegister}>
 							<h2
 								className='m-auto leading-none'
@@ -124,7 +124,7 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_9rem] h-[39rem] flex flex-[1] px-20'
+							className='border border-neutral rounded-[0rem_0rem_0rem_9rem] h-[39rem] flex flex-[1] px-20'
 							ref={containerElStoreRegister}>
 							<h2
 								data-font-family='satoshi'
@@ -150,7 +150,7 @@ export default function Hero({}) {
 						/*                                    upper                                   */
 						/* -------------------------------------------------------------------------- */}
 						<header
-							className='flex-[1] text-[13.75rem] border border-[--color-font-neutral] h-72 flex rounded-[9rem_9rem_9rem_0rem]'
+							className='flex-[1] text-[13.75rem] border border-neutral h-72 flex rounded-[9rem_9rem_9rem_0rem]'
 							ref={containerElStoreRegister}>
 							<h2
 								className='m-auto leading-none'
@@ -161,7 +161,7 @@ export default function Hero({}) {
 						</header>
 
 						<div
-							className='flex-[0.3] text-6xl flex border border-[--color-font-neutral] h-72 rounded-[9rem_9rem_0rem_9rem]'
+							className='flex-[0.3] text-6xl flex border border-neutral h-72 rounded-[9rem_9rem_0rem_9rem]'
 							ref={containerElStoreRegister}>
 							<span
 								data-font-family='boxing'
@@ -182,7 +182,7 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_9rem] h-[60rem] flex flex-[1]'
+							className='border border-neutral rounded-[0rem_0rem_0rem_9rem] h-[60rem] flex flex-[1]'
 							ref={containerElStoreRegister}>
 							ball
 						</div>
@@ -199,7 +199,7 @@ export default function Hero({}) {
 								/*                                btm language                                */
 								/* -------------------------------------------------------------------------- */}
 								<div
-									className='border border-[--color-font-neutral] h-72 flex-1 flex flex-col'
+									className='border border-neutral h-72 flex-1 flex flex-col'
 									ref={containerElStoreRegister}>
 									<div className='m-auto text-center'>
 										<h3
@@ -231,7 +231,7 @@ export default function Hero({}) {
 								/*                                btm Backend                                */
 								/* -------------------------------------------------------------------------- */}
 								<div
-									className='border border-[--color-font-neutral] h-72 flex flex-1 flex-col'
+									className='border border-neutral h-72 flex flex-1 flex-col'
 									ref={containerElStoreRegister}>
 									<div className='m-auto text-center'>
 										<h3
@@ -274,7 +274,7 @@ export default function Hero({}) {
 								/* -------------------------------------------------------------------------- */}
 
 								<div
-									className='border border-[--color-font-neutral] h-72 flex flex-1 flex-col'
+									className='border border-neutral h-72 flex flex-1 flex-col'
 									ref={containerElStoreRegister}>
 									<div className='m-auto text-center'>
 										<h3
@@ -312,7 +312,7 @@ export default function Hero({}) {
 								/*                                btm frontend                                */
 								/* -------------------------------------------------------------------------- */}
 								<div
-									className='border border-[--color-font-neutral] h-[39rem] flex flex-1 flex-col'
+									className='border border-neutral h-[39rem] flex flex-1 flex-col'
 									ref={containerElStoreRegister}>
 									<div className='m-auto text-center'>
 										<h3
@@ -390,7 +390,7 @@ export default function Hero({}) {
 								/*                                btm Design                                   */
 								/* -------------------------------------------------------------------------- */}
 								<div
-									className='border border-[--color-font-neutral] rounded-[0rem_0rem_9rem_0rem] h-72 flex flex-col'
+									className='border border-neutral rounded-[0rem_0rem_9rem_0rem] h-72 flex flex-col'
 									ref={containerElStoreRegister}>
 									<div className='m-auto text-center'>
 										<h3
@@ -431,7 +431,7 @@ export default function Hero({}) {
 						/*                                    upper 1st                                */
 						/* -------------------------------------------------------------------------- */}
 						<header
-							className='flex-[1] text-[13.75rem] border border-[--color-font-neutral] h-72 flex rounded-[9rem_9rem_0rem_0rem]'
+							className='flex-[1] text-[13.75rem] border border-neutral h-72 flex rounded-[9rem_9rem_0rem_0rem]'
 							ref={containerElStoreRegister}>
 							<h2
 								className='m-auto leading-none'
@@ -448,7 +448,7 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='flex-[0.3] text-6xl flex border border-[--color-font-neutral] h-72 rounded-[0rem_9rem_9rem_9rem]'
+							className='flex-[0.3] text-6xl flex border border-neutral h-72 rounded-[0rem_9rem_9rem_9rem]'
 							ref={containerElStoreRegister}>
 							<span
 								className='m-auto'
@@ -458,7 +458,7 @@ export default function Hero({}) {
 							</span>
 						</div>
 						<div
-							className='flex-[1] text-7xl border border-[--color-font-neutral] h-72 flex'
+							className='flex-[1] text-7xl border border-neutral h-72 flex'
 							ref={containerElStoreRegister}>
 							<h3
 								className='m-auto leading-none'
@@ -475,7 +475,7 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_9rem] h-[60rem] flex flex-[0.3]'
+							className='border border-neutral rounded-[0rem_0rem_0rem_9rem] h-[60rem] flex flex-[0.3]'
 							ref={containerElStoreRegister}>
 							ball
 						</div>
@@ -489,7 +489,7 @@ export default function Hero({}) {
 							/*                                btm right 1st row - title                    */
 							/* -------------------------------------------------------------------------- */}
 							<div
-								className='border border-[--color-font-neutral] h-72 flex-1 flex flex-col'
+								className='border border-neutral h-72 flex-1 flex flex-col'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center'>
 									<ul className='font-satoshi text-3xl leading-[1.5]'>
@@ -524,7 +524,7 @@ export default function Hero({}) {
 							/*                                btm 2nd row - listed des                   */
 							/* -------------------------------------------------------------------------- */}
 							<div
-								className='border border-[--color-font-neutral] h-72 flex-1 flex flex-col'
+								className='border border-neutral h-72 flex-1 flex flex-col'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center px-6'>
 									<p
@@ -536,7 +536,7 @@ export default function Hero({}) {
 								</div>
 							</div>
 							<div
-								className='border border-[--color-font-neutral] h-72 flex-1 flex flex-col'
+								className='border border-neutral h-72 flex-1 flex flex-col'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center px-6 leading-[1.5]'>
 									<p
@@ -548,7 +548,7 @@ export default function Hero({}) {
 								</div>
 							</div>
 							<div
-								className='border border-[--color-font-neutral] h-72 flex-1 flex flex-col'
+								className='border border-neutral h-72 flex-1 flex flex-col'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center px-6 leading-[1.5]'>
 									<p
@@ -566,7 +566,7 @@ export default function Hero({}) {
 							/*                                btm 3nd row - listed des                   */
 							/* -------------------------------------------------------------------------- */}
 							<div
-								className='border border-[--color-font-neutral] h-72 flex-1 flex flex-col'
+								className='border border-neutral h-72 flex-1 flex flex-col'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center px-6 leading-[1.5]'>
 									<p
@@ -578,7 +578,7 @@ export default function Hero({}) {
 								</div>
 							</div>
 							<div
-								className='border border-[--color-font-neutral] h-72 flex-1 flex flex-col'
+								className='border border-neutral h-72 flex-1 flex flex-col'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center px-6 leading-[1.5]'>
 									<p
@@ -590,7 +590,7 @@ export default function Hero({}) {
 								</div>
 							</div>
 							<div
-								className='border border-[--color-font-neutral] h-72 flex-1 flex flex-col rounded-[0rem_0rem_9rem_0rem]'
+								className='border border-neutral h-72 flex-1 flex flex-col rounded-[0rem_0rem_9rem_0rem]'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center px-6'>{`square`}</div>
 							</div>
@@ -605,7 +605,7 @@ export default function Hero({}) {
 						/*                                    upper                                   */
 						/* -------------------------------------------------------------------------- */}
 						<header
-							className='flex-[1] text-[13.75rem] border border-[--color-font-neutral] h-72 flex rounded-[9rem_9rem_9rem_9rem]'
+							className='flex-[1] text-[13.75rem] border border-neutral h-72 flex rounded-[9rem_9rem_9rem_9rem]'
 							ref={containerElStoreRegister}>
 							<h2
 								className='m-auto leading-none'
@@ -616,7 +616,7 @@ export default function Hero({}) {
 						</header>
 
 						<div
-							className='flex-[0.3] text-6xl flex border border-[--color-font-neutral] h-72 rounded-[9rem_9rem_9rem_9rem]'
+							className='flex-[0.3] text-6xl flex border border-neutral h-72 rounded-[9rem_9rem_9rem_9rem]'
 							ref={containerElStoreRegister}>
 							<span
 								data-font-family='boxing'
@@ -637,7 +637,7 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
+							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
 							ref={containerElStoreRegister}
 							data-parallax='home.webp'>
 							<h2
@@ -657,7 +657,7 @@ export default function Hero({}) {
 
 						<div className='flex flex-[1] flex-col gap-12'>
 							<div
-								className='border border-[--color-font-neutral] h-72 flex flex-col'
+								className='border border-neutral h-72 flex flex-col'
 								ref={containerElStoreRegister}>
 								<h3 className='m-auto text-center px-6'>
 									<span
@@ -670,7 +670,7 @@ export default function Hero({}) {
 							</div>
 
 							<div
-								className='border border-[--color-font-neutral] h-[39rem] flex flex-col'
+								className='border border-neutral h-[39rem] flex flex-col'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center'>
 									<h3
@@ -729,7 +729,7 @@ export default function Hero({}) {
 						<div
 							className='flex flex-[2] gap-12'
 							ref={containerElStoreRegister}>
-							<div className='border border-[--color-font-neutral] h-72 flex px-12 gap-12'>
+							<div className='border border-neutral h-72 flex px-12 gap-12'>
 								<h3 className='m-auto text-center'>
 									<span
 										className='text-4xl'
@@ -753,7 +753,7 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-[--color-font-neutral] h-72 flex flex-[1] items-center justify-center gap-12 text-4xl text-highlight'
+							className='border border-neutral h-72 flex flex-[1] items-center justify-center gap-12 text-4xl text-highlight'
 							ref={containerElStoreRegister}>
 							<a
 								ref={textElStoreRegister}
@@ -776,7 +776,7 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
+							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
 							ref={containerElStoreRegister}
 							data-parallax='previewShareYourMemories'>
 							<h2
@@ -796,7 +796,7 @@ export default function Hero({}) {
 
 						<div className='flex flex-[1] flex-col gap-12'>
 							<div
-								className='border border-[--color-font-neutral] h-72 flex flex-col'
+								className='border border-neutral h-72 flex flex-col'
 								ref={containerElStoreRegister}>
 								<h3 className='m-auto text-center px-6'>
 									<span
@@ -809,7 +809,7 @@ export default function Hero({}) {
 							</div>
 
 							<div
-								className='border border-[--color-font-neutral] h-[39rem] flex flex-col'
+								className='border border-neutral h-[39rem] flex flex-col'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center'>
 									<h3
@@ -898,7 +898,7 @@ export default function Hero({}) {
 						<div
 							className='flex flex-[2] gap-12'
 							ref={containerElStoreRegister}>
-							<div className='border border-[--color-font-neutral] h-72 flex px-12 gap-12'>
+							<div className='border border-neutral h-72 flex px-12 gap-12'>
 								<h3 className='m-auto text-center'>
 									<span
 										className='text-4xl'
@@ -922,7 +922,7 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-[--color-font-neutral] h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
+							className='border border-neutral h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
 							ref={containerElStoreRegister}>
 							<a
 								ref={textElStoreRegister}
@@ -943,7 +943,7 @@ export default function Hero({}) {
 						/*                                    1st row left                              */
 						/* -------------------------------------------------------------------------- */}
 						<div
-							className='border border-[--color-font-neutral] rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
+							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
 							ref={containerElStoreRegister}
 							data-parallax='previewLearnEnglishDictionary'>
 							<h2
@@ -963,7 +963,7 @@ export default function Hero({}) {
 
 						<div className='flex flex-[1] flex-col gap-12'>
 							<div
-								className='border border-[--color-font-neutral] h-72 flex flex-col'
+								className='border border-neutral h-72 flex flex-col'
 								ref={containerElStoreRegister}>
 								<h3 className='m-auto text-center px-6'>
 									<span
@@ -976,7 +976,7 @@ export default function Hero({}) {
 							</div>
 
 							<div
-								className='border border-[--color-font-neutral] h-[39rem] flex flex-col'
+								className='border border-neutral h-[39rem] flex flex-col'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center'>
 									<h3
@@ -1045,7 +1045,7 @@ export default function Hero({}) {
 						<div
 							className='flex flex-[2] gap-12'
 							ref={containerElStoreRegister}>
-							<div className='border border-[--color-font-neutral] h-72 flex px-12 gap-12'>
+							<div className='border border-neutral h-72 flex px-12 gap-12'>
 								<h3 className='m-auto text-center'>
 									<span
 										className='text-4xl'
@@ -1069,7 +1069,7 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-[--color-font-neutral] h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
+							className='border border-neutral h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
 							ref={containerElStoreRegister}>
 							<a
 								ref={textElStoreRegister}
@@ -1147,131 +1147,291 @@ export default function Hero({}) {
 /*                                    menu                                    */
 /* -------------------------------------------------------------------------- */
 
+function clamp(val, min, max) {
+	return Math.min(Math.max(val, min), max);
+}
+
+function mapRange(value, start1, stop1, start2, stop2) {
+	return clamp(start2 + ((value - start1) * (stop2 - start2)) / (stop1 - start1), 0, 100);
+}
+
 function Menu() {
 	const [isOpen, setIsOpen] = useState(false);
-	const [isHover, setIsHover] = useState(false);
+	const [isOverlayCloseHover, setIsOverlayCloseHover] = useState(false);
+	const overlayNavRef = useRef(null);
 
-	const btnRef = useRef(null);
-	const btnUnderlayRef = useRef(null);
-	const iconRef = useRef(null);
-	const textRef = useRef(null);
-	const navRef = useRef(null);
-	const cornerRef = useRef(null);
+	useGSAP(
+		() => {
+			const tl = gsap.timeline();
 
-	// useGSAP(() => {
-	// 	gsap.to(btnRef.current, {
-	// 		backgroundColor: isOpen ? 'var(--color-secondary)' : 'transparent',
-	// 		padding: isOpen ? '0.75rem 1rem 0.75rem 1rem' : '0.75rem 1rem 0.75rem 1rem',
-	// 		border: isOpen ? '1px solid var(--color-white)' : '1px solid var(--color-font-neutral)',
-	// 		color: isOpen ? 'var(--color-font-neutral)' : 'var(--color-font-neutral)',
-	// 		ease: 'linear',
-	// 		duration: 0.1,
-	// 	});
+			if (isOpen) {
+				gsap.to(overlayNavRef.current, { opacity: 1, pointerEvents: 'auto', duration: 0.2, ease: 'sine.in' });
+				tl.to('[data-action-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' })
+					.to('[data-home-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-about-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-skill-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-experience-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-project-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-contact-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%');
+			}
+			if (!isOpen) {
+				gsap.to(overlayNavRef.current, { opacity: 0, pointerEvents: 'none', duration: 0.2, ease: 'sine.in' });
+				tl.to('[data-action-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' })
+					.to('[data-home-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-about-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-skill-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-experience-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-project-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-contact-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%');
+			}
+		},
+		{ dependencies: [isOpen], scope: overlayNavRef },
+	);
 
-	// 	const tl = gsap.timeline();
+	useGSAP(
+		() => {
+			if (isOverlayCloseHover) {
+				gsap.to('[data-close-up-bar]', {
+					rotate: '225deg',
+					duration: 0.2,
+					ease: 'sine.in',
+				});
+				gsap.to('[data-close-btm-bar]', {
+					rotate: '135deg',
+					duration: 0.2,
+					ease: 'sine.in',
+				});
+			}
+			if (!isOverlayCloseHover) {
+				gsap.to('[data-close-up-bar]', {
+					rotate: '45deg',
+					duration: 0.2,
+					ease: 'sine.in',
+				});
+				gsap.to('[data-close-btm-bar]', {
+					rotate: '-45deg',
+					duration: 0.2,
+					ease: 'sine.in',
+				});
+			}
+		},
+		{ dependencies: [isOverlayCloseHover], scope: overlayNavRef },
+	);
 
-	// 	tl.to(btnUnderlayRef.current, {
-	// 		opacity: isOpen ? '1' : '0',
-	// 		width: isOpen ? '100%' : '0%',
-	// 		borderRadius: isOpen ? '1.5rem 1.5rem 0 0' : '0',
-	// 		padding: isOpen ? '0.5rem' : '0',
-	// 		ease: 'power1.in',
-	// 		duration: 0.15,
-	// 	}).to(
-	// 		navRef.current,
-	// 		{
-	// 			opacity: isOpen ? '1' : '0',
-	// 			width: isOpen ? '100%' : '0%',
-	// 			height: isOpen ? '100%' : '0%',
-	// 			borderRadius: isOpen ? '2rem 0 2rem 2rem' : '0',
-	// 			padding: isOpen ? '1rem 1.5rem 2.5rem 1.5rem' : '0',
-	// 			duration: 0.15,
-	// 			ease: 'power1.in',
-	// 		},
-	// 		'<',
-	// 	);
-
-	// 	gsap.to(cornerRef.current, {
-	// 		opacity: isOpen ? '1' : '0',
-	// 		right: isOpen ? '141' : '0',
-	// 		duration: isOpen ? 0.15 : 0.05,
-	// 		ease: 'power1.in',
-	// 	});
-
-	// 	gsap.fromTo(
-	// 		iconRef.current,
-	// 		{ opacity: 0, y: 10 },
-	// 		{ opacity: 1, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' },
-	// 	);
-
-	// 	gsap.fromTo(
-	// 		textRef.current,
-	// 		{ opacity: 0, y: 10 },
-	// 		{ opacity: 1, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' },
-	// 	);
-	// }, [isOpen]);
-
-	// useGSAP(() => {
-	// 	if (isHover) {
-	// 		gsap.fromTo(
-	// 			textRef.current,
-	// 			{ opacity: 0, x: 10 },
-	// 			{ opacity: 1, x: 0, duration: 1, ease: 'elastic.out(1, 0.5)' },
-	// 		);
-	// 		gsap.fromTo(
-	// 			iconRef.current,
-	// 			{ opacity: 0, x: 10 },
-	// 			{ opacity: 1, x: 0, duration: 1, ease: 'elastic.out(1, 0.5)' },
-	// 		);
-	// 	}
-	// }, [isHover]);
+	console.log('re render');
 
 	return (
-		<nav
-			className='flex py-2 pl-12 pr-2 rounded-full justify-between items-center top-6 sticky text-sm z-20 max-w-[60rem] m-auto leading-none font-boxing'
-			style={{
-				backdropFilter: `blur(1rem) saturate(250%) hue-rotate(9deg)`,
-				// backgroundColor: `#0000007a`,
-				// boxShadow: `0 3px 180px 15px #000000`,
-				textShadow: `0 0 .5rem green`,
-				border: `1px solid #ffffff17`,
-			}}>
+		<>
+			<nav
+				className='flex gap-6 py-2 pl-12 pr-2 rounded-full items-center top-6 fixed text-sm z-20 max-w-[60rem] m-auto leading-none font-boxing backdrop-blur-lg backdrop-saturate-[250%] backdrop-hue-rotate-[9deg] border border-[#ffffff15] left-1/2 -translate-x-1/2'
+				style={{ textShadow: `0 0 1px black` }}>
+				<a
+					href=''
+					className=''>{`layne chen`}</a>
+
+				<div className={`border-r border-neutral h-7`}></div>
+
+				<p className='flex-1 text-center'>{`portfolio#2024`}</p>
+
+				<div className={`border-r border-neutral h-7`}></div>
+
+				<div className='flex gap-4'>
+					<a href=''>{`[ github ]`}</a>
+					<a href=''>{`[ linkedin ]`}</a>
+					<a href=''>{`[ resume ]`}</a>
+					<a href=''>{`[ mail ]`}</a>
+				</div>
+
+				<button
+					className='rounded-full aspect-square border border-neutral flex flex-col gap-0.5 justify-center p-2'
+					onClick={() => setIsOpen(!isOpen)}>
+					<div className='bg-neutral w-5 h-0.5'></div>
+					<div className='bg-neutral w-5 h-0.5'></div>
+					<div className='bg-neutral w-5 h-0.5'></div>
+				</button>
+			</nav>
+
+			<nav
+				className={`fixed z-30 top-0 right-0 flex flex-col h-lvh w-full items-end font-boxing text-neutralContrast opacity-0`}
+				ref={overlayNavRef}>
+				<div
+					className='bg-primary text-4xl flex-[1] w-[max-content] flex px-12 py-4 items-center gap-20'
+					data-action-row>
+					<button
+						className='px-6 rounded-full border border-neutralContrast aspect-square h-[min-content] flex flex-col justify-center items-center origin-center'
+						onClick={() => setIsOpen(!isOpen)}
+						onPointerEnter={() => setIsOverlayCloseHover(true)}
+						onPointerLeave={() => setIsOverlayCloseHover(false)}>
+						<div
+							className={`w-[3rem] h-[2px] bg-neutralContrast origin-center translate-y-1/2`}
+							data-close-up-bar></div>
+						<div
+							className={`w-[3rem] h-[2px] bg-neutralContrast origin-center -translate-y-1/2`}
+							data-close-btm-bar></div>
+					</button>
+					<div className='flex gap-8 items-center'>
+						<OverlayNavLinkButton label={`github`} />
+						<OverlayNavLinkButton label={`linkedin`} />
+						<OverlayNavLinkButton label={`resume`} />
+						<OverlayNavLinkButton label={`mail`} />
+					</div>
+				</div>
+				<div
+					className='bg-primary flex-[1] w-[55rem] flex items-center justify-end px-12 py-4'
+					data-home-row>
+					<a href=''>
+						<span className='text-[6rem] leading-none mr-8'>{`home`}</span>
+						<span className='text-4xl'>{`[00.]`}</span>
+					</a>
+				</div>
+				<div
+					className='bg-primary flex-[1] w-[47.5rem] flex items-center justify-end px-12 py-4'
+					data-about-row>
+					<a href=''>
+						<span className='text-[6.5rem] leading-none mr-8'>{`about`}</span>
+						<span className='text-4xl'>{`[01.]`}</span>
+					</a>
+				</div>
+				<div
+					className='bg-primary flex-[1] w-[42rem] flex items-center justify-end px-12 py-4'
+					data-skill-row>
+					<a href=''>
+						<span className='text-[6rem] leading-none mr-8'>{`skill`}</span>
+						<span className='text-4xl'>{`[02.]`}</span>
+					</a>
+				</div>
+				<div
+					className='bg-primary flex-[1] w-[75rem] flex items-center justify-end px-12 py-4'
+					data-experience-row>
+					<a href=''>
+						<span className='text-[6rem] leading-none mr-8'>{`experience`}</span>
+						<span className='text-4xl'>{`[03.]`}</span>
+					</a>
+				</div>
+				<div
+					className='bg-primary flex-[1] w-[85rem] flex items-center justify-end px-12 py-4'
+					data-project-row>
+					<a href=''>
+						<span className='text-[6rem] leading-none mr-8'>{`project`}</span>
+						<span className='text-4xl'>{`[04.]`}</span>
+					</a>
+				</div>
+				<div
+					className='bg-primary flex-[1] w-[95rem] flex items-center px-12 py-4 justify-between gap-72'
+					data-contact-row>
+					<div className='flex gap-8 flex-wrap'>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+					</div>
+					<a href=''>
+						<span className='text-[6rem] leading-none mr-8'>{`contact`}</span>
+						<span className='text-4xl'>{`[99.]`}</span>
+					</a>
+				</div>
+			</nav>
+		</>
+	);
+}
+
+function OverlayNavLinkButton({ label }) {
+	const [isHover, setIsHover] = useState(false);
+	const pointerRef = useRef({ xPercent: 0, yPercent: 0 });
+	const buttonRef = useRef(null);
+	const labelRef = useRef(null);
+	const flairRef = useRef(null);
+
+	function handlePointerEnter(e) {
+		const { clientX, clientY } = e;
+		const { left, top, width, height } = buttonRef.current.getBoundingClientRect();
+		const originX = clientX - left;
+		const originY = clientY - top;
+		const mapOriginX = mapRange(originX, 0, width, 0, 100);
+		const mapOriginY = mapRange(originY, 0, height, 0, 100);
+
+		pointerRef.current = {
+			xPercent: mapOriginX,
+			yPercent: mapOriginY,
+		};
+
+		setIsHover(true);
+	}
+
+	useGSAP(
+		() => {
+			const tl = gsap.timeline();
+
+			const ease = 'sine.in';
+
+			const { xPercent, yPercent } = pointerRef.current;
+
+			const configPositioningCircle = {
+				xPercent,
+				yPercent,
+				duration: 0,
+			};
+			const configScale = {
+				scale: isHover ? 1 : 0,
+				duration: 0.25,
+				ease,
+			};
+
+			const configDisplace = {
+				y: isHover ? '0.1rem' : 0,
+				boxShadow: isHover
+					? `0px 0.275rem 0px 0px var(--color-abysmal)`
+					: `0px 0.375rem 0px 0px var(--color-abysmal)`,
+				duration: 0.25,
+				ease,
+			};
+
+			if (isHover) {
+				tl.to(flairRef.current, configPositioningCircle)
+					.to(flairRef.current, configScale)
+					.to(buttonRef.current, configDisplace, '<');
+			} else {
+				tl.to(flairRef.current, configScale).to(buttonRef.current, configDisplace, '<');
+			}
+		},
+		{ dependencies: [isHover], scope: buttonRef },
+	);
+
+	return (
+		<>
 			<a
-				href=''
-				className=''>{`layne chen`}</a>
-
-			<div
-				style={{
-					height: `2rem`,
-					borderRight: `1px solid white`,
-				}}></div>
-
-			<p className=''>{`portfolio#2024`}</p>
-
-			<div
-				style={{
-					height: `2rem`,
-					borderRight: `1px solid white`,
-				}}></div>
-
-			<div className='flex gap-4'>
-				<a href=''>{`[ github ]`}</a>
-				<a href=''>{`[ linkedin ]`}</a>
-				<a href=''>{`[ resume ]`}</a>
-				<a href=''>{`[ mail ]`}</a>
-			</div>
-
-			<div
-				style={{
-					height: `2rem`,
-					borderRight: `1px solid white`,
-				}}></div>
-
-			<button className='rounded-full aspect-square border border-[--color-font-neutral] flex flex-col gap-0.5 justify-center p-3'>
-				<div className='bar1'></div>
-				<div className='bar2'></div>
-				<div className='bar3'></div>
-			</button>
-		</nav>
+				ref={buttonRef}
+				onPointerEnter={e => handlePointerEnter(e)}
+				onPointerLeave={() => setIsHover(false)}
+				className='px-9 py-3.5 text-2xl rounded-full border border-neutralContrast bg-neutral h-[min-content] relative overflow-hidden cursor-pointer'>
+				<span
+					ref={flairRef}
+					className={`absolute top-0 left-0 bottom-0 right-0 pointer-events-none scale-0 origin-top-left 
+					before:content-[''] before:absolute before:top-0 before:bottom-0 before:right-0 before:left-0 before:w-[200%] before:aspect-square 
+					before:bg-[#e8fe25] before:border-2 before:border-neutralContrast before:rounded-full 
+					before:-translate-x-1/2 before:-translate-y-1/2 before:pointer-events-none`}></span>
+				<span
+					ref={labelRef}
+					className='relative block'>
+					{label}
+				</span>
+			</a>
+		</>
 	);
 }

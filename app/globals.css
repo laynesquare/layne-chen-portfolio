@@ -112,12 +112,28 @@ body::-webkit-scrollbar,
 		background-color: var(--color-secondary);
 	}
 
-	.bar1,
-	.bar2,
-	.bar3 {
-		width: 1.25rem;
-		height: 2px;
-		background-color: white;
-		transition: 0.4s;
+	/* [data-github-flair] {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		pointer-events: none;
+		transform: scale(0);
+		transform-origin: 0 0;
 	}
+
+	[data-github-flair]::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 200%;
+		aspect-ratio: 1/1;
+		background-color: #e8fe25;
+		border: 2px solid var(--color-border-neutral-contrast);
+		border-radius: 50%;
+		transform: translate(-50%, -50%);
+		pointer-events: none;
+	} */
 }
