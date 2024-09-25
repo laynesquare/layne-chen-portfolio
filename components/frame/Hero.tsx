@@ -11,6 +11,8 @@ import frameTopLeftIdentity from '@/public/frame/frame-top-left-identity.png';
 import { useDomStore } from '@/store';
 import { useThree } from '@react-three/fiber';
 
+import OverlayNavArrow from '@/public/frame/overlay-nav-arrow.svg';
+
 gsap.registerPlugin(useGSAP);
 
 export default function Hero({}) {
@@ -1235,11 +1237,11 @@ function Menu() {
 
 				<div className={`border-r border-neutral h-7`}></div>
 
-				<div className='flex gap-4'>
-					<a href=''>{`[ github ]`}</a>
-					<a href=''>{`[ linkedin ]`}</a>
-					<a href=''>{`[ resume ]`}</a>
-					<a href=''>{`[ mail ]`}</a>
+				<div className='flex gap-4 self-stretch'>
+					<NavLinkButton label={`[ github ]`} />
+					<NavLinkButton label={`[ linkedin ]`} />
+					<NavLinkButton label={`[ resume ]`} />
+					<NavLinkButton label={`[ mail ]`} />
 				</div>
 
 				<button
@@ -1252,10 +1254,10 @@ function Menu() {
 			</nav>
 
 			<nav
-				className={`fixed z-30 top-0 right-0 flex flex-col h-lvh w-full items-end font-boxing text-neutralContrast opacity-0`}
+				className={`fixed z-30 top-0 right-0 h-lvh w-full font-boxing text-neutralContrast opacity-0 flex flex-col backdrop-blur-md backdrop-saturate-200 backdrop-hue-rotate-15`}
 				ref={overlayNavRef}>
 				<div
-					className='bg-primary text-4xl flex-[1] w-[max-content] flex px-12 py-4 items-center gap-20'
+					className='bg-primary border border-primary text-4xl flex-[1] w-[max-content] flex px-12 py-4 items-center gap-20'
 					data-action-row>
 					<button
 						className='px-6 rounded-full border border-neutralContrast aspect-square h-[min-content] flex flex-col justify-center items-center origin-center'
@@ -1277,49 +1279,54 @@ function Menu() {
 					</div>
 				</div>
 				<div
-					className='bg-primary flex-[1] w-[55rem] flex items-center justify-end px-12 py-4'
+					className='bg-primary border border-primary flex-[1] w-[55rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
 					data-home-row>
-					<a href=''>
-						<span className='text-[6rem] leading-none mr-8'>{`home`}</span>
-						<span className='text-4xl'>{`[00.]`}</span>
-					</a>
+					<OverlayNavLinkChapter
+						label={`home`}
+						chapter={`[00.]`}
+						container={`data-home-row`}
+					/>
 				</div>
 				<div
-					className='bg-primary flex-[1] w-[47.5rem] flex items-center justify-end px-12 py-4'
+					className='bg-primary border border-primary flex-[1] w-[47.5rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
 					data-about-row>
-					<a href=''>
-						<span className='text-[6.5rem] leading-none mr-8'>{`about`}</span>
-						<span className='text-4xl'>{`[01.]`}</span>
-					</a>
+					<OverlayNavLinkChapter
+						label={`about`}
+						chapter={`[01.]`}
+						container={`data-about-row`}
+					/>
 				</div>
 				<div
-					className='bg-primary flex-[1] w-[42rem] flex items-center justify-end px-12 py-4'
+					className='bg-primary border border-primary flex-[1] w-[42rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
 					data-skill-row>
-					<a href=''>
-						<span className='text-[6rem] leading-none mr-8'>{`skill`}</span>
-						<span className='text-4xl'>{`[02.]`}</span>
-					</a>
+					<OverlayNavLinkChapter
+						label={`skill`}
+						chapter={`[02.]`}
+						container={`data-skill-row`}
+					/>
 				</div>
 				<div
-					className='bg-primary flex-[1] w-[75rem] flex items-center justify-end px-12 py-4'
+					className='bg-primary border border-primary flex-[1] w-[75rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
 					data-experience-row>
-					<a href=''>
-						<span className='text-[6rem] leading-none mr-8'>{`experience`}</span>
-						<span className='text-4xl'>{`[03.]`}</span>
-					</a>
+					<OverlayNavLinkChapter
+						label={`experience`}
+						chapter={`[03.]`}
+						container={`data-experience-row`}
+					/>
 				</div>
 				<div
-					className='bg-primary flex-[1] w-[85rem] flex items-center justify-end px-12 py-4'
+					className='bg-primary border border-primary flex-[1] w-[85rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
 					data-project-row>
-					<a href=''>
-						<span className='text-[6rem] leading-none mr-8'>{`project`}</span>
-						<span className='text-4xl'>{`[04.]`}</span>
-					</a>
+					<OverlayNavLinkChapter
+						label={`project`}
+						chapter={`[04.]`}
+						container={`data-project-row`}
+					/>
 				</div>
 				<div
-					className='bg-primary flex-[1] w-[95rem] flex items-center px-12 py-4 justify-between gap-72'
+					className='bg-primary border border-primary flex-[1] w-[95rem] flex items-center px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
 					data-contact-row>
-					<div className='flex gap-8 flex-wrap'>
+					<div className='flex gap-8 flex-wrap max-w-[34rem] mr-auto'>
 						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
 						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
 						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
@@ -1341,10 +1348,11 @@ function Menu() {
 						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
 						<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
 					</div>
-					<a href=''>
-						<span className='text-[6rem] leading-none mr-8'>{`contact`}</span>
-						<span className='text-4xl'>{`[99.]`}</span>
-					</a>
+					<OverlayNavLinkChapter
+						label={`contact`}
+						chapter={`[99.]`}
+						container={`data-contact-row`}
+					/>
 				</div>
 			</nav>
 		</>
@@ -1433,5 +1441,173 @@ function OverlayNavLinkButton({ label }) {
 				</span>
 			</a>
 		</>
+	);
+}
+
+function OverlayNavLinkChapter({ chapter, label, container }) {
+	const [isHover, setIsHover] = useState(false);
+	const chapterRef = useRef(null);
+
+	useGSAP(
+		() => {
+			if (isHover) {
+				gsap.to('[data-chapter-label]', {
+					color: `var(--color-font-neutral)`,
+					yPercent: -100,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+				gsap.to('[data-chapter-label-clone]', {
+					color: `var(--color-font-neutral)`,
+					yPercent: 0,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+				gsap.to('[data-chapter-sequence]', {
+					color: `var(--color-font-neutral)`,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+				gsap.to('[data-chapter-arrow]', {
+					fill: `var(--color-font-neutral)`,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+				gsap.to('[data-chapter-arrow-container]', {
+					opacity: 1,
+					marginRight: '3rem',
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+			} else {
+				gsap.to('[data-chapter-label]', {
+					color: `var(--color-font-neutral-contrast)`,
+					yPercent: 0,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+				gsap.to('[data-chapter-label-clone]', {
+					color: `var(--color-font-neutral-contrast)`,
+					yPercent: 100,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+				gsap.to('[data-chapter-sequence]', {
+					color: `var(--color-font-neutral-contrast)`,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+				gsap.to('[data-chapter-arrow]', {
+					fill: `var(--color-font-neutral-contrast)`,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+				gsap.to('[data-chapter-arrow-container]', {
+					marginRight: 'auto',
+					opacity: 0,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+			}
+		},
+		{ dependencies: [isHover], scope: `[${container}]` },
+	);
+
+	return (
+		<>
+			<span
+				className='aspect-square w-[4rem]'
+				data-chapter-arrow-container>
+				<svg
+					className={`w-full h-full`}
+					width='75'
+					height='75'
+					viewBox='0 0 75 75'
+					fill='none'
+					xmlns='http://www.w3.org/2000/svg'>
+					<path
+						data-chapter-arrow
+						d='M5.76923 0L5.76923 11.5385L55.3269 11.5385L9.0049e-07 66.8654L8.13461 75L63.4615 19.6731L63.4615 69.2308H75L75 0L5.76923 0Z'
+						fill='var(--color-font-neutral-contrast)'
+					/>
+				</svg>
+			</span>
+
+			<a
+				href=''
+				className='relative flex items-baseline self-stretch overflow-hidden'
+				onPointerEnter={() => setIsHover(true)}
+				onPointerLeave={() => setIsHover(false)}
+				ref={chapterRef}>
+				<span
+					data-chapter-label
+					className='text-[6rem] leading-none mr-8 h-full flex items-center'>
+					{label}
+				</span>
+				<span
+					data-chapter-sequence
+					className='text-4xl leading-none h-full'>
+					{chapter}
+				</span>
+				<span
+					data-chapter-label-clone
+					className='text-[6rem] leading-none absolute top-0 left-0 w-full h-full flex items-center pointer-events-none underline'>
+					{label}
+				</span>
+			</a>
+		</>
+	);
+}
+
+function NavLinkButton({ label }) {
+	const ctnRef = useRef(null);
+	const [isHover, setIsHover] = useState(false);
+
+	useGSAP(
+		() => {
+			if (isHover) {
+				gsap.to('[data-nav-action]', {
+					yPercent: -100,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+				gsap.to('[data-nav-action-clone]', {
+					yPercent: 0,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+			} else {
+				gsap.to('[data-nav-action]', {
+					yPercent: 0,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+				gsap.to('[data-nav-action-clone]', {
+					yPercent: 100,
+					duration: 0.5,
+					ease: 'bounce.out',
+				});
+			}
+		},
+		{ dependencies: [isHover], scope: ctnRef },
+	);
+	return (
+		<a
+			href=''
+			className='relative leading-none overflow-hidden'
+			onPointerEnter={() => setIsHover(true)}
+			onPointerLeave={() => setIsHover(false)}
+			ref={ctnRef}>
+			<span
+				data-nav-action
+				className={`h-full flex items-center`}>
+				{label}
+			</span>
+			<span
+				data-nav-action-clone
+				className='absolute top-0 left-0 h-full flex items-center'>
+				{label}
+			</span>
+		</a>
 	);
 }
