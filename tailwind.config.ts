@@ -15,7 +15,13 @@ const config: Config = {
 			highlight: 'var(--color-font-highlight)',
 		},
 		backgroundColor: {
-			primary: 'var(--color-primary-green)',
+			primary: 'var(--color-bg-primary)',
+			neutral: 'var(--color-bg-neutral)',
+			neutralContrast: 'var(--color-bg-neutral-contrast)',
+		},
+		borderColor: {
+			neutral: 'var(--color-border-neutral)',
+			neutralContrast: 'var(--color-border-neutral-contrast)',
 		},
 		screens: {
 			sm: '375px',
