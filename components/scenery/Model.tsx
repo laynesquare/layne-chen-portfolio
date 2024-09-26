@@ -215,15 +215,6 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 					uniforms={uniformsRef.current}
 					transparent
 				/>
-				<CustomShaderMaterial
-					ref={depthMaterialRef}
-					baseMaterial={MeshDepthMaterial}
-					vertexShader={vertexShader}
-					uniforms={uniformsRef.current}
-					silent
-					depthPacking={RGBADepthPacking}
-					attach='customDepthMaterial'
-				/>
 			</mesh>
 
 			<mesh
