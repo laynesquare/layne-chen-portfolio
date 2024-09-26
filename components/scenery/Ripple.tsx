@@ -52,14 +52,13 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	const memory = navigator.deviceMemory || 4;
 	const resolutionScale = devicePixelRatio > 1.5 || memory <= 4 ? 0.5 : 0.75;
 
-	// const portBuffer = useFBO(size.width, size.height, {
-	// 	minFilter: LinearFilter,
-	// 	magFilter: LinearFilter,
-	// 	format: RGBAFormat,
-	// });
-	const portBuffer = useFBO();
+	const portBuffer = useFBO(size.width * 1.1, size.height * 1.1, {
+		minFilter: LinearFilter,
+		magFilter: LinearFilter,
+		format: RGBAFormat,
+	});
 
-	const rippleBuffer = useFBO(size.width * 0.1, size.height * 0.1, {
+	const rippleBuffer = useFBO(64, 64, {
 		minFilter: LinearFilter,
 		magFilter: LinearFilter,
 		format: RGBAFormat,
@@ -71,6 +70,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 
 	const velocityRef = useRef(0);
 	const preMousePos = useRef({ x: 0, y: 0 });
+	const rippleVec3 = useRef(new Vector3());
 	const rippleTexture = useLoader(TextureLoader, '/scenery/textures/ripple.png');
 	const rippleRefs = useRef([]);
 	const rippleCurrIdx = useRef(-1);
@@ -85,9 +85,6 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 				uTexture: { value: null },
 				uTextureSize: { value: new Vector2(100, 100) },
 				uQuadSize: { value: new Vector2(100, 100) },
-				uBorderRadius: { value: 0 },
-				uMouseEnter: { value: 0 },
-				uMouseOverPos: { value: new Vector2(0.5, 0.5) },
 				uDisplacement: { value: null },
 			},
 			vertexShader,
@@ -101,7 +98,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	});
 
 	const ripples = useMemo(() => {
-		const max = 25; // Number of planes
+		const max = 25;
 		const meshes = [];
 
 		for (let i = 0; i < max; i++) {
@@ -131,11 +128,11 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 
 	const handleMouseMove = useCallback(
 		(event: MouseEvent) => {
-			const vector = new Vector3();
+			const vector = rippleVec3.current;
 			vector.set(pointer.x, pointer.y, 0.5);
 			vector.unproject(camera);
 			vector.sub(camera.position).normalize();
-			const distance = (1 - camera.position.z) / vector.z;
+			const distance = (2 - camera.position.z) / vector.z;
 
 			const offsetX = Math.abs(preMousePos.current.x - event.clientX);
 			const offsetY = Math.abs(preMousePos.current.y - event.clientY);
