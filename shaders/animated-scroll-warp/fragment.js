@@ -121,14 +121,14 @@ void main() {
   float noise = snoise(gl_FragCoord.xy);
 
   // modify texture coordinates
-  texCoords.x += mix(0.0, circle * noise * 0.001, uMouseEnter + uScrollVelocity * 0.01);
-  texCoords.y += mix(0.0, circle * noise * 0.001, uMouseEnter + uScrollVelocity * 0.01);
+  texCoords.x += mix(0.0, noise * 0.01, uScrollVelocity * 0.01);
+  texCoords.y += mix(0.0, noise * 0.01, uScrollVelocity * 0.01);
 
   // --- DISPLACEMENT SECTION ---
   vec4 displacement = texture(uDisplacement, texCoords); // Sample displacement texture
   float theta = displacement.r * 2.0 * PI; // Rotation based on displacement
   vec2 dir = vec2(sin(theta), cos(theta)); // Direction
-  texCoords += dir * displacement.r * 0.035; // Apply displacement to texture coordinates
+  texCoords += dir * displacement.r * 0.05; // Apply displacement to texture coordinates
   // --- END OF DISPLACEMENT SECTION ---
 
   // Apply chromatic aberration where displacement occurs
