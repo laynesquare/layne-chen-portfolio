@@ -36,6 +36,7 @@ import Banner from '@/components/scenery/Banner';
 import Model from '@/components/scenery/Model';
 
 export default function Port() {
+	const lightDirRef = useRef(new Vector3(0, 0, 0));
 	return (
 		<>
 			{/* <OrbitControls /> */}
@@ -46,7 +47,7 @@ export default function Port() {
 					pages={}> */}
 				<Ripple>
 					<Banner />
-					{/* <Model /> */}
+					<Model />
 					{/* <Camera /> */}
 					<Environment preset='warehouse'>
 						<Lightformer
@@ -54,7 +55,7 @@ export default function Port() {
 							intensity={5}
 							position={[10, 5, 0]}
 							scale={[10, 50, 1]}
-							onUpdate={self => self.lookAt(0, 0, 0)}
+							target={lightDirRef.current}
 							form='rect'
 						/>
 					</Environment>
