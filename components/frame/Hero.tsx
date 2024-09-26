@@ -3,15 +3,12 @@ import Image from 'next/image';
 import { Html, useProgress } from '@react-three/drei';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { VscMenu } from 'react-icons/vsc';
-import { RiCloseLargeFill } from 'react-icons/ri';
 
-import layneChen from '@/public/frame/layne_chen_clash.svg';
-import frameTopLeftIdentity from '@/public/frame/frame-top-left-identity.png';
 import { useDomStore } from '@/store';
 import { useThree } from '@react-three/fiber';
 
-import OverlayNavArrow from '@/public/frame/overlay-nav-arrow.svg';
+import previewShareYourMemories from '@/public/frame/project-preview-share-your-memories.jpg';
+import previewLearnEnglishDictionary from '@/public/frame/project-preview-learn-english-dictionary.jpg';
 
 gsap.registerPlugin(useGSAP);
 
@@ -57,7 +54,7 @@ export default function Hero({}) {
 			<Menu />
 
 			<article
-				className={`w-full top-0 left-0 font-boxing z-10 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+				className={`w-full font-boxing z-10 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
 				ref={torsoElStoreRegister}
 				onClick={() => setIsVisible(pre => !pre)}>
 				{/* -------------------------------------------------------------------------- */
@@ -638,20 +635,16 @@ export default function Hero({}) {
 						/*                                    1st row left                              */
 						/* -------------------------------------------------------------------------- */}
 
-						<div
-							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
+						<figure
+							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3]'
 							ref={containerElStoreRegister}
-							data-parallax='home.webp'>
-							<h2
-								data-font-family='satoshi'
-								className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'
-								ref={textElStoreRegister}>
-								<Image
-									alt=''
-									className='frame-left-item-icon'
-								/>
-							</h2>
-						</div>
+							data-parallax='previewShareYourMemories'>
+							<Image
+								src={previewShareYourMemories}
+								alt=''
+								className='frame-left-item-icon h-full w-full object-cover'
+							/>
+						</figure>
 
 						{/* -------------------------------------------------------------------------- */
 						/*                                    1st row right                            */
@@ -777,20 +770,16 @@ export default function Hero({}) {
 						/*                                    1st row left                              */
 						/* -------------------------------------------------------------------------- */}
 
-						<div
-							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
+						<figure
+							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3]'
 							ref={containerElStoreRegister}
 							data-parallax='previewShareYourMemories'>
-							<h2
-								data-font-family='satoshi'
-								className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'
-								ref={textElStoreRegister}>
-								<Image
-									alt=''
-									className='frame-left-item-icon'
-								/>
-							</h2>
-						</div>
+							<Image
+								src={previewShareYourMemories}
+								alt=''
+								className='frame-left-item-icon h-full w-full object-cover'
+							/>
+						</figure>
 
 						{/* -------------------------------------------------------------------------- */
 						/*                                    1st row right                            */
@@ -944,20 +933,16 @@ export default function Hero({}) {
 						{/* -------------------------------------------------------------------------- */
 						/*                                    1st row left                              */
 						/* -------------------------------------------------------------------------- */}
-						<div
-							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3] px-20'
+						<figure
+							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3]'
 							ref={containerElStoreRegister}
 							data-parallax='previewLearnEnglishDictionary'>
-							<h2
-								data-font-family='satoshi'
-								className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'
-								ref={textElStoreRegister}>
-								<Image
-									alt=''
-									className='frame-left-item-icon'
-								/>
-							</h2>
-						</div>
+							<Image
+								src={previewLearnEnglishDictionary}
+								alt=''
+								className='frame-left-item-icon h-full w-full object-cover'
+							/>
+						</figure>
 
 						{/* -------------------------------------------------------------------------- */
 						/*                                    1st row right                             */
@@ -1149,14 +1134,6 @@ export default function Hero({}) {
 /*                                    menu                                    */
 /* -------------------------------------------------------------------------- */
 
-function clamp(val, min, max) {
-	return Math.min(Math.max(val, min), max);
-}
-
-function mapRange(value, start1, stop1, start2, stop2) {
-	return clamp(start2 + ((value - start1) * (stop2 - start2)) / (stop1 - start1), 0, 100);
-}
-
 function Menu() {
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -1203,23 +1180,23 @@ function OverlayNav({ isOpen, setIsOpen }) {
 
 			if (isOpen) {
 				gsap.to(overlayNavRef.current, { opacity: 1, pointerEvents: 'auto', duration: 0.2, ease: 'sine.in' });
-				tl.to('[data-action-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' })
-					.to('[data-home-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
-					.to('[data-about-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
-					.to('[data-skill-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
-					.to('[data-experience-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
-					.to('[data-project-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
-					.to('[data-contact-row]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%');
+				tl.to('[data-row="action"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' })
+					.to('[data-row="home"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-row="about"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-row="skill"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-row="experience"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-row="project"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-row="contact"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%');
 			}
 			if (!isOpen) {
 				gsap.to(overlayNavRef.current, { opacity: 0, pointerEvents: 'none', duration: 0.2, ease: 'sine.in' });
-				tl.to('[data-action-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' })
-					.to('[data-home-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
-					.to('[data-about-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
-					.to('[data-skill-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
-					.to('[data-experience-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
-					.to('[data-project-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
-					.to('[data-contact-row]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%');
+				tl.to('[data-row="action"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' })
+					.to('[data-row="home"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-row="about"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-row="skill"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-row="experience"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-row="project"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-row="contact"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%');
 			}
 		},
 		{ dependencies: [isOpen], scope: overlayNavRef },
@@ -1261,7 +1238,7 @@ function OverlayNav({ isOpen, setIsOpen }) {
 			ref={overlayNavRef}>
 			<div
 				className='bg-primary border border-primary text-4xl flex-[1] w-[max-content] flex px-12 py-4 items-center gap-20'
-				data-action-row>
+				data-row={`action`}>
 				<button
 					className='px-6 rounded-full border border-neutralContrast aspect-square h-[min-content] flex flex-col justify-center items-center origin-center'
 					onClick={() => setIsOpen(false)}
@@ -1281,82 +1258,60 @@ function OverlayNav({ isOpen, setIsOpen }) {
 					<OverlayNavLinkBtn label={`mail`} />
 				</div>
 			</div>
-			<div
-				className='bg-primary border border-primary flex-[1] w-[55rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-				data-home-row>
-				<OverlayNavLinkChapter
-					label={`home`}
-					chapter={`[00.]`}
-					container={`data-home-row`}
-				/>
-			</div>
-			<div
-				className='bg-primary border border-primary flex-[1] w-[47.5rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-				data-about-row>
-				<OverlayNavLinkChapter
-					label={`about`}
-					chapter={`[01.]`}
-					container={`data-about-row`}
-				/>
-			</div>
-			<div
-				className='bg-primary border border-primary flex-[1] w-[42rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-				data-skill-row>
-				<OverlayNavLinkChapter
-					label={`skill`}
-					chapter={`[02.]`}
-					container={`data-skill-row`}
-				/>
-			</div>
-			<div
-				className='bg-primary border border-primary flex-[1] w-[75rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-				data-experience-row>
-				<OverlayNavLinkChapter
-					label={`experience`}
-					chapter={`[03.]`}
-					container={`data-experience-row`}
-				/>
-			</div>
-			<div
-				className='bg-primary border border-primary flex-[1] w-[85rem] flex items-center justify-end px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-				data-project-row>
-				<OverlayNavLinkChapter
-					label={`project`}
-					chapter={`[04.]`}
-					container={`data-project-row`}
-				/>
-			</div>
-			<div
-				className='bg-primary border border-primary flex-[1] w-[95rem] flex items-center px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)]'
-				data-contact-row>
-				<div className='flex gap-8 flex-wrap max-w-[34rem] mr-auto'>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-					<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-				</div>
-				<OverlayNavLinkChapter
-					label={`contact`}
-					chapter={`[99.]`}
-					container={`data-contact-row`}
-				/>
-			</div>
+
+			<OverlayNavLinkChapter
+				label={`home`}
+				chapter={`[00.]`}
+				container={`data-home-row`}
+				width={`w-[55rem]`}
+				justify={`justify-end`}
+				isDecor={false}
+			/>
+
+			<OverlayNavLinkChapter
+				label={`about`}
+				chapter={`[01.]`}
+				container={`data-about-row`}
+				width={`w-[47.5rem]`}
+				justify={`justify-end`}
+				isDecor={false}
+			/>
+
+			<OverlayNavLinkChapter
+				label={`skill`}
+				chapter={`[02.]`}
+				container={`data-skill-row`}
+				width={`w-[42rem]`}
+				justify={`justify-end`}
+				isDecor={false}
+			/>
+
+			<OverlayNavLinkChapter
+				label={`experience`}
+				chapter={`[03.]`}
+				container={`data-experience-row`}
+				width={`w-[75rem]`}
+				justify={`justify-end`}
+				isDecor={false}
+			/>
+
+			<OverlayNavLinkChapter
+				label={`project`}
+				chapter={`[04.]`}
+				container={`data-project-row`}
+				width={`w-[85rem]`}
+				justify={`justify-end`}
+				isDecor={false}
+			/>
+
+			<OverlayNavLinkChapter
+				label={`contact`}
+				chapter={`[99.]`}
+				container={`data-project-row`}
+				width={`w-[95rem]`}
+				justify={`justify-start`}
+				isDecor
+			/>
 		</nav>
 	);
 }
@@ -1446,9 +1401,9 @@ function OverlayNavLinkBtn({ label }) {
 	);
 }
 
-function OverlayNavLinkChapter({ chapter, label, container }) {
+function OverlayNavLinkChapter({ chapter, label, container, width, justify, isDecor }) {
 	const [isHover, setIsHover] = useState(false);
-	const chapterRef = useRef(null);
+	const ctnRef = useRef(null);
 
 	useGSAP(
 		() => {
@@ -1512,52 +1467,84 @@ function OverlayNavLinkChapter({ chapter, label, container }) {
 				});
 			}
 		},
-		{ dependencies: [isHover], scope: `[${container}]` },
+		{ dependencies: [isHover], scope: ctnRef },
 	);
 
 	return (
 		<>
-			<span
-				className='aspect-square w-[4rem]'
-				data-chapter-arrow-container>
-				<svg
-					className={`w-full h-full`}
-					width='75'
-					height='75'
-					viewBox='0 0 75 75'
-					fill='none'
-					xmlns='http://www.w3.org/2000/svg'>
-					<path
-						data-chapter-arrow
-						d='M5.76923 0L5.76923 11.5385L55.3269 11.5385L9.0049e-07 66.8654L8.13461 75L63.4615 19.6731L63.4615 69.2308H75L75 0L5.76923 0Z'
-						fill='var(--color-font-neutral-contrast)'
-					/>
-				</svg>
-			</span>
+			<div
+				className={`bg-primary border border-primary flex-[1] flex items-center px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)] ${width} ${justify}`}
+				data-row={label}
+				ref={ctnRef}>
+				{isDecor && <OverlayNavContactDecor />}
+				<span
+					className='aspect-square w-[4rem]'
+					data-chapter-arrow-container>
+					<svg
+						className={`w-full h-full`}
+						width='75'
+						height='75'
+						viewBox='0 0 75 75'
+						fill='none'
+						xmlns='http://www.w3.org/2000/svg'>
+						<path
+							data-chapter-arrow
+							d='M5.76923 0L5.76923 11.5385L55.3269 11.5385L9.0049e-07 66.8654L8.13461 75L63.4615 19.6731L63.4615 69.2308H75L75 0L5.76923 0Z'
+							fill='var(--color-font-neutral-contrast)'
+						/>
+					</svg>
+				</span>
 
-			<a
-				href=''
-				className='relative flex items-baseline self-stretch overflow-hidden'
-				onPointerEnter={() => setIsHover(true)}
-				onPointerLeave={() => setIsHover(false)}
-				ref={chapterRef}>
-				<span
-					data-chapter-label
-					className='text-[6rem] leading-none mr-8 h-full flex items-center'>
-					{label}
-				</span>
-				<span
-					data-chapter-sequence
-					className='text-4xl leading-none h-full'>
-					{chapter}
-				</span>
-				<span
-					data-chapter-label-clone
-					className='text-[6rem] leading-none absolute top-0 left-0 w-full h-full flex items-center pointer-events-none underline'>
-					{label}
-				</span>
-			</a>
+				<a
+					href=''
+					className='relative flex items-baseline self-stretch overflow-hidden'
+					onPointerEnter={() => setIsHover(true)}
+					onPointerLeave={() => setIsHover(false)}>
+					<span
+						data-chapter-label
+						className='text-[6rem] leading-none mr-8 h-full flex items-center'>
+						{label}
+					</span>
+					<span
+						data-chapter-sequence
+						className='text-4xl leading-none h-full'>
+						{chapter}
+					</span>
+					<span
+						data-chapter-label-clone
+						className='text-[6rem] leading-none absolute top-0 left-0 w-full h-full flex items-center pointer-events-none underline'>
+						{label}
+					</span>
+				</a>
+			</div>
 		</>
+	);
+}
+
+function OverlayNavContactDecor() {
+	return (
+		<div className='flex gap-8 flex-wrap max-w-[34rem] mr-auto'>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+		</div>
 	);
 }
 
@@ -1663,4 +1650,12 @@ function NavOpenBtn({ setIsOpen }) {
 				className='bg-neutral w-5 h-0.5'></div>
 		</button>
 	);
+}
+
+function clamp(val, min, max) {
+	return Math.min(Math.max(val, min), max);
+}
+
+function mapRange(value, start1, stop1, start2, stop2) {
+	return clamp(start2 + ((value - start1) * (stop2 - start2)) / (stop1 - start1), 0, 100);
 }
