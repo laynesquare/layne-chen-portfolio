@@ -175,15 +175,11 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 
 	function updatePosition() {
 		if (ballRef.current) {
-			ballRef.current.position.lerp(new Vector3(0, 0, 0), 0.02);
-		}
-	}
-
-	function initializeGeometry(ref) {
-		if (ref?.current?.geometry) {
-			ref.current.geometry.computeBoundsTree = computeBoundsTree;
-			ref.current.geometry.disposeBoundsTree = disposeBoundsTree;
-			ref.current.geometry.boundsTree = new MeshBVH(ref.current.geometry);
+			const speed = isBallPress ? 4 : 2;
+			ballRef.current.position.lerp(ballCenterPos, 0.02);
+			ballRef.current.rotation.x = Math.cos(elapsedTime) * speed;
+			ballRef.current.rotation.y = Math.sin(elapsedTime) * speed;
+			ballRef.current.rotation.z = Math.sin(elapsedTime) * speed;
 		}
 	}
 
