@@ -111,14 +111,15 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 					ref={el => (rippleRefs.current[i] = el)}
 					material={
 						new MeshBasicMaterial({
-							transparent: true,
 							map: rippleTexture,
+							transparent: true,
 							visible: false,
 							depthTest: false,
 							depthWrite: false,
+							stencilWrite: false,
 						})
 					}
-					position={[0, 0, 1]}
+					position={[0, 0, 2]}
 					rotation={[0, 0, 2 * Math.PI * Math.random()]}>
 					<planeGeometry args={[0.5, 0.5, 1, 1]} />
 				</mesh>,
@@ -146,7 +147,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 				rippleRefs.current[rippleCurrIdx.current].material.opacity = 1;
 				rippleRefs.current[rippleCurrIdx.current].scale.x = rippleRefs.current[
 					rippleCurrIdx.current
-				].scale.y = 1.5;
+				].scale.y = 1;
 				rippleRefs.current[rippleCurrIdx.current].position
 					.copy(camera.position)
 					.add(vector.multiplyScalar(distance));
@@ -182,7 +183,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		rippleRefs.current.forEach(mesh => {
 			mesh.rotation.z += 0.025;
 			mesh.material.opacity *= 0.95;
-			mesh.scale.x = 0.95 * mesh.scale.x + 0.155;
+			mesh.scale.x = 0.98 * mesh.scale.x + 0.155;
 			mesh.scale.y = mesh.scale.x;
 		});
 
