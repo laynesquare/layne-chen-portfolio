@@ -62,10 +62,10 @@ const Banner = () => {
 	const pointerCenterRef = useRef(new Vector2(0, 0));
 
 	const textGroupRef = useRef(null);
-	const textMeshRatio = 1 - viewport.factor / calcFactorCamZ(2);
+	const textMeshRatio = 1 - viewport.factor / calcFactorCamZ(3);
 
 	const containerGroupRef = useRef(null);
-	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(1.5);
+	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(2.9);
 	const containerMaterialParallaxRefs = useRef([]);
 
 	const meshMetalRef = useRef(null);
@@ -231,7 +231,7 @@ const Banner = () => {
 
 					let pX = baseX + (parsedL / factor) * ratio;
 					let pY = baseY - (parsedT / factor) * ratio - scrollOffset;
-					let pZ = 2;
+					let pZ = 3;
 
 					let sX = 1;
 					let sY = 1;
@@ -307,7 +307,7 @@ const Banner = () => {
 
 					let x = baseX + ((parseL + shiftHalfW) / factor) * ratio;
 					let y = baseY - ((parseT + shiftHalfH) / factor) * ratio - scrollOffset;
-					let z = 1.5;
+					let z = 2.9;
 
 					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
