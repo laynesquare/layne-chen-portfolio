@@ -61,8 +61,8 @@ export default function Scene({ wrapperRef }: SceneProps) {
 			gl={{
 				antialias: true,
 				alpha: false,
-				stencil: true,
-				depth: true,
+				stencil: false,
+				depth: false,
 				powerPreference: 'high-performance',
 				// pixelRatio: Math.min(2, window.devicePixelRatio),
 			}}
