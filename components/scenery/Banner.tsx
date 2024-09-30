@@ -100,6 +100,9 @@ const Banner = () => {
 		new MeshBasicMaterial({
 			color: new Color('#FFFFF0'),
 			dithering: true,
+			// blending: MultiplyBlending,
+			depthWrite: false,
+			depthTest: false,
 		}),
 	);
 
@@ -107,6 +110,8 @@ const Banner = () => {
 		new MeshBasicMaterial({
 			color: new Color('#25fed3'),
 			dithering: true,
+			depthWrite: false,
+			depthTest: false,
 		}),
 	);
 
@@ -115,6 +120,8 @@ const Banner = () => {
 			uniforms: { uTime: { value: 0 } },
 			vertexShader: vertexShaderAcidBg,
 			fragmentShader: fragmentShaderAcidBg,
+			depthWrite: false,
+			depthTest: false,
 		}),
 	);
 
@@ -348,6 +355,8 @@ const Banner = () => {
 								fragmentShader={fs}
 								uniforms={uniforms}
 								transparent
+								depthTest={false}
+								depthWrite={false}
 							/>
 						</mesh>
 					);
