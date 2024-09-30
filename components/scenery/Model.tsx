@@ -117,9 +117,9 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		uColor: { value: new Color('#e6ff00') },
 		uGradientStrength: { value: 1 },
 		uSpeed: { value: 4 },
-		uNoiseStrength: { value: 4 },
-		uDisplacementStrength: { value: 1.2 },
-		uFractAmount: { value: 1.2 },
+		uNoiseStrength: { value: 2.5 },
+		uDisplacementStrength: { value: 1 },
+		uFractAmount: { value: 0.8 },
 	});
 	// const uniformsRef = {
 	// 	uTime: { value: 0 },
@@ -134,24 +134,31 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	useFrame(({ clock }) => {
 		const elapsedTime = clock.getElapsedTime();
 
-		if (materialRef.current) {
-			updatePosition(elapsedTime);
-			updateMaterialTime(elapsedTime);
+		if (materialRef.current && materialRef.current) {
+			ballCenterUpdate();
+			ballRotationUpdate(elapsedTime);
+			ballMaterialUpdate(elapsedTime);
 		}
 	});
+
+	function ballCenterUpdate() {
+		if (ballRef.current.position.distanceTo(ballCenterPos.current) > 0.1) {
+			ballRef.current.position.lerp(ballCenterPos.current, 0.02);
+		}
+	}
 
 	useGSAP(
 		() => {
 			if (ballRef.current && materialRef.current) {
 				if (isBallPress) {
 					gsap.to(materialRef.current.uniforms.uNoiseStrength, {
-						value: 8.5,
-						duration: 2,
+						value: 3.5,
+						duration: 3,
 						ease: 'elastic.out(1, 0.1)',
 					});
 					gsap.to(materialRef.current.uniforms.uDisplacementStrength, {
-						value: 1.35,
-						duration: 2,
+						value: 1.1,
+						duration: 3,
 						ease: 'elastic.out(1, 0.1)',
 					});
 					gsap.to(materialRef.current, {
@@ -159,18 +166,18 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 						metalness: 0.6,
 						roughness: 1,
 						clearcoat: 0,
-						duration: 2,
+						duration: 3,
 						ease: 'elastic.out(1, 0.1)',
 					});
 				} else {
 					gsap.to(materialRef.current.uniforms.uNoiseStrength, {
-						value: 4,
-						duration: 2,
+						value: 2.5,
+						duration: 3,
 						ease: 'elastic.out(1, 0.1)',
 					});
 					gsap.to(materialRef.current.uniforms.uDisplacementStrength, {
-						value: 1.2,
-						duration: 2,
+						value: 1,
+						duration: 3,
 						ease: 'elastic.out(1, 0.1)',
 					});
 					gsap.to(materialRef.current, {
@@ -178,7 +185,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 						metalness: 0.5,
 						roughness: 0.1,
 						clearcoat: 1.0,
-						duration: 2,
+						duration: 3,
 						ease: 'elastic.out(1, 0.1)',
 					});
 				}
@@ -187,17 +194,14 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		{ dependencies: [isBallPress], scope: ballRef },
 	);
 
-	function updatePosition(elapsedTime) {
-		if (ballRef.current) {
-			const speed = isBallPress ? 4 : 1.2;
-			ballRef.current.position.lerp(ballCenterPos.current, 0.02);
-			ballRef.current.rotation.x = Math.cos(elapsedTime) * speed;
-			ballRef.current.rotation.y = Math.sin(elapsedTime) * speed;
-			ballRef.current.rotation.z = Math.sin(elapsedTime) * speed;
-		}
+	function ballRotationUpdate(elapsedTime) {
+		const speed = isBallPress ? 4 : 1.2;
+		ballRef.current.rotation.x = Math.cos(elapsedTime) * speed;
+		ballRef.current.rotation.y = Math.sin(elapsedTime) * speed;
+		ballRef.current.rotation.z = Math.sin(elapsedTime) * speed;
 	}
 
-	function updateMaterialTime(elapsedTime: number) {
+	function ballMaterialUpdate(elapsedTime: number) {
 		materialRef.current.uniforms.uTime.value = elapsedTime;
 	}
 
@@ -221,7 +225,6 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 					iridescenceIOR={1.3}
 					uniforms={uniformsRef.current}
 				/>
-				{/* <meshBasicMaterial color={0x000000}></meshBasicMaterial> */}
 			</mesh>
 
 			<mesh
@@ -238,6 +241,8 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 				<meshBasicMaterial
 					transparent={true}
 					opacity={0}
+					depthTest={false}
+					depthWrite={false}
 				/>
 			</mesh>
 		</>
