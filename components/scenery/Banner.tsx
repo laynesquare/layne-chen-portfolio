@@ -49,13 +49,20 @@ import fragmentShaderAcidBg from '@/shaders/animated-underlay-acid-fluid/fragmen
 import fragmentShaderParallaxDepth from '@/shaders/animated-parallax-depth/fragment';
 import vertexShaderParallaxDepth from '@/shaders/animated-parallax-depth/vertex';
 
+import debounce from 'lodash/debounce';
+
 gsap.registerPlugin(useGSAP);
 
+// Custom hook for debounced viewport
+// Custom hook for debounced viewport and size
+
 const Banner = () => {
-	const { viewport, size, camera, pointer } = useThree();
-	const torsoDomEl = useDomStore(state => state.torsoEl);
-	const containerDomEls = useDomStore(state => state.containerEls);
-	const textDomEls = useDomStore(state => state.textEls);
+	const { viewport, size, camera } = useThree();
+	// const torsoDomEl = useDomStore(state => state.torsoEl);
+	// const containerDomEls = useDomStore(state => state.containerEls);
+	// const textDomEls = useDomStore(state => state.textEls);
+
+	const { torsoEl: torsoDomEl, containerEls: containerDomEls, textEls: textDomEls } = useDomStore(state => state);
 
 	const scrollOffsetRef = useRef(0); // pixel
 	const pointerRef = useRef(new Vector2(0, 0));
