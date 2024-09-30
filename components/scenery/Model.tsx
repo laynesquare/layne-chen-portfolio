@@ -1,4 +1,4 @@
-// cSpell: ignore Raycaster, GLTF, metalness, clearcoat, matcap, drei
+/// cSpell: ignore Raycaster, GLTF, metalness, clearcoat, matcap, drei
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -54,11 +54,11 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	const materialRef = useRef(null);
 	const [isBallPress, setIsBallPress] = useState(false);
 	const ballRef = useRef();
-	const ballPos = useRef([r(10), r(10), 1]);
+	const ballPos = useRef(new Vector3(r(10), r(10), 1));
 	const ballCenterPos = useRef(new Vector3(0, 0, 1));
 
 	const ballGeometry = useMemo(() => {
-		const geometry = mergeVertices(new IcosahedronGeometry(0.5, 128));
+		const geometry = mergeVertices(new IcosahedronGeometry(0.5, 64));
 		geometry.computeTangents();
 		return geometry;
 	}, []);
