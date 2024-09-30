@@ -25,10 +25,11 @@ void main() {
 
     // Colors
     vec3 borderColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
-    vec3 fillColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
+    // vec3 fillColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
+    vec3 fillColor = vec3(0, 0, 0); // #fffff0 in RGB
 
     // Determine the alpha for fill and border
-    float fillAlpha = 0.0;        // Make the fill fully transparent
+    float fillAlpha = 0.2;        // Make the fill fully transparent
     float borderAlpha = 1.0;      // Keep the border fully opaque
 
     // Mix the fill and border colors based on the distance
