@@ -46,7 +46,7 @@ extend({ RippleMaterial });
 
 export default function Ripple({ children, damping = 0.15, ...props }) {
 	const ref = useRef();
-	const { viewport, size, camera, pointer, gl } = useThree();
+	const { viewport, size, camera, pointer } = useThree();
 
 	const devicePixelRatio = window.devicePixelRatio || 1;
 	const memory = navigator.deviceMemory || 4;
@@ -58,7 +58,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		format: RGBAFormat,
 	});
 
-	const rippleBuffer = useFBO(64, 64, {
+	const rippleBuffer = useFBO(32, 32, {
 		minFilter: LinearFilter,
 		magFilter: LinearFilter,
 		format: RGBAFormat,
@@ -90,6 +90,8 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			vertexShader,
 			fragmentShader,
 			glslVersion: GLSL3,
+			depthTest: false,
+			depthWrite: false,
 		}),
 	);
 
@@ -113,10 +115,9 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 							visible: false,
 							depthTest: false,
 							depthWrite: false,
-							stencilWrite: false,
 						})
 					}
-					position={[0, 0, 2]}
+					position={[0, 0, 1]}
 					rotation={[0, 0, 2 * Math.PI * Math.random()]}>
 					<planeGeometry args={[0.5, 0.5, 1, 1]} />
 				</mesh>,
@@ -132,7 +133,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			vector.set(pointer.x, pointer.y, 0.5);
 			vector.unproject(camera);
 			vector.sub(camera.position).normalize();
-			const distance = (2 - camera.position.z) / vector.z;
+			const distance = (1 - camera.position.z) / vector.z;
 
 			const offsetX = Math.abs(preMousePos.current.x - event.clientX);
 			const offsetY = Math.abs(preMousePos.current.y - event.clientY);
@@ -161,6 +162,10 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			window.removeEventListener('mousemove', handleMouseMove);
 		};
 	}, [handleMouseMove]);
+
+	useEffect(() => {
+		portBuffer.setSize(size.width * 1.2, size.height * 1.2);
+	}, [size, portBuffer]);
 
 	useFrame(({ clock, gl, camera }, delta) => {
 		const elapsedTime = clock.getElapsedTime();
