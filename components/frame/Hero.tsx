@@ -55,18 +55,19 @@ export default function Hero({}) {
 	// }
 
 	// useGSAP(() => {
-	// 	gsap.fromTo(
-	// 		'[data-anchor-about]',
-	// 		{ rotation: 0 },
-	// 		{
-	// 			rotation: 180,
-	// 			duration: 3,
-	// 			scrollTrigger: {
-	// 				trigger: `[data-anchor-about]`,
-	// 				scrub: 2,
-	// 			},
-	// 		},
-	// 	);
+	// 	const inView = ScrollTrigger.isInViewport;
+	// 	if (inView('[data-anchor-about]', 0.5)) {
+	// 		console.log('working');
+	// 	}
+
+	// 	let st = ScrollTrigger.create({
+	// 		trigger: '[data-anchor-about]',
+	// 		start: 'top top',
+	// 		end: '+=500',
+
+	// 	});
+
+	// 	console.log(st.trigger); // trigger element (not selector text)
 	// }, []);
 
 	return (
@@ -77,7 +78,7 @@ export default function Hero({}) {
 			<Menu />
 
 			<article
-				className={`w-full font-boxing z-10 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+				className={`w-full font-boxing z-20 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
 				ref={torsoElStoreRegister}
 				onClick={() => setIsVisible(pre => !pre)}>
 				{/* -------------------------------------------------------------------------- */
@@ -162,7 +163,7 @@ export default function Hero({}) {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
 							}}
-							data-anchor-about>
+							data-anchor='about'>
 							{'ball'}
 						</div>
 					</section>
@@ -209,7 +210,11 @@ export default function Hero({}) {
 
 						<div
 							className='border border-neutral rounded-[0rem_0rem_0rem_9rem] h-[60rem] flex flex-[1]'
-							ref={containerElStoreRegister}>
+							ref={el => {
+								containerElStoreRegister(el);
+								anchorElStoreRegister(el);
+							}}
+							data-anchor='skill'>
 							ball
 						</div>
 
