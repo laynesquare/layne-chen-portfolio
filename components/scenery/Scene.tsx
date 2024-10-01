@@ -73,8 +73,10 @@ export default function Scene({ wrapperRef }: SceneProps) {
 				width: '100lvw',
 				height: '100lvh',
 			}}
-			dpr={[1.5, 2]}
+			dpr={[1.1, 1.1]}
 			camera={{ position: [0, 0, 3.5] }}
+			resize={{ debounce: 100 }}
+			flat={true}
 			eventSource={wrapperRef?.current}>
 			{/* <OrthographicCamera
 				makeDefault
