@@ -74,15 +74,10 @@ export default function Scene({ wrapperRef }: SceneProps) {
 				height: '100lvh',
 			}}
 			dpr={[1.1, 1.1]}
-			camera={{ position: [0, 0, 3.5] }}
+			camera={{ position: [0, 0, 8], fov: 30 }}
 			resize={{ debounce: 100 }}
 			flat={true}
 			eventSource={wrapperRef?.current}>
-			{/* <OrthographicCamera
-				makeDefault
-				position={[0, 0, 3.5]}
-				zoom={100}
-			/> */}
 			<Port />
 		</Canvas>
 	);
