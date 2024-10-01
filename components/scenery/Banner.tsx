@@ -181,12 +181,10 @@ const Banner = () => {
 	}, []);
 
 	function updatePosition(offset: number) {
-		if (textGroupRef.current) {
-			textGroupRef.current.position.y = (offset / viewport.factor) * textMeshRatio;
-		}
-
-		if (containerGroupRef.current) {
-			containerGroupRef.current.position.y = (offset / viewport.factor) * containerMeshRatio;
+		if (textGroupRef.current && containerGroupRef.current) {
+			const base = offset / viewport.factor;
+			textGroupRef.current.position.y = base * textMeshRatio;
+			containerGroupRef.current.position.y = base * containerMeshRatio;
 		}
 	}
 
@@ -213,20 +211,17 @@ const Banner = () => {
 					const { left, top, height, width } = el.getBoundingClientRect();
 					const { fontFamily, scaleY, fontHighlight } = el.dataset;
 					const { factor } = viewport;
-					const parsedL = parseFloat(left);
-					const parsedT = parseFloat(top);
+
 					const parsedFontSize = parseFloat(fontSize);
 					const parsedLineHeight = parseFloat(lineHeight);
-					const parsedH = parseFloat(height);
-					const parsedW = parseFloat(width);
 					const ratio = textMeshRatio;
 					const baseX = (-viewport.width / 2) * ratio;
 					const baseY = (viewport.height / 2) * ratio;
 					const scrollOffset = (scrollY / factor) * ratio;
 					const material = fontHighlight ? materialDomTextHighlight.current : materialDomText.current;
 
-					let pX = baseX + (parsedL / factor) * ratio;
-					let pY = baseY - (parsedT / factor) * ratio - scrollOffset;
+					let pX = baseX + (left / factor) * ratio;
+					let pY = baseY - (top / factor) * ratio - scrollOffset;
 
 					let pZ = 3;
 
@@ -245,7 +240,7 @@ const Banner = () => {
 							position={[pX, pY, pZ]}
 							material={material}
 							lineHeight={parsedLineHeight / parsedFontSize}
-							maxWidth={(parsedW / factor) * ratio + 0.01}
+							maxWidth={(width / factor) * ratio + 0.01}
 							scale={[sX, sY, sZ]}
 							textAlign={textAlign}
 							fontSize={(parsedFontSize / factor) * ratio}>
@@ -278,31 +273,25 @@ const Banner = () => {
 			<group ref={containerGroupRef}>
 				{[...containerDomEls].map((el, idx) => {
 					const {
-						width,
-						height,
 						borderBottomLeftRadius: rbl,
 						borderBottomRightRadius: rbr,
 						borderTopLeftRadius: rtl,
 						borderTopRightRadius: rtr,
 					} = window.getComputedStyle(el);
 					const { scrollY } = window;
-					const { left, top } = el.getBoundingClientRect();
+					const { left, top, width, height } = el.getBoundingClientRect();
 					const { parallax } = el.dataset;
 					const { factor } = viewport;
 					const ratio = containerMeshRatio;
 					const baseX = (-viewport.width / 2) * ratio;
 					const baseY = (viewport.height / 2) * ratio;
-					const parsedW = parseFloat(width);
-					const parsedH = parseFloat(height);
-					const parseL = parseFloat(left);
-					const parseT = parseFloat(top);
-					const shiftHalfW = parsedW / 2;
-					const shiftHalfH = parsedH / 2;
+					const shiftHalfW = width / 2;
+					const shiftHalfH = height / 2;
 					const scrollOffset = (scrollY / factor) * ratio;
 
-					let x = baseX + ((parseL + shiftHalfW) / factor) * ratio;
-					let y = baseY - ((parseT + shiftHalfH) / factor) * ratio - scrollOffset;
-					// let y = baseY - ((parseT + shiftHalfH) / factor) * ratio;
+					let x = baseX + ((left + shiftHalfW) / factor) * ratio;
+					let y = baseY - ((top + shiftHalfH) / factor) * ratio - scrollOffset;
+
 					let z = 2.9;
 
 					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
@@ -313,12 +302,12 @@ const Banner = () => {
 					const uniforms = parallax
 						? {
 								uTexture: { value: previewMap[parallax] },
-								uResolution: { value: new Vector2(parsedW, parsedH) },
+								uResolution: { value: new Vector2(width, height) },
 								uRadii: { value: new Vector4(...radius) },
 								uMouse: { value: new Vector2(0.5, 0.5) },
 						  }
 						: {
-								uResolution: { value: new Vector2(parsedW, parsedH) },
+								uResolution: { value: new Vector2(width, height) },
 								uRadii: { value: new Vector4(...radius) },
 						  };
 
@@ -328,7 +317,7 @@ const Banner = () => {
 						<mesh
 							key={idx}
 							position={[x, y, z]}>
-							<planeGeometry args={[(parsedW / factor) * ratio, (parsedH / factor) * ratio, 1, 1]} />
+							<planeGeometry args={[(width / factor) * ratio, (height / factor) * ratio, 1, 1]} />
 							<CustomShaderMaterial
 								ref={materialRef}
 								baseMaterial={MeshBasicMaterial}
