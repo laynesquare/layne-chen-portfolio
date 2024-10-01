@@ -90,7 +90,7 @@ const float strength = 2.0;
 vec2 bulge(vec2 uv, vec2 center) {
   uv -= center;
   float dist = length(uv) / radius; // distance from UVs divided by radius
-  float distPow = pow(dist, 2.25);
+  float distPow = pow(dist, 4.0);
   float strengthAmount = strength / (1.0 + distPow); // Invert bulge and add a minimum of 1)
 
   float scrollSpeed = abs(uScrollVelocity); // ranges from 0.0 to 50.0
