@@ -19,9 +19,11 @@ const useDomStore = create(set => ({
 	textEls: new Set(),
 	torsoEl: null,
 	containerEls: new Set(),
+	anchorEls: new Set(),
+
 	textElRegister: el => {
 		set(state => {
-			if (state) {
+			if (state && el) {
 				state.textEls.add(el);
 			}
 			return state;
@@ -29,7 +31,7 @@ const useDomStore = create(set => ({
 	},
 	torsoElRegister: el => {
 		set(state => {
-			if (state) {
+			if (state && el) {
 				state.torsoEl = el;
 			}
 			return state;
@@ -37,8 +39,16 @@ const useDomStore = create(set => ({
 	},
 	containerElRegister: el => {
 		set(state => {
-			if (state) {
+			if (state && el) {
 				state.containerEls.add(el);
+			}
+			return state;
+		});
+	},
+	anchorElRegister: el => {
+		set(state => {
+			if (state && el) {
+				state.anchorEls.add(el);
 			}
 			return state;
 		});
