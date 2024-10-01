@@ -9,6 +9,7 @@ import {
 	Sparkles,
 	Billboard,
 	RoundedBox,
+	useScroll,
 } from '@react-three/drei';
 import { Intersection, useFrame, useGraph, useThree } from '@react-three/fiber';
 import { BallCollider, Physics, RigidBody, CylinderCollider, RapierRigidBody } from '@react-three/rapier';
@@ -37,6 +38,8 @@ import {
 	FrontSide,
 } from 'three';
 
+import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
+
 import CustomShaderMaterial from 'three-custom-shader-material';
 import vertexShader from '@/shaders/animated-displaced-sphere/vertex';
 import fragmentShader from '@/shaders/animated-displaced-sphere/fragment';
@@ -45,12 +48,18 @@ import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { useControls } from 'leva';
 import { lerp } from 'three/src/math/MathUtils.js';
 
+import { useDomStore } from '@/store';
+
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-gsap.registerPlugin(useGSAP);
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Model({ r = MathUtils.randFloatSpread }) {
+	const { viewport, size, camera } = useThree();
+
 	const materialRef = useRef(null);
 	const [isBallPress, setIsBallPress] = useState(false);
 	const ballRef = useRef();
@@ -58,14 +67,19 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	const ballCenterPos = useRef(new Vector3(0, 0, 1));
 
 	const ballGeometry = useMemo(() => {
-		const geometry = mergeVertices(new IcosahedronGeometry(0.5, 64));
+		const geometry = mergeVertices(new IcosahedronGeometry(0.4, 64));
 		geometry.computeTangents();
 		return geometry;
 	}, []);
 
 	const ballMaskRef = useRef(null);
 
-	console.log('re render from ball');
+	const anchorDomEls = useDomStore(state => state.anchorEls);
+	const scrollOffsetRef = useRef(0); // pixel
+
+	const ballMeshRatio = 1 - viewport.factor / calcFactorCamZ(1);
+
+	// console.log('re render from ball');
 
 	// const {
 	// 	gradientStrength,
@@ -112,6 +126,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	// 	uDisplacementStrength: { value: displacementStrength },
 	// 	uFractAmount: { value: fractAmount },
 	// });
+
 	const uniformsRef = useRef({
 		uTime: { value: 0 },
 		uColor: { value: new Color('#e6ff00') },
@@ -121,6 +136,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		uDisplacementStrength: { value: 1 },
 		uFractAmount: { value: 0.8 },
 	});
+
 	// const uniformsRef = {
 	// 	uTime: { value: 0 },
 	// 	uColor: { value: new Color(color) },
@@ -131,15 +147,79 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	// 	uFractAmount: { value: fractAmount },
 	// };
 
-	useFrame(({ clock }) => {
-		const elapsedTime = clock.getElapsedTime();
+	useFrame(({ clock, scene }) => {
+		// const isInView = ScrollTrigger.isInViewport([...anchorDomEls][0]);
+
+		// console.log([...anchorDomEls]);
+
+		const inView = [...anchorDomEls].find(el => {
+			return ScrollTrigger.isInViewport(el, 0.5);
+		});
+
+		if (inView && ballRef.current) {
+			const el = inView;
+			const { anchor } = el.dataset;
+			const { factor } = viewport;
+			const { left, top, width, height } = el.getBoundingClientRect();
+
+			console.log(anchor);
+
+			const baseX = (-viewport.width / 2) * ballMeshRatio;
+			const baseY = (-viewport.height / 2) * ballMeshRatio;
+			const shiftHalfW = width / 2;
+			const shiftHalfH = height / 2;
+
+			const x = baseX + ((left + shiftHalfW) / factor) * ballMeshRatio;
+			const y = baseY + ((top + shiftHalfH) / factor) * ballMeshRatio;
+			// ballRef.current.position.lerp(new Vector3(x, y, 1), 0.02);
+			ballRef.current.position.x += (x - ballRef.current.position.x) * 0.02;
+		}
 
 		if (materialRef.current && materialRef.current) {
-			ballCenterUpdate();
+			const elapsedTime = clock.getElapsedTime();
+			// ballCenterUpdate();
 			ballRotationUpdate(elapsedTime);
 			ballMaterialUpdate(elapsedTime);
 		}
 	});
+
+	useLenis(
+		event => {
+			const baseOffset = Math.abs(event.scroll - scrollOffsetRef.current) / viewport.factor;
+			if (event.direction) {
+				updatePosition(event.direction * baseOffset);
+				scrollOffsetRef.current = event.scroll;
+			}
+		},
+		[size],
+	);
+
+	function updatePosition(offset: number) {
+		const inView = [...anchorDomEls].find(el => {
+			return ScrollTrigger.isInViewport(el, 0.5);
+		});
+		if (ballRef.current && inView) {
+			const el = inView;
+			const { factor } = viewport;
+			const { left, top, width, height } = el.getBoundingClientRect();
+			const baseX = (-viewport.width / 2) * ballMeshRatio;
+			const baseY = (viewport.height / 2) * ballMeshRatio;
+			const shiftHalfW = width / 2;
+			const shiftHalfH = height / 2;
+			const x = baseX + ((left + shiftHalfW) / factor) * ballMeshRatio;
+			const y = baseY - ((top + shiftHalfH) / factor) * ballMeshRatio;
+
+			ballRef.current.position.y = y;
+		}
+	}
+
+	function calcFactorCamZ(zPosition: number) {
+		const fov = (camera.fov * Math.PI) / 180;
+		const h = 2 * Math.tan(fov / 2) * zPosition;
+		const w = h * (size.width / size.height);
+		const factor = size.width / w;
+		return factor;
+	}
 
 	function ballCenterUpdate() {
 		if (ballRef.current.position.distanceTo(ballCenterPos.current) > 0.1) {
@@ -225,6 +305,10 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 					iridescenceIOR={1.3}
 					uniforms={uniformsRef.current}
 				/>
+
+				{/* <meshBasicMaterial
+					ref={materialRef}
+					color={`green`}></meshBasicMaterial> */}
 			</mesh>
 
 			<mesh
