@@ -67,11 +67,12 @@ const Banner = () => {
 	const textGroupRef = useRef(null);
 	const textMeshRatio = 1 - viewport.factor / calcFactorCamZ(3);
 
+	const torsoGroupRef = useRef(null);
+	const torsoMeshRatio = 1 - viewport.factor / calcFactorCamZ(0);
+
 	const containerGroupRef = useRef(null);
 	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(2.9);
 	const containerMaterialParallaxRefs = useRef([]);
-
-	const meshMetalRef = useRef(null);
 
 	const previewShareYourMemories = useLoader(TextureLoader, '/frame/project-preview-share-your-memories.jpg');
 	const previewLearnEnglishDictionary = useLoader(
@@ -135,6 +136,8 @@ const Banner = () => {
 		};
 	}
 
+	const meshMetalRef = useRef(null);
+
 	const fbo = useFBO(256, 256, {
 		minFilter: LinearFilter,
 		magFilter: LinearFilter,
@@ -185,6 +188,7 @@ const Banner = () => {
 			const base = offset / viewport.factor;
 			textGroupRef.current.position.y = base * textMeshRatio;
 			containerGroupRef.current.position.y = base * containerMeshRatio;
+			torsoGroupRef.current.position.y = base * torsoMeshRatio;
 		}
 	}
 
@@ -222,7 +226,6 @@ const Banner = () => {
 
 					let pX = baseX + (left / factor) * ratio;
 					let pY = baseY - (top / factor) * ratio - scrollOffset;
-
 					let pZ = 3;
 
 					let sX = 1;
@@ -248,13 +251,6 @@ const Banner = () => {
 						</Text>
 					);
 				})}
-
-				<mesh
-					scale={[torsoDomEl.offsetWidth / viewport.factor + 1, torsoDomEl.offsetHeight / viewport.factor, 1]}
-					position={[0, 0, 0]}
-					material={materialAcidBg.current}>
-					<planeGeometry args={[1, 1, 1, 1]} />
-				</mesh>
 
 				<mesh
 					ref={meshMetalRef}
@@ -291,7 +287,6 @@ const Banner = () => {
 
 					let x = baseX + ((left + shiftHalfW) / factor) * ratio;
 					let y = baseY - ((top + shiftHalfH) / factor) * ratio - scrollOffset;
-
 					let z = 2.9;
 
 					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
@@ -332,6 +327,24 @@ const Banner = () => {
 						</mesh>
 					);
 				})}
+			</group>
+
+			<group ref={torsoGroupRef}>
+				<mesh
+					scale={[
+						(torsoDomEl.offsetWidth / viewport.factor) * torsoMeshRatio + 1,
+						(torsoDomEl.offsetHeight / viewport.factor) * torsoMeshRatio,
+						1,
+					]}
+					position={[
+						0,
+						(viewport.height / 2) * torsoMeshRatio -
+							((torsoDomEl.offsetHeight / viewport.factor) * torsoMeshRatio) / 2,
+						0,
+					]}
+					material={materialAcidBg.current}>
+					<planeGeometry args={[1, 1, 1, 1]} />
+				</mesh>
 			</group>
 
 			{/* <group>
