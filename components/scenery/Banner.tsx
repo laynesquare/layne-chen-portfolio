@@ -181,7 +181,7 @@ const Banner = () => {
 
 	useLenis(event => {
 		updatePosition(event.scroll);
-	}, []);
+	}, [size]);
 
 	function updatePosition(offset: number) {
 		if (textGroupRef.current && containerGroupRef.current) {
