@@ -59,7 +59,7 @@ export default function Port() {
 							form='rect'
 						/>
 					</Environment>
-					<Preload />
+					<Preload all />
 				</Ripple>
 				{/* </ScrollControls> */}
 			</Suspense>
