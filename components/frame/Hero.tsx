@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Html, useProgress } from '@react-three/drei';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { useDomStore } from '@/store';
 import { useThree } from '@react-three/fiber';
@@ -10,7 +11,7 @@ import { useThree } from '@react-three/fiber';
 import previewShareYourMemories from '@/public/frame/project-preview-share-your-memories.jpg';
 import previewLearnEnglishDictionary from '@/public/frame/project-preview-learn-english-dictionary.jpg';
 
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Hero({}) {
 	const { progress, item } = useProgress();
@@ -18,9 +19,16 @@ export default function Hero({}) {
 
 	const [isVisible, setIsVisible] = useState(true);
 
-	const textElStoreRegister = useDomStore(state => state.textElRegister);
-	const torsoElStoreRegister = useDomStore(state => state.torsoElRegister);
-	const containerElStoreRegister = useDomStore(state => state.containerElRegister);
+	// const textElStoreRegister = useDomStore(state => state.textElRegister);
+	// const torsoElStoreRegister = useDomStore(state => state.torsoElRegister);
+	// const containerElStoreRegister = useDomStore(state => state.containerElRegister);
+
+	const {
+		textElRegister: textElStoreRegister,
+		torsoElRegister: torsoElStoreRegister,
+		containerElRegister: containerElStoreRegister,
+		anchorElRegister: anchorElStoreRegister,
+	} = useDomStore(state => state);
 
 	// useGSAP(() => {
 	// 	if (progress === 100 && someRef.current) {
@@ -45,6 +53,21 @@ export default function Hero({}) {
 	// 		someRef.current = el;
 	// 	}
 	// }
+
+	// useGSAP(() => {
+	// 	gsap.fromTo(
+	// 		'[data-anchor-about]',
+	// 		{ rotation: 0 },
+	// 		{
+	// 			rotation: 180,
+	// 			duration: 3,
+	// 			scrollTrigger: {
+	// 				trigger: `[data-anchor-about]`,
+	// 				scrub: 2,
+	// 			},
+	// 		},
+	// 	);
+	// }, []);
 
 	return (
 		<>
@@ -135,7 +158,11 @@ export default function Hero({}) {
 
 						<div
 							className='h-[39rem] flex-[1] border border-[--color-font-neutral rounded-[0rem_0rem_9rem_0rem]'
-							ref={containerElStoreRegister}>
+							ref={el => {
+								containerElStoreRegister(el);
+								anchorElStoreRegister(el);
+							}}
+							data-anchor-about>
 							{'ball'}
 						</div>
 					</section>
