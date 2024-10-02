@@ -24,6 +24,8 @@ import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 
 import { lerp } from 'three/src/math/MathUtils.js';
 
+import { useDomStore, usePortFboStore } from '@/store';
+
 // Create the shader material
 const RippleMaterial = shaderMaterial(
 	{
@@ -47,16 +49,22 @@ extend({ RippleMaterial });
 export default function Ripple({ children, damping = 0.15, ...props }) {
 	const ref = useRef();
 	const { viewport, size, camera, pointer } = useThree();
+	// const { portFboRegister } = usePortFboStore(state => state);
 
 	const devicePixelRatio = window.devicePixelRatio || 1;
 	const memory = navigator.deviceMemory || 4;
 	const resolutionScale = devicePixelRatio > 1.5 || memory <= 4 ? 0.5 : 0.75;
 
-	const portBuffer = useFBO(size.width * 1.1, size.height * 1.1, {
+	const portBuffer = useFBO(size.width, size.height, {
 		minFilter: LinearFilter,
 		magFilter: LinearFilter,
 		format: RGBAFormat,
 	});
+
+	useEffect(() => {
+		// portBuffer.setSize(size.width * 1.2, size.height * 1.2);
+		// portFboRegister(portBuffer);
+	}, []);
 
 	const rippleBuffer = useFBO(32, 32, {
 		minFilter: LinearFilter,
@@ -163,11 +171,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		};
 	}, [handleMouseMove]);
 
-	useEffect(() => {
-		portBuffer.setSize(size.width * 1.2, size.height * 1.2);
-	}, [size, portBuffer]);
-
-	useFrame(({ clock, gl, camera }, delta) => {
+	useFrame(({ clock, gl, camera, scene }, delta) => {
 		const elapsedTime = clock.getElapsedTime();
 
 		if (portMaterialRef.current) {
@@ -189,10 +193,10 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			mesh.scale.y = mesh.scale.x;
 		});
 
-		gl.setRenderTarget(rippleBuffer);
-		gl.render(rippleScene, camera);
 		gl.setRenderTarget(portBuffer);
 		gl.render(portScene, camera);
+		gl.setRenderTarget(rippleBuffer);
+		gl.render(rippleScene, camera);
 		gl.setRenderTarget(null);
 	});
 
@@ -201,6 +205,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			{createPortal(children, portScene)}
 			{createPortal(ripples, rippleScene)}
 			<mesh
+				name='billboard'
 				castShadow={false}
 				receiveShadow={false}
 				ref={ref}
