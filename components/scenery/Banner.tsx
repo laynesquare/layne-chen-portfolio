@@ -11,13 +11,18 @@ import {
 	TextureLoader,
 	Vector2,
 	CustomBlending,
-	OneMinusSrcAlphaFactor,
 	AddEquation,
+	SubtractEquation,
 	SrcAlphaFactor,
 	OneFactor,
 	DstColorFactor,
 	OneMinusDstColorFactor,
 	OneMinusSrcColorFactor,
+	OneMinusSrcAlphaFactor,
+	OneMinusDstAlphaFactor,
+	SrcColorFactor,
+	SrcAlphaSaturateFactor,
+	ZeroFactor,
 	AdditiveBlending,
 	SubtractiveBlending,
 	MultiplyBlending,
@@ -30,13 +35,15 @@ import {
 	MultiplyOperation,
 	PerspectiveCamera,
 	Vector4,
+	AddOperation,
+	Scene,
 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line } from '@react-three/drei';
 import CustomShaderMaterial from 'three-custom-shader-material';
 import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
-import { useDomStore } from '@/store';
+import { useDomStore, usePortFboStore } from '@/store';
 
 import { useGSAP } from '@gsap/react';
 
@@ -50,6 +57,7 @@ import fragmentShaderParallaxDepth from '@/shaders/animated-parallax-depth/fragm
 import vertexShaderParallaxDepth from '@/shaders/animated-parallax-depth/vertex';
 
 import debounce from 'lodash/debounce';
+import { Vector } from 'html2canvas/dist/types/render/vector';
 
 gsap.registerPlugin(useGSAP);
 
@@ -60,6 +68,7 @@ const Banner = () => {
 	const { viewport, size, camera } = useThree();
 
 	const { torsoEl: torsoDomEl, containerEls: containerDomEls, textEls: textDomEls } = useDomStore(state => state);
+	// const { portFbo } = usePortFboStore(state => state);
 
 	const pointerRef = useRef(new Vector2(0, 0));
 	const pointerCenterRef = useRef(new Vector2(0, 0));
@@ -73,6 +82,7 @@ const Banner = () => {
 	const containerGroupRef = useRef(null);
 	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(2.9);
 	const containerMaterialParallaxRefs = useRef([]);
+	const containerMaskedMeshesRef = useRef(new Set());
 
 	const previewShareYourMemories = useLoader(TextureLoader, '/frame/project-preview-share-your-memories.jpg');
 	const previewLearnEnglishDictionary = useLoader(
@@ -122,39 +132,22 @@ const Banner = () => {
 		}),
 	);
 
-	function domTextShared(type: 'boxing' | 'satoshi') {
-		const fontFamily = {
-			boxing: '/font/Boxing-Regular.woff',
-			satoshi: '/font/Satoshi-Bold.woff',
-		};
-
-		return {
-			font: fontFamily[type],
-			anchorX: 'left',
-			anchorY: 'top',
-			overflowWrap: 'break-word',
-		};
-	}
-
 	const meshMetalRef = useRef(null);
-
-	const fbo = useFBO(256, 256, {
-		minFilter: LinearFilter,
-		magFilter: LinearFilter,
-		format: RGBAFormat,
-		type: UnsignedShort4444Type,
-	});
 
 	useFrame(({ scene, camera, gl, clock, pointer }) => {
 		// const originalPosition = textGroupRef.current.position.y;
-
 		// textGroupRef.current.position.y = 0;
-
-		// gl.setRenderTarget(fbo); // Render to FBO
-		// gl.render(scene, camera); // Render the scene from the camera's perspective
-		// gl.setRenderTarget(null); // Reset the render target to default
-
 		// textGroupRef.current.position.y = originalPosition;
+
+		if ([...containerMaskedMeshesRef.current].length > 0) {
+			const mask = [...containerMaskedMeshesRef.current];
+
+			mask.forEach(mesh => {
+				if (mesh) {
+					mesh.material.uniforms.uMask.value = maskBuffer.texture;
+				}
+			});
+		}
 
 		if (meshMetalRef.current) {
 			meshMetalRef.current.rotation.x = Math.cos(clock.elapsedTime / 2);
@@ -177,11 +170,27 @@ const Banner = () => {
 				ref.uniforms.uMouse.value.lerp(target, 0.025);
 			});
 		}
+
+		const psychedelicBall = scene.getObjectByName('psychedelic-ball');
+
+		psychedelicBall.material.wireframe = true;
+
+		gl.setRenderTarget(maskBuffer);
+		gl.render(scene, camera);
+
+		psychedelicBall.material.wireframe = false;
+
+		gl.setRenderTarget(null);
 	});
 
-	useLenis(event => {
-		updatePosition(event.scroll);
-	}, [size]);
+	const maskBuffer = useFBO(size.width, size.height);
+
+	useLenis(
+		event => {
+			updatePosition(event.scroll);
+		},
+		[size],
+	);
 
 	function updatePosition(offset: number) {
 		if (textGroupRef.current && containerGroupRef.current) {
@@ -201,8 +210,6 @@ const Banner = () => {
 	// 		});
 	// 	}
 	// }, [isHover]);
-
-	console.log('re render');
 
 	return (
 		<>
@@ -276,7 +283,7 @@ const Banner = () => {
 					} = window.getComputedStyle(el);
 					const { scrollY } = window;
 					const { left, top, width, height } = el.getBoundingClientRect();
-					const { parallax } = el.dataset;
+					const { parallax, anchor } = el.dataset;
 					const { factor } = viewport;
 					const ratio = containerMeshRatio;
 					const baseX = (-viewport.width / 2) * ratio;
@@ -304,6 +311,9 @@ const Banner = () => {
 						: {
 								uResolution: { value: new Vector2(width, height) },
 								uRadii: { value: new Vector4(...radius) },
+								uAnchor: { value: +!anchor },
+								uMask: { value: maskBuffer?.texture && null },
+								uMaskResolution: { value: new Vector2(size.width, size.height) },
 						  };
 
 					const materialRef = parallax ? el => (containerMaterialParallaxRefs.current[idx] = el) : null;
@@ -311,6 +321,11 @@ const Banner = () => {
 					return (
 						<mesh
 							key={idx}
+							ref={el => {
+								if (anchor === 'about' && el) {
+									containerMaskedMeshesRef.current.add(el);
+								}
+							}}
 							position={[x, y, z]}>
 							<planeGeometry args={[(width / factor) * ratio, (height / factor) * ratio, 1, 1]} />
 							<CustomShaderMaterial
@@ -323,6 +338,12 @@ const Banner = () => {
 								transparent
 								depthTest={false}
 								depthWrite={false}
+								// blending={CustomBlending}
+								// blendingSrc={OneMinusDstColorFactor}
+								// blendingDst={OneMinusDstColorFactor}
+								// blendEquation={AddEquation}
+								// blendSrc={OneMinusSrcColorFactor}
+								// blendDst={OneMinusDstColorFactor}
 							/>
 						</mesh>
 					);
@@ -364,6 +385,20 @@ export default Banner;
 /* -------------------------------------------------------------------------- */
 /*                                  later use                                 */
 /* -------------------------------------------------------------------------- */
+
+function domTextShared(type: 'boxing' | 'satoshi') {
+	const fontFamily = {
+		boxing: '/font/Boxing-Regular.woff',
+		satoshi: '/font/Satoshi-Bold.woff',
+	};
+
+	return {
+		font: fontFamily[type],
+		anchorX: 'left',
+		anchorY: 'top',
+		overflowWrap: 'break-word',
+	};
+}
 
 // const background = useLoader(TextureLoader, '/scenery/textures/background-noise-medium.webp');
 // const texture = useLoader(
