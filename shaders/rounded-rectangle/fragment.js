@@ -2,6 +2,9 @@ const fragmentShader = `
 varying vec2 vUv;
 uniform vec2 uResolution;
 uniform vec4 uRadii;
+uniform float uAnchor;
+uniform sampler2D uMask;
+uniform vec2 uMaskResolution;
 
 float roundedBoxSDF(vec2 centerPosition, vec2 size, vec4 radius) {
     radius.xy = (centerPosition.x > 0.0) ? radius.xy : radius.zw;
@@ -11,11 +14,9 @@ float roundedBoxSDF(vec2 centerPosition, vec2 size, vec4 radius) {
 }
 
 void main() {
+    float borderWidth = 2.0;
     vec2 pixelPosition = vUv * uResolution;
     vec2 centerPosition = pixelPosition - uResolution * 0.5;
-
-    float borderWidth = 2.0;
-
     vec2 size = uResolution * 0.5 - borderWidth;
 
     float distance = roundedBoxSDF(centerPosition, size, uRadii);
@@ -23,13 +24,18 @@ void main() {
     // Smooth alpha for the border and the fill
     float smoothedAlpha = 1.0 - smoothstep(0.0, 1.0, distance);
 
-    // Colors
-    vec3 borderColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
+    // - Colors
     // vec3 fillColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
-    vec3 fillColor = vec3(0, 0, 0); // #fffff0 in RGB
+    // vec3 fillColor = vec3(0.0, 0.0, 0.0);
+    vec3 borderColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
+
+    // - masking and clipping
+    vec2 maskUv = gl_FragCoord.xy / uMaskResolution.xy;
+    vec4 maskColor = texture2D(uMask, maskUv);
+    vec3 fillColor = maskColor.rgb;
 
     // Determine the alpha for fill and border
-    float fillAlpha = 0.2;        // Make the fill fully transparent
+    float fillAlpha = (uAnchor == 1.0) ? 1.0 : 0.2; // Use uAnchor to control fillAlpha
     float borderAlpha = 1.0;      // Keep the border fully opaque
 
     // Mix the fill and border colors based on the distance

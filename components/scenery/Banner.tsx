@@ -311,7 +311,7 @@ const Banner = () => {
 						: {
 								uResolution: { value: new Vector2(width, height) },
 								uRadii: { value: new Vector4(...radius) },
-								uAnchor: { value: +!anchor },
+								uAnchor: { value: +!!anchor },
 								uMask: { value: maskBuffer?.texture && null },
 								uMaskResolution: { value: new Vector2(size.width, size.height) },
 						  };
