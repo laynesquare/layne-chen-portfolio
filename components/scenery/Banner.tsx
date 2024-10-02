@@ -37,6 +37,7 @@ import {
 	Vector4,
 	AddOperation,
 	Scene,
+	MeshNormalMaterial,
 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line } from '@react-three/drei';
@@ -76,6 +77,7 @@ const Banner = () => {
 	const textGroupRef = useRef(null);
 	const textMeshRatio = 1 - viewport.factor / calcFactorCamZ(3);
 
+	const torsoMeshRef = useRef(null);
 	const torsoGroupRef = useRef(null);
 	const torsoMeshRatio = 1 - viewport.factor / calcFactorCamZ(0);
 
@@ -139,10 +141,6 @@ const Banner = () => {
 	const meshMetalRef = useRef(null);
 
 	useFrame(({ scene, camera, gl, clock, pointer }) => {
-		// const originalPosition = textGroupRef.current.position.y;
-		// textGroupRef.current.position.y = 0;
-		// textGroupRef.current.position.y = originalPosition;
-
 		if ([...containerMaskedMeshesRef.current].length > 0) {
 			const mask = [...containerMaskedMeshesRef.current];
 
@@ -175,14 +173,22 @@ const Banner = () => {
 			});
 		}
 
-		const psychedelicBall = scene.getObjectByName('psychedelic-ball');
+		const psychedelicBallMesh = scene.getObjectByName('psychedelic-ball');
 
-		psychedelicBall.material.wireframe = true;
+		materialAcidBg.current.uniforms.uBrightColor.value = new Color('#7B60FB');
+		materialAcidBg.current.uniforms.uDarkColor.value = new Color('#FF00C7');
+		psychedelicBallMesh.material.wireframe = true;
+		psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 1;
+		psychedelicBallMesh.material.roughness = 0.5;
 
 		gl.setRenderTarget(maskBuffer);
 		gl.render(scene, camera);
 
-		psychedelicBall.material.wireframe = false;
+		materialAcidBg.current.uniforms.uBrightColor.value = new Color('#69D2B7');
+		materialAcidBg.current.uniforms.uDarkColor.value = new Color('#868686');
+		psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 0;
+		psychedelicBallMesh.material.roughness = 0.1;
+		psychedelicBallMesh.material.wireframe = false;
 
 		gl.setRenderTarget(null);
 	});
@@ -356,6 +362,7 @@ const Banner = () => {
 
 			<group ref={torsoGroupRef}>
 				<mesh
+					ref={torsoMeshRef}
 					scale={[
 						(torsoDomEl.offsetWidth / viewport.factor) * torsoMeshRatio + 1,
 						(torsoDomEl.offsetHeight / viewport.factor) * torsoMeshRatio,
