@@ -288,6 +288,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	return (
 		<>
 			<mesh
+				name='psychedelic-ball'
 				geometry={ballGeometry}
 				ref={ballRef}
 				position={ballPos.current}>
