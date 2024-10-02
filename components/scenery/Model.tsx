@@ -64,8 +64,9 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	const materialRef = useRef(null);
 	const [isBallPress, setIsBallPress] = useState(false);
 	const ballRef = useRef();
-	const ballPos = useRef(new Vector3(r(10), r(10), 1));
+	const ballInitPos = useRef(new Vector3(r(10), r(10), 1));
 	const ballCenterPos = useRef(new Vector3(0, 0, 1));
+	const ballDynamicPos = useRef(new Vector3());
 
 	const ballGeometry = useMemo(() => {
 		const geometry = mergeVertices(new IcosahedronGeometry(0.5, 64));
@@ -150,68 +151,42 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	// };
 
 	useFrame(({ clock, scene, gl }) => {
-		// const isInView = ScrollTrigger.isInViewport([...anchorDomEls][0]);
+		const elapsedTime = clock.getElapsedTime();
 
-		const inView = [...anchorDomEls].find(el => {
-			return ScrollTrigger.isInViewport(el, 0.5);
-		});
+		const inViewEl = [...anchorDomEls].find(el => ScrollTrigger.isInViewport(el, 0.5));
 
-		if (inView && ballRef.current) {
-			const el = inView;
-			const { anchor } = el.dataset;
-			const { factor } = viewport;
-			const { left, top, width, height } = el.getBoundingClientRect();
-
-			// console.log(anchor);
-
-			const baseX = (-viewport.width / 2) * ballMeshRatio;
-			const baseY = (-viewport.height / 2) * ballMeshRatio;
-			const shiftHalfW = width / 2;
-			const shiftHalfH = height / 2;
-
-			const x = baseX + ((left + shiftHalfW) / factor) * ballMeshRatio;
-			const y = baseY + ((top + shiftHalfH) / factor) * ballMeshRatio;
-			// ballRef.current.position.lerp(new Vector3(x, y, 1), 0.02);
-			ballRef.current.position.x += (x - ballRef.current.position.x) * 0.02;
+		if (!inViewEl) {
+			ballCenterUpdate();
 		}
 
-		if (materialRef.current && materialRef.current) {
-			const elapsedTime = clock.getElapsedTime();
-			// ballCenterUpdate();
-			ballRotationUpdate(elapsedTime);
-			ballMaterialUpdate(elapsedTime);
-		}
+		ballRotationUpdate(elapsedTime);
+		ballMaterialUpdate(elapsedTime);
 	});
 
-	useLenis(
-		event => {
-			const baseOffset = Math.abs(event.scroll - scrollOffsetRef.current) / viewport.factor;
-			if (event.direction) {
-				updatePosition(event.direction * baseOffset);
-				scrollOffsetRef.current = event.scroll;
-			}
-		},
-		[size],
-	);
+	function updatePosByScroll() {
+		const inViewEl = [...anchorDomEls].find(el => ScrollTrigger.isInViewport(el, 0.5));
 
-	function updatePosition(offset: number) {
-		const inView = [...anchorDomEls].find(el => {
-			return ScrollTrigger.isInViewport(el, 0.5);
-		});
-		if (ballRef.current && inView) {
-			const el = inView;
+		if (ballRef.current && inViewEl) {
 			const { factor } = viewport;
-			const { left, top, width, height } = el.getBoundingClientRect();
+			const { left, top, width, height } = inViewEl.getBoundingClientRect();
 			const baseX = (-viewport.width / 2) * ballMeshRatio;
 			const baseY = (viewport.height / 2) * ballMeshRatio;
 			const shiftHalfW = width / 2;
 			const shiftHalfH = height / 2;
 			const x = baseX + ((left + shiftHalfW) / factor) * ballMeshRatio;
 			const y = baseY - ((top + shiftHalfH) / factor) * ballMeshRatio;
-
-			ballRef.current.position.y = y;
+			const targetBallPos = ballDynamicPos.current.set(x, y, 1);
+			ballRef.current.position.lerp(targetBallPos, 0.04);
 		}
 	}
+
+	useLenis(
+		event => {
+			updatePosByScroll();
+			scrollOffsetRef.current = event.scroll;
+		},
+		[size],
+	);
 
 	function calcFactorCamZ(zPosition: number) {
 		const fov = (camera.fov * Math.PI) / 180;
@@ -222,8 +197,12 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	}
 
 	function ballCenterUpdate() {
-		if (ballRef.current.position.distanceTo(ballCenterPos.current) > 0.1) {
-			ballRef.current.position.lerp(ballCenterPos.current, 0.02);
+		const epsilon = ballRef.current.position.distanceTo(ballCenterPos.current) > 0.01;
+		// const scrollOverHalfH = scrollOffsetRef.current < size.height / 2;
+		// const shouldCenter = epsilon && scrollOverHalfH;
+
+		if (epsilon) {
+			ballRef.current.position.lerp(ballCenterPos.current, 0.05);
 		}
 	}
 
@@ -291,7 +270,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 				name='psychedelic-ball'
 				geometry={ballGeometry}
 				ref={ballRef}
-				position={ballPos.current}>
+				position={ballInitPos.current}>
 				<CustomShaderMaterial
 					ref={materialRef}
 					baseMaterial={MeshPhysicalMaterial}
