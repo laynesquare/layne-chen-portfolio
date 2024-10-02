@@ -23,18 +23,19 @@ import {
 	Quaternion,
 	Mesh,
 	TextureLoader,
-	MeshMatcapMaterial,
 	Color,
 	LoopRepeat,
+	MeshMatcapMaterial,
 	MeshPhysicalMaterial,
 	MeshDepthMaterial,
+	MeshNormalMaterial,
 	RGBADepthPacking,
 	DoubleSide,
-	TorusGeometry,
 	ShaderMaterial,
 	IcosahedronGeometry,
 	MathUtils,
 	SphereGeometry,
+	TorusGeometry,
 	FrontSide,
 } from 'three';
 
@@ -67,7 +68,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	const ballCenterPos = useRef(new Vector3(0, 0, 1));
 
 	const ballGeometry = useMemo(() => {
-		const geometry = mergeVertices(new IcosahedronGeometry(0.4, 64));
+		const geometry = mergeVertices(new IcosahedronGeometry(0.5, 64));
 		geometry.computeTangents();
 		return geometry;
 	}, []);
@@ -135,6 +136,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		uNoiseStrength: { value: 2.5 },
 		uDisplacementStrength: { value: 1 },
 		uFractAmount: { value: 0.8 },
+		uIsNormalColor: { value: 0 },
 	});
 
 	// const uniformsRef = {
@@ -147,10 +149,8 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	// 	uFractAmount: { value: fractAmount },
 	// };
 
-	useFrame(({ clock, scene }) => {
+	useFrame(({ clock, scene, gl }) => {
 		// const isInView = ScrollTrigger.isInViewport([...anchorDomEls][0]);
-
-		// console.log([...anchorDomEls]);
 
 		const inView = [...anchorDomEls].find(el => {
 			return ScrollTrigger.isInViewport(el, 0.5);
@@ -162,7 +162,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 			const { factor } = viewport;
 			const { left, top, width, height } = el.getBoundingClientRect();
 
-			console.log(anchor);
+			// console.log(anchor);
 
 			const baseX = (-viewport.width / 2) * ballMeshRatio;
 			const baseY = (-viewport.height / 2) * ballMeshRatio;
@@ -305,10 +305,6 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 					iridescenceIOR={1.3}
 					uniforms={uniformsRef.current}
 				/>
-
-				{/* <meshBasicMaterial
-					ref={materialRef}
-					color={`green`}></meshBasicMaterial> */}
 			</mesh>
 
 			<mesh
