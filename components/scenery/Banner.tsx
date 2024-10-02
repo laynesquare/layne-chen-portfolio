@@ -141,16 +141,6 @@ const Banner = () => {
 	const meshMetalRef = useRef(null);
 
 	useFrame(({ scene, camera, gl, clock, pointer }) => {
-		if ([...containerMaskedMeshesRef.current].length > 0) {
-			const mask = [...containerMaskedMeshesRef.current];
-
-			mask.forEach(mesh => {
-				if (mesh) {
-					mesh.material.uniforms.uMask.value = maskBuffer.texture;
-				}
-			});
-		}
-
 		if (meshMetalRef.current) {
 			meshMetalRef.current.rotation.x = Math.cos(clock.elapsedTime / 2);
 			meshMetalRef.current.rotation.y = Math.sin(clock.elapsedTime / 2);
@@ -174,26 +164,88 @@ const Banner = () => {
 		}
 
 		const psychedelicBallMesh = scene.getObjectByName('psychedelic-ball');
+		const ogRoughness = psychedelicBallMesh.material.roughness;
+		const ogMetalness = psychedelicBallMesh.material.metalness;
+		const ogIridescence = psychedelicBallMesh.material.iridescence;
 
-		materialAcidBg.current.uniforms.uBrightColor.value = new Color('#7B60FB');
-		materialAcidBg.current.uniforms.uDarkColor.value = new Color('#FF00C7');
-		psychedelicBallMesh.material.wireframe = true;
-		psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 1;
-		psychedelicBallMesh.material.roughness = 0.5;
-
-		gl.setRenderTarget(maskBuffer);
+		maskBufferMap['ABOUT'].mutateScene(psychedelicBallMesh);
+		gl.setRenderTarget(maskBufferMap['ABOUT'].buffer);
+		gl.clear();
 		gl.render(scene, camera);
+
+		maskBufferMap['SKILL'].mutateScene(psychedelicBallMesh);
+		gl.setRenderTarget(maskBufferMap['SKILL'].buffer);
+		gl.clear();
+		gl.render(scene, camera);
+
+		const maskMeshesArr = [...containerMaskedMeshesRef.current];
+		if (maskMeshesArr.length > 0) {
+			maskMeshesArr.forEach(mesh => {
+				if (mesh) {
+					mesh.material.uniforms.uMask.value = maskBufferMap[mesh.name]?.buffer.texture || null;
+				}
+			});
+		}
 
 		materialAcidBg.current.uniforms.uBrightColor.value = new Color('#69D2B7');
 		materialAcidBg.current.uniforms.uDarkColor.value = new Color('#868686');
-		psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 0;
-		psychedelicBallMesh.material.roughness = 0.1;
+		psychedelicBallMesh.material.roughness = ogRoughness;
+		psychedelicBallMesh.material.metalness = ogMetalness;
+		psychedelicBallMesh.material.iridescence = ogIridescence;
 		psychedelicBallMesh.material.wireframe = false;
+		psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 0;
 
 		gl.setRenderTarget(null);
+		gl.clear();
 	});
 
-	const maskBuffer = useFBO(size.width, size.height);
+	const maskBufferMap = {
+		ABOUT: {
+			buffer: useFBO(size.width * 0.8, size.height * 0.8, {
+				minFilter: LinearFilter,
+				magFilter: LinearFilter,
+				format: RGBAFormat,
+				type: UnsignedShort4444Type,
+			}),
+			mutateScene: ballMesh => {
+				materialAcidBg.current.uniforms.uBrightColor.value = new Color('#7B60FB');
+				materialAcidBg.current.uniforms.uDarkColor.value = new Color('#FF00C7');
+				ballMesh.material.roughness = 0.5;
+				ballMesh.material.wireframe = true;
+				ballMesh.material.uniforms.uIsNormalColor.value = 1;
+			},
+		},
+		SKILL: {
+			buffer: useFBO(size.width, size.height, {
+				minFilter: LinearFilter,
+				magFilter: LinearFilter,
+				format: RGBAFormat,
+				type: UnsignedShort4444Type,
+			}),
+			mutateScene: ballMesh => {
+				materialAcidBg.current.uniforms.uBrightColor.value = new Color('#FF0000');
+				materialAcidBg.current.uniforms.uDarkColor.value = new Color('#0500FF');
+				ballMesh.material.roughness = 20;
+				ballMesh.material.metalness = 0;
+				ballMesh.material.iridescence = 20;
+				ballMesh.material.wireframe = false;
+				ballMesh.material.uniforms.uIsNormalColor.value = 1;
+			},
+		},
+	};
+
+	const commonMaskBuffer = useFBO(size.width * 0.8, size.height * 0.8, {
+		minFilter: LinearFilter,
+		magFilter: LinearFilter,
+		format: RGBAFormat,
+		type: UnsignedShort4444Type,
+	});
+
+	// const maskBufferMap = {
+	// 	ABOUT: {
+	// 		buffer
+	// 	},
+	// };
 
 	useLenis(
 		event => {
@@ -322,7 +374,7 @@ const Banner = () => {
 								uResolution: { value: new Vector2(width, height) },
 								uRadii: { value: new Vector4(...radius) },
 								uAnchor: { value: +!!anchor },
-								uMask: { value: maskBuffer?.texture && null },
+								uMask: { value: null },
 								uMaskResolution: { value: new Vector2(size.width, size.height) },
 						  };
 
@@ -331,11 +383,8 @@ const Banner = () => {
 					return (
 						<mesh
 							key={idx}
-							ref={el => {
-								if (anchor === 'about' && el) {
-									containerMaskedMeshesRef.current.add(el);
-								}
-							}}
+							name={anchor}
+							ref={el => (anchor && el ? containerMaskedMeshesRef.current.add(el) : null)}
 							position={[x, y, z]}>
 							<planeGeometry args={[(width / factor) * ratio, (height / factor) * ratio, 1, 1]} />
 							<CustomShaderMaterial
@@ -348,12 +397,6 @@ const Banner = () => {
 								transparent
 								depthTest={false}
 								depthWrite={false}
-								// blending={CustomBlending}
-								// blendingSrc={OneMinusDstColorFactor}
-								// blendingDst={OneMinusDstColorFactor}
-								// blendEquation={AddEquation}
-								// blendSrc={OneMinusSrcColorFactor}
-								// blendDst={OneMinusDstColorFactor}
 							/>
 						</mesh>
 					);
