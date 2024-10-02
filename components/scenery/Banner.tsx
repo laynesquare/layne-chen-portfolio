@@ -124,7 +124,11 @@ const Banner = () => {
 
 	const materialAcidBg = useRef(
 		new ShaderMaterial({
-			uniforms: { uTime: { value: 0 } },
+			uniforms: {
+				uTime: { value: 0 },
+				uBrightColor: { value: new Color('#69D2B7') },
+				uDarkColor: { value: new Color('#868686') },
+			},
 			vertexShader: vertexShaderAcidBg,
 			fragmentShader: fragmentShaderAcidBg,
 			depthWrite: false,

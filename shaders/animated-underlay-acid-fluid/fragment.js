@@ -2,7 +2,9 @@ const fragmentShader = `
 uniform float uTime;
 varying vec2 vUv;
 varying vec3 vPosition;
-uniform sampler2D uTexture; // texture
+uniform sampler2D uTexture;
+uniform vec3 uBrightColor;
+uniform vec3 uDarkColor;
 
 // Simplex 2D noise
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
@@ -69,7 +71,8 @@ void main() {
     vec3 brightColor = vec3(0.243, 0.639, 0.482);
     
     // Mix colors based on the pattern
-    vec3 finalColor = mix(brightColor, darkColor, baseSecondPattern);
+    vec3 finalColor = mix(uBrightColor, uDarkColor, baseSecondPattern);
+    // vec3 finalColor = mix(brightColor, darkColor, baseSecondPattern);
     
     // Add grainy texture on top
     float grain = grainNoise(vUv);
