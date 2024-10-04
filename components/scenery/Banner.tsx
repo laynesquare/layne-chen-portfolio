@@ -38,6 +38,8 @@ import {
 	AddOperation,
 	Scene,
 	MeshNormalMaterial,
+	UnsignedByteType,
+	NearestFilter,
 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line } from '@react-three/drei';
@@ -69,7 +71,6 @@ const Banner = () => {
 	const { viewport, size, camera } = useThree();
 
 	const { torsoEl: torsoDomEl, containerEls: containerDomEls, textEls: textDomEls } = useDomStore(state => state);
-	// const { portFbo } = usePortFboStore(state => state);
 
 	const pointerRef = useRef(new Vector2(0, 0));
 	const pointerCenterRef = useRef(new Vector2(0, 0));
@@ -85,6 +86,7 @@ const Banner = () => {
 	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(2.9);
 	const containerMaterialParallaxRefs = useRef([]);
 	const containerMaskedMeshesRef = useRef(new Set());
+	const containerMirrorMaskedMeshesRef = useRef(new Set());
 
 	const previewShareYourMemories = useLoader(TextureLoader, '/frame/project-preview-share-your-memories.jpg');
 	const previewLearnEnglishDictionary = useLoader(
@@ -167,21 +169,16 @@ const Banner = () => {
 		const ogRoughness = psychedelicBallMesh.material.roughness;
 		const ogMetalness = psychedelicBallMesh.material.metalness;
 		const ogIridescence = psychedelicBallMesh.material.iridescence;
-
-		maskBufferMap['ABOUT'].mutateScene(psychedelicBallMesh);
-		gl.setRenderTarget(maskBufferMap['ABOUT'].buffer);
-		gl.clear();
-		gl.render(scene, camera);
-
-		maskBufferMap['SKILL'].mutateScene(psychedelicBallMesh);
-		gl.setRenderTarget(maskBufferMap['SKILL'].buffer);
-		gl.clear();
-		gl.render(scene, camera);
+		const ogClearcoat = psychedelicBallMesh.material.clearcoat;
 
 		const maskMeshesArr = [...containerMaskedMeshesRef.current];
-		if (maskMeshesArr.length > 0) {
+		if (maskMeshesArr.length) {
 			maskMeshesArr.forEach(mesh => {
 				if (mesh) {
+					maskBufferMap[mesh.name].mutateScene(psychedelicBallMesh, mesh);
+					gl.setRenderTarget(maskBufferMap[mesh.name].buffer);
+					gl.clear();
+					gl.render(scene, camera);
 					mesh.material.uniforms.uMask.value = maskBufferMap[mesh.name]?.buffer.texture || null;
 				}
 			});
@@ -192,60 +189,76 @@ const Banner = () => {
 		psychedelicBallMesh.material.roughness = ogRoughness;
 		psychedelicBallMesh.material.metalness = ogMetalness;
 		psychedelicBallMesh.material.iridescence = ogIridescence;
+		psychedelicBallMesh.material.clearcoat = ogClearcoat;
 		psychedelicBallMesh.material.wireframe = false;
+		psychedelicBallMesh.material.sheen = 0;
+		psychedelicBallMesh.material.displacementScale = 0;
 		psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 0;
+		psychedelicBallMesh.material.uniforms.uColor.value = new Color('#e6ff00');
+		psychedelicBallMesh.material.uniforms.uFractAmount.value = 0.8;
+		psychedelicBallMesh.scale.set(1, 1, 1);
 
 		gl.setRenderTarget(null);
 		gl.clear();
 	});
 
+	const maskBufferConfig = {
+		samples: 0,
+		minFilter: NearestFilter,
+		magFilter: NearestFilter,
+		format: RGBAFormat,
+		stencilBuffer: false,
+		type: UnsignedByteType,
+		anisotropy: 0,
+		colorSpace: '',
+		generateMipmaps: false,
+	};
+
 	const maskBufferMap = {
 		ABOUT: {
-			buffer: useFBO(size.width * 0.8, size.height * 0.8, {
-				minFilter: LinearFilter,
-				magFilter: LinearFilter,
-				format: RGBAFormat,
-				type: UnsignedShort4444Type,
-			}),
-			mutateScene: ballMesh => {
+			buffer: useFBO(size.width, size.height, maskBufferConfig),
+			mutateScene: (ballMesh, containerMesh) => {
+				ballMesh.material.uniforms.uIsNormalColor.value = 1;
 				materialAcidBg.current.uniforms.uBrightColor.value = new Color('#7B60FB');
 				materialAcidBg.current.uniforms.uDarkColor.value = new Color('#FF00C7');
-				ballMesh.material.roughness = 0.5;
 				ballMesh.material.wireframe = true;
-				ballMesh.material.uniforms.uIsNormalColor.value = 1;
+				ballMesh.material.roughness = 0.5;
+				ballMesh.material.displacementScale = 1;
 			},
 		},
 		SKILL: {
-			buffer: useFBO(size.width, size.height, {
-				minFilter: LinearFilter,
-				magFilter: LinearFilter,
-				format: RGBAFormat,
-				type: UnsignedShort4444Type,
-			}),
-			mutateScene: ballMesh => {
+			buffer: useFBO(128, 128, maskBufferConfig),
+			mutateScene: (ballMesh, containerMesh) => {
 				materialAcidBg.current.uniforms.uBrightColor.value = new Color('#FF0000');
 				materialAcidBg.current.uniforms.uDarkColor.value = new Color('#0500FF');
-				ballMesh.material.roughness = 20;
-				ballMesh.material.metalness = 0;
-				ballMesh.material.iridescence = 20;
+				ballMesh.material.uniforms.uIsNormalColor.value = 0;
+				ballMesh.material.uniforms.uColor.value = new Color('#FF0000');
 				ballMesh.material.wireframe = false;
+				ballMesh.material.roughness = 0.3;
+				ballMesh.material.metalness = 0.3;
+				ballMesh.material.iridescence = 0.5;
+				ballMesh.material.displacementScale = 0;
+				ballMesh.material.sheen = 1.0;
+				ballMesh.material.clearcoat = 0.0;
+				ballMesh.material.sheenColor = new Color('#fd267a');
+			},
+		},
+		EXPERIENCE: {
+			buffer: useFBO(size.width / 2, size.height / 2, maskBufferConfig),
+			mutateScene: (ballMesh, containerMesh) => {
 				ballMesh.material.uniforms.uIsNormalColor.value = 1;
+				containerMesh.material.uniforms.uHeatMap.value = 1;
+				ballMesh.material.uniforms.uFractAmount.value = 2;
+				ballMesh.material.wireframe = true;
+				ballMesh.material.wireframeLinecap = 'square';
+				ballMesh.material.wireframeLinejoin = 'square';
+				ballMesh.material.roughness = 0;
+				ballMesh.material.metalness = 0;
+				ballMesh.material.uniforms.uFractAmount.value = 0.1;
+				ballMesh.scale.set(0.5, 0.5, 0.5);
 			},
 		},
 	};
-
-	const commonMaskBuffer = useFBO(size.width * 0.8, size.height * 0.8, {
-		minFilter: LinearFilter,
-		magFilter: LinearFilter,
-		format: RGBAFormat,
-		type: UnsignedShort4444Type,
-	});
-
-	// const maskBufferMap = {
-	// 	ABOUT: {
-	// 		buffer
-	// 	},
-	// };
 
 	useLenis(
 		event => {
@@ -320,19 +333,6 @@ const Banner = () => {
 						</Text>
 					);
 				})}
-
-				<mesh
-					ref={meshMetalRef}
-					position={[0, -viewport.height, 2]}>
-					{/* <boxGeometry args={[1, 1, 1]} /> */}
-					{/* <meshMatcapMaterial
-						side={FrontSide}
-						bumpMap={fbo.texture}
-						bumpScale={0.5}
-						matcap={metalAnisotropic}
-						dithering={true}
-					/> */}
-				</mesh>
 			</group>
 
 			<group ref={containerGroupRef}>
@@ -345,7 +345,7 @@ const Banner = () => {
 					} = window.getComputedStyle(el);
 					const { scrollY } = window;
 					const { left, top, width, height } = el.getBoundingClientRect();
-					const { parallax, anchor } = el.dataset;
+					const { parallax, anchor, anchorMirror } = el.dataset;
 					const { factor } = viewport;
 					const ratio = containerMeshRatio;
 					const baseX = (-viewport.width / 2) * ratio;
@@ -353,6 +353,7 @@ const Banner = () => {
 					const shiftHalfW = width / 2;
 					const shiftHalfH = height / 2;
 					const scrollOffset = (scrollY / factor) * ratio;
+					// const meshName = `${anchor + (anchorMirror ? ' mirror' : '')}`;
 
 					let x = baseX + ((left + shiftHalfW) / factor) * ratio;
 					let y = baseY - ((top + shiftHalfH) / factor) * ratio - scrollOffset;
@@ -374,6 +375,7 @@ const Banner = () => {
 								uResolution: { value: new Vector2(width, height) },
 								uRadii: { value: new Vector4(...radius) },
 								uAnchor: { value: +!!anchor },
+								uHeatMap: { value: 0 },
 								uMask: { value: null },
 								uMaskResolution: { value: new Vector2(size.width, size.height) },
 						  };
@@ -384,8 +386,12 @@ const Banner = () => {
 						<mesh
 							key={idx}
 							name={anchor}
-							ref={el => (anchor && el ? containerMaskedMeshesRef.current.add(el) : null)}
-							position={[x, y, z]}>
+							ref={el => {
+								anchor && el ? containerMaskedMeshesRef.current.add(el) : null;
+								anchorMirror && el ? containerMirrorMaskedMeshesRef.current.add(el) : null;
+							}}
+							position={[x, y, z]}
+							frustumCulled={false}>
 							<planeGeometry args={[(width / factor) * ratio, (height / factor) * ratio, 1, 1]} />
 							<CustomShaderMaterial
 								ref={materialRef}
@@ -430,6 +436,19 @@ const Banner = () => {
 					<planeGeometry args={[5, 3, 1, 1]} />
 				</mesh>
 			</group> */}
+
+			{/* <mesh
+				ref={meshMetalRef}
+				position={[0, -viewport.height, 2]}>
+				<boxGeometry args={[1, 1, 1]} />
+				<meshMatcapMaterial
+						side={FrontSide}
+						bumpMap={fbo.texture}
+						bumpScale={0.5}
+						matcap={metalAnisotropic}
+						dithering={true}
+					/>
+			</mesh> */}
 		</>
 	);
 };
