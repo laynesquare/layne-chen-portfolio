@@ -3,6 +3,7 @@ varying vec2 vUv;
 uniform vec2 uResolution;
 uniform vec4 uRadii;
 uniform float uAnchor;
+uniform float uHeatMap;
 uniform sampler2D uMask;
 uniform vec2 uMaskResolution;
 
@@ -11,6 +12,28 @@ float roundedBoxSDF(vec2 centerPosition, vec2 size, vec4 radius) {
     radius.x = (centerPosition.y > 0.0) ? radius.x : radius.y;
     vec2 q = abs(centerPosition) - size + radius.x;
     return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - radius.x;
+}
+
+vec3 getHeatMapColor(float value) {
+    // Clamp the value between 0.0 and 1.0
+    value = clamp(value, 0.0, 1.0);
+    
+    // Define color stops
+    vec3 blue = vec3(0.0, 0.0, 1.0);
+    vec3 cyan = vec3(0.0, 1.0, 1.0);
+    vec3 green = vec3(0.0, 1.0, 0.0);
+    vec3 yellow = vec3(1.0, 1.0, 0.0);
+    vec3 red = vec3(1.0, 0.0, 0.0);
+    
+    if (value < 0.25) {
+        return mix(blue, cyan, value / 0.25);
+    } else if (value < 0.5) {
+        return mix(cyan, green, (value - 0.25) / 0.25);
+    } else if (value < 0.75) {
+        return mix(green, yellow, (value - 0.5) / 0.25);
+    } else {
+        return mix(yellow, red, (value - 0.75) / 0.25);
+    }
 }
 
 void main() {
@@ -31,8 +54,28 @@ void main() {
 
     // - masking and clipping
     vec2 maskUv = gl_FragCoord.xy / uMaskResolution.xy;
-    vec4 maskColor = texture2D(uMask, maskUv);
-    vec3 fillColor = maskColor.rgb;
+    vec4 maskColor;
+    vec3 fillColor;
+
+    // - heat map and distortion
+    if (uHeatMap == 1.0) {
+        float frequency = 100.0;
+        float amplitude = 0.003;
+        float distortion = sin(maskUv.y * frequency) * amplitude;
+        // maskColor = texture2D(uMask, vec2(maskUv.x + distortion, maskUv.y));
+        maskColor = texture2D(uMask, maskUv);
+        float scalar = maskColor.b;
+        fillColor = getHeatMapColor(scalar);
+        // - displacement
+        // vec4 displacement = texture2D(uMask, maskUv);
+        // float theta = displacement.r * 2.0 * PI; // Rotation based on displacement
+        // vec2 dir = vec2(sin(theta), cos(theta)); // Direction
+        // maskUv += dir * displacement.r * 0.5;
+        // fillColor = texture2D(uMask, maskUv).rgb;
+    } else {
+        maskColor = texture2D(uMask, maskUv);
+        fillColor = maskColor.rgb;
+    }
 
     // Determine the alpha for fill and border
     float fillAlpha = (uAnchor == 1.0) ? 1.0 : 0.2; // Use uAnchor to control fillAlpha
