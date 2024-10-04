@@ -17,9 +17,9 @@ float roundedBoxSDF(vec2 centerPosition, vec2 size, vec4 radius) {
 void main() {
     vec2 mouseNormalized = (uMouse + 1.0) / 2.0;
 
-    // Compute the view direction from the fragment to the mouse position
+    // - Compute the view direction from the fragment to the mouse position
 
-    // Parallax mapping parameters
+    // - Parallax mapping parameters
     float parallaxScale = 2.0; // Controls the strength of the parallax effect
     float numLayers = 30.0;
     float layerDepth = 1.0 / numLayers;
@@ -27,7 +27,7 @@ void main() {
     vec2 deltaTexCoords = uMouse * parallaxScale / numLayers;
     vec2 currentTexCoords = vUv;
 
-    // Perform parallax occlusion mapping
+    // - Perform parallax occlusion mapping
     for (int i = 0; i < 30; i++) {
         currentTexCoords -= deltaTexCoords;
         currentLayerDepth += layerDepth;
@@ -37,13 +37,13 @@ void main() {
         }
     }
 
-    // Sample the texture with the adjusted UV coordinates
+    // - Sample the texture with the adjusted UV coordinates
     vec4 textureColorWithParallax = texture2D(uTexture, currentTexCoords);
 
-    // ! border handling
+    // - border handling
+    float borderWidth = 2.0;
     vec2 pixelPosition = vUv * uResolution;
     vec2 centerPosition = pixelPosition - uResolution * 0.5;
-    float borderWidth = 2.0;
     vec2 size = uResolution * 0.5 - borderWidth;
     float distance = roundedBoxSDF(centerPosition, size, uRadii);
 
@@ -52,7 +52,7 @@ void main() {
 
     // - Colors
     vec3 borderColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
-    vec3 fillColor = vec3(textureColorWithParallax.r, textureColorWithParallax.g, textureColorWithParallax.b);
+    vec3 fillColor = textureColorWithParallax.rgb;
 
     // - Determine the alpha for fill and border
     float fillAlpha = 1.0;        // Make the fill fully transparent
