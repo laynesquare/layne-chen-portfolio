@@ -163,8 +163,8 @@ export default function Hero({}) {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
 							}}
-							data-anchor='about'>
-							{'ball'}
+							data-anchor='ABOUT'>
+							{'about'}
 						</div>
 					</section>
 
@@ -214,7 +214,7 @@ export default function Hero({}) {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
 							}}
-							data-anchor='skill'>
+							data-anchor='SKILL'>
 							ball
 						</div>
 
@@ -507,7 +507,11 @@ export default function Hero({}) {
 
 						<div
 							className='border border-neutral rounded-[0rem_0rem_0rem_9rem] h-[60rem] flex flex-[0.3]'
-							ref={containerElStoreRegister}>
+							ref={el => {
+								containerElStoreRegister(el);
+								anchorElStoreRegister(el);
+							}}
+							data-anchor='EXPERIENCE'>
 							ball
 						</div>
 
@@ -622,7 +626,12 @@ export default function Hero({}) {
 							</div>
 							<div
 								className='border border-neutral h-72 flex-1 flex flex-col rounded-[0rem_0rem_9rem_0rem]'
-								ref={containerElStoreRegister}>
+								ref={el => {
+									containerElStoreRegister(el);
+									anchorElStoreRegister(el);
+								}}
+								data-anchor='EXPERIENCE'
+								data-anchor-mirror>
 								<div className='m-auto text-center px-6'>{`square`}</div>
 							</div>
 						</div>
