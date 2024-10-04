@@ -55,4 +55,17 @@ const useDomStore = create(set => ({
 	},
 }));
 
-export { useDomStore };
+const usePortFboStore = create(set => ({
+	portFbo: null,
+
+	portFboRegister: item => {
+		set(state => {
+			if (state && item) {
+				state.portFbo = item;
+			}
+			return state;
+		});
+	},
+}));
+
+export { useDomStore, usePortFboStore };
