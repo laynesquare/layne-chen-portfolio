@@ -14,6 +14,10 @@ import {
 	LinearFilter,
 	RGBAFormat,
 	UnsignedShort4444Type,
+	NearestFilter,
+	RGBFormat,
+	UnsignedByteType,
+	LinearEncoding,
 } from 'three';
 import { easing } from 'maath';
 
@@ -56,22 +60,41 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	const resolutionScale = devicePixelRatio > 1.5 || memory <= 4 ? 0.5 : 0.75;
 
 	const portBuffer = useFBO(size.width, size.height, {
+		// minFilter: NearestFilter,
+		// magFilter: NearestFilter,
+		// samples: 10,
+		// minFilter: LinearFilter,
+		// magFilter: LinearFilter,
+		// stencilBuffer: false,
+		// type: UnsignedByteType,
+		// generateMipmaps: false,
+		// anisotropy: 0,
+		// colorSpace: '',
+		// format: RGBFormat,
+		// depthBuffer: false,
+	});
+
+	const rippleBuffer = useFBO(32, 32, {
+		samples: 0,
 		minFilter: LinearFilter,
 		magFilter: LinearFilter,
 		format: RGBAFormat,
+		type: UnsignedByteType,
+		stencilBuffer: false,
+		depthBuffer: false,
+		depth: false,
+		anisotropy: 0,
+		colorSpace: '',
+		generateMipmaps: false,
+
+		// colorSpace: '',
+		// anisotropy: 0,
 	});
 
 	useEffect(() => {
 		// portBuffer.setSize(size.width * 1.2, size.height * 1.2);
 		// portFboRegister(portBuffer);
 	}, []);
-
-	const rippleBuffer = useFBO(32, 32, {
-		minFilter: LinearFilter,
-		magFilter: LinearFilter,
-		format: RGBAFormat,
-		type: UnsignedShort4444Type,
-	});
 
 	const [portScene] = useState(() => new Scene());
 	const [rippleScene] = useState(() => new Scene());
@@ -194,10 +217,13 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		});
 
 		gl.setRenderTarget(portBuffer);
+		gl.clear();
 		gl.render(portScene, camera);
 		gl.setRenderTarget(rippleBuffer);
+		gl.clear();
 		gl.render(rippleScene, camera);
 		gl.setRenderTarget(null);
+		gl.clear();
 	});
 
 	return (
@@ -206,10 +232,10 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			{createPortal(ripples, rippleScene)}
 			<mesh
 				name='billboard'
+				onPointerOver={() => null}
 				castShadow={false}
 				receiveShadow={false}
 				ref={ref}
-				onPointerOver={() => null}
 				scale={[viewport.width, viewport.height, 1]}
 				material={portMaterialRef.current}
 				position={[0, 0, 0]}>
