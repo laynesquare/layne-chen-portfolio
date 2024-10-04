@@ -511,7 +511,8 @@ export default function Hero({}) {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
 							}}
-							data-anchor='EXPERIENCE'>
+							data-anchor='EXPERIENCE'
+							data-anchor-mirror>
 							ball
 						</div>
 
