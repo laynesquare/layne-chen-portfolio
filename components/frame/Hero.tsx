@@ -679,8 +679,12 @@ export default function Hero({}) {
 
 						<figure
 							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3]'
-							ref={containerElStoreRegister}
-							data-parallax='previewShareYourMemories'>
+							ref={el => {
+								containerElStoreRegister(el);
+								anchorElStoreRegister(el);
+							}}
+							data-parallax='previewShareYourMemories'
+							data-anchor='PROJECT'>
 							<Image
 								src={previewShareYourMemories}
 								alt=''
@@ -780,7 +784,7 @@ export default function Hero({}) {
 									className='m-auto text-xl font-satoshi whitespace-pre-line'
 									data-font-family='satoshi'
 									ref={textElStoreRegister}>
-									{`Showcases my work and expertise as a fron tend developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for lightning-fast load times while improving crawlability for better SEO.`}
+									{`Showcases my work and expertise as a front-end developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for lightning-fast load times while improving crawlability for better SEO.`}
 								</p>
 							</div>
 						</div>
@@ -795,10 +799,10 @@ export default function Hero({}) {
 							<a
 								ref={textElStoreRegister}
 								data-font-family='boxing'
-								data-font-highlight>{`[ demo ]`}</a>
+								data-font-highlight='button'>{`[ demo ]`}</a>
 							<a
 								ref={textElStoreRegister}
-								data-font-highlight
+								data-font-highlight='button'
 								data-font-family='boxing'>{`[ code ]`}</a>
 						</div>
 
@@ -814,8 +818,12 @@ export default function Hero({}) {
 
 						<figure
 							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3]'
-							ref={containerElStoreRegister}
-							data-parallax='previewShareYourMemories'>
+							ref={el => {
+								containerElStoreRegister(el);
+								anchorElStoreRegister(el);
+							}}
+							data-parallax='previewShareYourMemories'
+							data-anchor='PROJECT'>
 							<Image
 								src={previewShareYourMemories}
 								alt=''
@@ -959,11 +967,11 @@ export default function Hero({}) {
 							ref={containerElStoreRegister}>
 							<a
 								ref={textElStoreRegister}
-								data-font-highlight
+								data-font-highlight='button'
 								data-font-family='boxing'>{`[ demo ]`}</a>
 							<a
 								ref={textElStoreRegister}
-								data-font-highlight
+								data-font-highlight='button'
 								data-font-family='boxing'>{`[ code ]`}</a>
 						</div>
 
@@ -977,8 +985,12 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 						<figure
 							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3]'
-							ref={containerElStoreRegister}
-							data-parallax='previewLearnEnglishDictionary'>
+							ref={el => {
+								containerElStoreRegister(el);
+								anchorElStoreRegister(el);
+							}}
+							data-parallax='previewLearnEnglishDictionary'
+							data-anchor='PROJECT'>
 							<Image
 								src={previewLearnEnglishDictionary}
 								alt=''
@@ -1098,8 +1110,10 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-neutral h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
-							ref={containerElStoreRegister}>
+							className='h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
+							ref={el => {
+								containerElStoreRegister(el);
+							}}>
 							<a
 								ref={textElStoreRegister}
 								data-font-highlight
@@ -1130,28 +1144,28 @@ export default function Hero({}) {
 							<a
 								data-font-family='boxing'
 								ref={textElStoreRegister}
-								data-font-highlight
+								data-font-highlight='button'
 								href=''>{`[ github ]`}</a>
 							<a
 								data-font-family='boxing'
 								ref={textElStoreRegister}
-								data-font-highlight
+								data-font-highlight='button'
 								href=''>{`[ linkedin ]`}</a>
 							<a
 								data-font-family='boxing'
 								ref={textElStoreRegister}
-								data-font-highlight
+								data-font-highlight='button'
 								href=''>{`[ resume ]`}</a>
 							<a
 								data-font-family='boxing'
 								ref={textElStoreRegister}
-								data-font-highlight
+								data-font-highlight='button'
 								href=''>{`[ laynechensquare@gmail.com ]`}</a>
 						</nav>
 						<button
 							data-font-family='boxing'
 							ref={textElStoreRegister}
-							data-font-highlight
+							data-font-highlight='button'
 							className='text-right'>
 							{'[ Back to top ]'}
 						</button>
