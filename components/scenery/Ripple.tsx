@@ -18,6 +18,7 @@ import {
 	RGBFormat,
 	UnsignedByteType,
 	LinearEncoding,
+	HalfFloatType,
 } from 'three';
 import { easing } from 'maath';
 
@@ -63,8 +64,8 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		// minFilter: NearestFilter,
 		// magFilter: NearestFilter,
 		samples: 0,
-		minFilter: NearestFilter,
-		magFilter: NearestFilter,
+		minFilter: LinearFilter,
+		magFilter: LinearFilter,
 		stencilBuffer: false,
 		type: UnsignedByteType,
 		generateMipmaps: false,
@@ -76,10 +77,10 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 
 	const rippleBuffer = useFBO(32, 32, {
 		samples: 0,
-		minFilter: LinearFilter,
+		minFilter: NearestFilter,
 		magFilter: LinearFilter,
 		format: RGBAFormat,
-		type: UnsignedByteType,
+		type: HalfFloatType,
 		stencilBuffer: false,
 		depthBuffer: false,
 		depth: false,
@@ -160,8 +161,11 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 
 	const handleMouseMove = useCallback(
 		(event: MouseEvent) => {
+			const ndcX = (event.clientX / size.width) * 2 - 1;
+			const ndcY = -((event.clientY / size.height) * 2 - 1);
+
 			const vector = rippleVec3.current;
-			vector.set(pointer.x, pointer.y, 0.5);
+			vector.set(ndcX, ndcY, 0.5);
 			vector.unproject(camera);
 			vector.sub(camera.position).normalize();
 			const distance = (1 - camera.position.z) / vector.z;
@@ -216,12 +220,14 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			mesh.scale.y = mesh.scale.x;
 		});
 
-		gl.setRenderTarget(portBuffer);
-		gl.clear();
-		gl.render(portScene, camera);
 		gl.setRenderTarget(rippleBuffer);
 		gl.clear();
 		gl.render(rippleScene, camera);
+
+		gl.setRenderTarget(portBuffer);
+		gl.clear();
+		gl.render(portScene, camera);
+
 		gl.setRenderTarget(null);
 		gl.clear();
 	});
