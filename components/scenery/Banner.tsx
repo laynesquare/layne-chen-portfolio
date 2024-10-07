@@ -40,6 +40,8 @@ import {
 	MeshNormalMaterial,
 	UnsignedByteType,
 	NearestFilter,
+	HalfFloatType,
+	NoBlending,
 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line } from '@react-three/drei';
@@ -61,11 +63,9 @@ import vertexShaderParallaxDepth from '@/shaders/animated-parallax-depth/vertex'
 
 import debounce from 'lodash/debounce';
 import { Vector } from 'html2canvas/dist/types/render/vector';
+import { depth } from 'three/webgpu';
 
 gsap.registerPlugin(useGSAP);
-
-// Custom hook for debounced viewport
-// Custom hook for debounced viewport and size
 
 const Banner = () => {
 	const { viewport, size, camera } = useThree();
@@ -111,18 +111,19 @@ const Banner = () => {
 		new MeshBasicMaterial({
 			color: new Color('#FFFFF0'),
 			dithering: true,
-			// blending: MultiplyBlending,
 			depthWrite: false,
 			depthTest: false,
+			// blending: NoBlending,
 		}),
 	);
 
 	const materialDomTextHighlight = useRef(
 		new MeshBasicMaterial({
-			color: new Color('#25fed3'),
+			color: new Color('#FAFF00'),
 			dithering: true,
 			depthWrite: false,
 			depthTest: false,
+			// blending: SubtractiveBlending,
 		}),
 	);
 
@@ -165,6 +166,9 @@ const Banner = () => {
 			});
 		}
 
+		textGroupRef.current.visible = false;
+		containerGroupRef.current.visible = false;
+
 		const psychedelicBallMesh = scene.getObjectByName('psychedelic-ball');
 		const ogRoughness = psychedelicBallMesh.material.roughness;
 		const ogMetalness = psychedelicBallMesh.material.metalness;
@@ -174,7 +178,7 @@ const Banner = () => {
 		const maskMeshesArr = [...containerMaskedMeshesRef.current];
 		if (maskMeshesArr.length) {
 			maskMeshesArr.forEach(mesh => {
-				if (mesh) {
+				if (mesh && maskBufferType.includes(mesh.name)) {
 					maskBufferMap[mesh.name].mutateScene(psychedelicBallMesh, mesh);
 					gl.setRenderTarget(maskBufferMap[mesh.name].buffer);
 					gl.clear();
@@ -183,6 +187,9 @@ const Banner = () => {
 				}
 			});
 		}
+
+		textGroupRef.current.visible = true;
+		containerGroupRef.current.visible = true;
 
 		materialAcidBg.current.uniforms.uBrightColor.value = new Color('#69D2B7');
 		materialAcidBg.current.uniforms.uDarkColor.value = new Color('#868686');
@@ -207,16 +214,20 @@ const Banner = () => {
 		minFilter: NearestFilter,
 		magFilter: NearestFilter,
 		format: RGBAFormat,
-		stencilBuffer: false,
-		type: UnsignedByteType,
+		type: HalfFloatType,
 		anisotropy: 0,
 		colorSpace: '',
 		generateMipmaps: false,
+		stencilBuffer: false,
+		// depthBuffer: false,
+		// depth: false,
 	};
+
+	const maskBufferType = ['ABOUT', 'SKILL', 'EXPERIENCE'];
 
 	const maskBufferMap = {
 		ABOUT: {
-			buffer: useFBO(size.width, size.height, maskBufferConfig),
+			buffer: useFBO(size.width / 2, size.height / 2, maskBufferConfig),
 			mutateScene: (ballMesh, containerMesh) => {
 				ballMesh.material.uniforms.uIsNormalColor.value = 1;
 				materialAcidBg.current.uniforms.uBrightColor.value = new Color('#7B60FB');
@@ -250,8 +261,8 @@ const Banner = () => {
 				containerMesh.material.uniforms.uHeatMap.value = 1;
 				ballMesh.material.uniforms.uFractAmount.value = 2;
 				ballMesh.material.wireframe = true;
-				ballMesh.material.wireframeLinecap = 'square';
-				ballMesh.material.wireframeLinejoin = 'square';
+				// ballMesh.material.wireframeLinecap = 'square';
+				// ballMesh.material.wireframeLinejoin = 'square';
 				ballMesh.material.roughness = 0;
 				ballMesh.material.metalness = 0;
 				ballMesh.material.uniforms.uFractAmount.value = 0.1;
@@ -275,16 +286,6 @@ const Banner = () => {
 			torsoGroupRef.current.position.y = base * torsoMeshRatio;
 		}
 	}
-
-	// useGSAP(() => {
-	// 	if (isHover) {
-	// 		gsap.to(groupRef.current.position, {
-	// 			z: -10,
-	// 			duration: 5,
-	// 			ease: 'power2.inOut',
-	// 		});
-	// 	}
-	// }, [isHover]);
 
 	return (
 		<>
@@ -321,6 +322,7 @@ const Banner = () => {
 					return (
 						<Text
 							key={idx}
+							// name={fontHighlight || null}
 							{...domTextShared(fontFamily)}
 							position={[pX, pY, pZ]}
 							material={material}
@@ -328,7 +330,8 @@ const Banner = () => {
 							maxWidth={(width / factor) * ratio + 0.01}
 							scale={[sX, sY, sZ]}
 							textAlign={textAlign}
-							fontSize={(parsedFontSize / factor) * ratio}>
+							fontSize={(parsedFontSize / factor) * ratio}
+							userData={el.dataset}>
 							{el.textContent}
 						</Text>
 					);
@@ -353,7 +356,6 @@ const Banner = () => {
 					const shiftHalfW = width / 2;
 					const shiftHalfH = height / 2;
 					const scrollOffset = (scrollY / factor) * ratio;
-					// const meshName = `${anchor + (anchorMirror ? ' mirror' : '')}`;
 
 					let x = baseX + ((left + shiftHalfW) / factor) * ratio;
 					let y = baseY - ((top + shiftHalfH) / factor) * ratio - scrollOffset;
@@ -391,7 +393,8 @@ const Banner = () => {
 								anchorMirror && el ? containerMirrorMaskedMeshesRef.current.add(el) : null;
 							}}
 							position={[x, y, z]}
-							frustumCulled={false}>
+							frustumCulled={false}
+							userData={el.dataset}>
 							<planeGeometry args={[(width / factor) * ratio, (height / factor) * ratio, 1, 1]} />
 							<CustomShaderMaterial
 								ref={materialRef}
@@ -403,6 +406,9 @@ const Banner = () => {
 								transparent
 								depthTest={false}
 								depthWrite={false}
+								// transmission={1.1}
+								// roughness={0.5}
+								// color={new Color('#7B60FB')}
 							/>
 						</mesh>
 					);
@@ -427,28 +433,6 @@ const Banner = () => {
 					<planeGeometry args={[1, 1, 1, 1]} />
 				</mesh>
 			</group>
-
-			{/* <group>
-				<mesh
-					position={[0, 0, 1]}
-					material={materialParallaxDepth.current}
-					onPointerEnter={() => console.log('enter')}>
-					<planeGeometry args={[5, 3, 1, 1]} />
-				</mesh>
-			</group> */}
-
-			{/* <mesh
-				ref={meshMetalRef}
-				position={[0, -viewport.height, 2]}>
-				<boxGeometry args={[1, 1, 1]} />
-				<meshMatcapMaterial
-						side={FrontSide}
-						bumpMap={fbo.texture}
-						bumpScale={0.5}
-						matcap={metalAnisotropic}
-						dithering={true}
-					/>
-			</mesh> */}
 		</>
 	);
 };
