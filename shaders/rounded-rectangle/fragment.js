@@ -37,7 +37,7 @@ vec3 getHeatMapColor(float value) {
 }
 
 void main() {
-    float borderWidth = 2.0;
+    float borderWidth = 1.0;
     vec2 pixelPosition = vUv * uResolution;
     vec2 centerPosition = pixelPosition - uResolution * 0.5;
     vec2 size = uResolution * 0.5 - borderWidth;
@@ -54,42 +54,49 @@ void main() {
 
     // - masking and clipping
     vec2 maskUv = gl_FragCoord.xy / uMaskResolution.xy;
-    vec4 maskColor;
-    vec3 fillColor;
+    vec4 maskColor = texture2D(uMask, maskUv);
+    vec3 fillColor = vec3(1.0, 1.0, 0.941);
+
+    // - alpha
+    float fillAlpha = 1.0;
+    float borderAlpha = 0.5;
+
+    // - Check if the mask is empty (texture not present or fully transparent)
+    bool hasMask = maskColor.a > 0.0; // Check if the mask's alpha is greater than 0
 
     // - heat map and distortion
     if (uHeatMap == 1.0) {
-        float frequency = 100.0;
-        float amplitude = 0.003;
-        float distortion = sin(maskUv.y * frequency) * amplitude;
+        // float frequency = 100.0;
+        // float amplitude = 0.003;
+        // float distortion = sin(maskUv.y * frequency) * amplitude;
         // maskColor = texture2D(uMask, vec2(maskUv.x + distortion, maskUv.y));
-        maskColor = texture2D(uMask, maskUv);
         float scalar = maskColor.b;
         fillColor = getHeatMapColor(scalar);
-        // - displacement
-        // vec4 displacement = texture2D(uMask, maskUv);
-        // float theta = displacement.r * 2.0 * PI; // Rotation based on displacement
-        // vec2 dir = vec2(sin(theta), cos(theta)); // Direction
-        // maskUv += dir * displacement.r * 0.5;
-        // fillColor = texture2D(uMask, maskUv).rgb;
-    } else {
-        maskColor = texture2D(uMask, maskUv);
+        fillAlpha = 1.0;
+    } else if (hasMask)  {
         fillColor = maskColor.rgb;
+        fillAlpha = 1.0;
+    } else {
+        fillAlpha = 0.0;
     }
 
-    // Determine the alpha for fill and border
-    float fillAlpha = (uAnchor == 1.0) ? 1.0 : 0.2; // Use uAnchor to control fillAlpha
-    float borderAlpha = 1.0;      // Keep the border fully opaque
-
-    // Mix the fill and border colors based on the distance
+    // - Mix the fill and border colors based on the distance
     vec3 color = mix(fillColor, borderColor, smoothstep(-borderWidth, 0.0, distance));
 
-    // Mix the alpha: fully transparent for fill, fully opaque for border
+    // - Mix the alpha: fully transparent for fill, fully opaque for border
     float alpha = mix(fillAlpha, borderAlpha, smoothstep(-borderWidth, 0.0, distance));
 
     // Output the final color with the calculated alpha
+    // csm_DiffuseColor = vec4(color, alpha * smoothedAlpha);
     csm_FragColor = vec4(color, alpha * smoothedAlpha);
 }
 `;
 
 export default fragmentShader;
+
+// - displacement
+// vec4 displacement = texture2D(uMask, maskUv);
+// float theta = displacement.r * 2.0 * PI; // Rotation based on displacement
+// vec2 dir = vec2(sin(theta), cos(theta)); // Direction
+// maskUv += dir * displacement.r * 0.5;
+// fillColor = texture2D(uMask, maskUv).rgb;
