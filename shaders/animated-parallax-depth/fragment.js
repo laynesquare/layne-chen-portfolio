@@ -21,14 +21,14 @@ void main() {
 
     // - Parallax mapping parameters
     float parallaxScale = 2.0; // Controls the strength of the parallax effect
-    float numLayers = 30.0;
+    float numLayers = 15.0;
     float layerDepth = 1.0 / numLayers;
     float currentLayerDepth = 0.0;
     vec2 deltaTexCoords = uMouse * parallaxScale / numLayers;
     vec2 currentTexCoords = vUv;
 
     // - Perform parallax occlusion mapping
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 15; i++) {
         currentTexCoords -= deltaTexCoords;
         currentLayerDepth += layerDepth;
         float depthFromTexture = 1.0 - texture2D(uTexture, currentTexCoords).r;
@@ -41,7 +41,7 @@ void main() {
     vec4 textureColorWithParallax = texture2D(uTexture, currentTexCoords);
 
     // - border handling
-    float borderWidth = 2.0;
+    float borderWidth = 1.0;
     vec2 pixelPosition = vUv * uResolution;
     vec2 centerPosition = pixelPosition - uResolution * 0.5;
     vec2 size = uResolution * 0.5 - borderWidth;
@@ -55,8 +55,8 @@ void main() {
     vec3 fillColor = textureColorWithParallax.rgb;
 
     // - Determine the alpha for fill and border
-    float fillAlpha = 1.0;        // Make the fill fully transparent
-    float borderAlpha = 1.0;      // Keep the border fully opaque
+    float fillAlpha = 0.95;        // Make the fill fully transparent
+    float borderAlpha = 0.2;      // Keep the border fully opaque
 
     // - Mix the fill and border colors based on the distance
     vec3 color = mix(fillColor, borderColor, smoothstep(-borderWidth, 0.0, distance));
