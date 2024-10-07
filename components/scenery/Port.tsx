@@ -52,7 +52,7 @@ export default function Port() {
 					<Environment preset='warehouse'>
 						<Lightformer
 							color='white'
-							intensity={5}
+							intensity={3}
 							position={[10, 5, 0]}
 							scale={[10, 50, 1]}
 							target={lightDirRef.current}
