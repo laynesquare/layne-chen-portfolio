@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Hero from '@/components/frame/Hero';
 import Scene from '@/components/scenery/Scene';
+import Loader from '@/components/scenery/Loader';
 
 import { useProgress } from '@react-three/drei';
 
@@ -22,7 +23,7 @@ export default function Home() {
 
 	return (
 		<>
-			{/* <Loader /> */}
+			<Loader />
 			{/* <main
 				className={`overall-ctn`}
 				ref={wrapperRef}
