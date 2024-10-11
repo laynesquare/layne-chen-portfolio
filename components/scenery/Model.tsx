@@ -10,6 +10,7 @@ import {
 	Billboard,
 	RoundedBox,
 	useScroll,
+	meshBounds,
 } from '@react-three/drei';
 import { Intersection, useFrame, useGraph, useLoader, useThree } from '@react-three/fiber';
 import { BallCollider, Physics, RigidBody, CylinderCollider, RapierRigidBody } from '@react-three/rapier';
@@ -41,11 +42,12 @@ import {
 	CubeRefractionMapping,
 	Euler,
 	MeshBasicMaterial,
+	CircleGeometry,
 } from 'three';
 
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 
-import CustomShaderMaterial from 'three-custom-shader-material';
+import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 import vertexShader from '@/shaders/animated-displaced-sphere/vertex';
 import fragmentShader from '@/shaders/animated-displaced-sphere/fragment';
 import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -63,10 +65,13 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Model({ r = MathUtils.randFloatSpread }) {
-	const { viewport, size, camera, scene } = useThree();
+	const viewport = useThree(state => state.viewport);
+	const size = useThree(state => state.size);
+	const camera = useThree(state => state.camera);
+	const scene = useThree(state => state.scene);
 
-	const materialRef = useRef(null);
-	const [isBallPress, setIsBallPress] = useState(false);
+	const anchorDomEls = useDomStore(state => state.anchorEls);
+
 	const ballRef = useRef();
 	const ballCloneRef = useRef();
 	const ballInitPosRef = useRef(new Vector3(r(10), r(10), 1));
@@ -83,14 +88,11 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	const ballMaskRef = useRef(null);
 	const ballClonedMaskRef = useRef(null);
 
-	const anchorDomEls = useDomStore(state => state.anchorEls);
 	const scrollOffsetRef = useRef(0); // pixel
 
 	const ballMeshRatio = 1 - viewport.factor / calcFactorCamZ(1);
 
-	// const waterNormals = useLoader(TextureLoader, '/scenery/textures/waternormals.jpg');
-	// const waterNormals = useLoader(TextureLoader, '/scenery/textures/test.jpg');
-	const waterNormals = useLoader(TextureLoader, '/scenery/textures/test2.jpg');
+	const displacementTexture = useLoader(TextureLoader, '/scenery/textures/test2.jpg');
 
 	// console.log('re render from ball');
 
@@ -161,13 +163,8 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		uIsNormalColor: { value: 0 },
 	});
 
-	const ballMaskMaterialRef = useRef(
-		new MeshBasicMaterial({ visible: true, depthTest: false, depthWrite: false, transparent: true, opacity: 0 }),
-	);
-
 	useFrame(({ clock, scene, gl, raycaster }) => {
 		const elapsedTime = clock.getElapsedTime();
-		// raycaster.layers.disableAll();
 
 		const inViewEl = [...anchorDomEls].find(el => ScrollTrigger.isInViewport(el, 0.2));
 
@@ -176,68 +173,26 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 			if (epsilon) {
 				ballRef.current.position.lerp(ballCenterPosRef.current, 0.05);
 			}
-			ballMaskRef.current.position.copy(ballRef.current.position.clone());
+			ballMaskRef.current.position.copy(ballRef.current.position);
 		}
 
-		ballRotationRefUpdate(elapsedTime);
+		if (ballCloneRef.current) {
+			ballCloneRef.current.rotation.copy(ballRef.current.rotation);
+		}
+
 		ballMaterialUpdate(elapsedTime);
 	});
 
 	useLenis(
 		event => {
-			createBallClone();
-			updatePosByScroll();
+			if (ballRef.current && ballCloneRef.current) {
+				// createBallClone();
+				updatePosByScroll();
+			}
 
 			scrollOffsetRef.current = event.scroll;
 		},
 		[size],
-	);
-
-	useGSAP(
-		() => {
-			if (ballRef.current && materialRef.current) {
-				if (isBallPress) {
-					gsap.to(materialRef.current.uniforms.uNoiseStrength, {
-						value: 3.5,
-						duration: 3,
-						ease: 'elastic.out(1, 0.1)',
-					});
-					gsap.to(materialRef.current.uniforms.uDisplacementStrength, {
-						value: 1.1,
-						duration: 3,
-						ease: 'elastic.out(1, 0.1)',
-					});
-					gsap.to(materialRef.current, {
-						iridescence: 1,
-						metalness: 0.6,
-						roughness: 1,
-						clearcoat: 0,
-						duration: 3,
-						ease: 'elastic.out(1, 0.1)',
-					});
-				} else {
-					gsap.to(materialRef.current.uniforms.uNoiseStrength, {
-						value: 2.5,
-						duration: 3,
-						ease: 'elastic.out(1, 0.1)',
-					});
-					gsap.to(materialRef.current.uniforms.uDisplacementStrength, {
-						value: 1,
-						duration: 3,
-						ease: 'elastic.out(1, 0.1)',
-					});
-					gsap.to(materialRef.current, {
-						iridescence: 0.1,
-						metalness: 0.5,
-						roughness: 0.1,
-						clearcoat: 1.0,
-						duration: 3,
-						ease: 'elastic.out(1, 0.1)',
-					});
-				}
-			}
-		},
-		{ dependencies: [isBallPress], scope: ballRef },
 	);
 
 	function updatePosByScroll() {
@@ -245,8 +200,8 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		const inViewEl = els.find(el => ScrollTrigger.isInViewport(el, 0.2));
 
 		if (!ballRef.current || !inViewEl) {
-			ballCloneRef.current.position.lerp(ballRef.current.position.clone(), 0.1);
-			ballClonedMaskRef.current.position.lerp(ballRef.current.position.clone(), 0.1);
+			ballCloneRef.current.position.lerp(ballRef.current.position, 0.1);
+			ballClonedMaskRef.current.position.lerp(ballRef.current.position, 0.1);
 			return;
 		}
 
@@ -267,52 +222,31 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		const { x: targetX, y: targetY } = getElementPosition(inViewEl);
 		const targetBallPos = ballDynamicPosRef.current.set(targetX, targetY, 1);
 		ballRef.current.position.lerp(targetBallPos, 0.05);
-		ballMaskRef.current.position.copy(ballRef.current.position.clone());
+		ballMaskRef.current.position.copy(ballRef.current.position);
 
 		if (anchorMirror) {
 			const inViewMirrorEl = els.find(el => el.dataset['anchor'] === anchor && el !== inViewEl);
 			const { x: mirrorX, y: mirrorY } = getElementPosition(inViewMirrorEl);
 			const targetBallClonePos = ballClonedDynamicPosRef.current.set(mirrorX, mirrorY, 1);
 			ballCloneRef.current.position.lerp(targetBallClonePos, 0.05);
-			ballClonedMaskRef.current.position.copy(ballCloneRef.current.position.clone());
+			ballClonedMaskRef.current.position.copy(targetBallClonePos);
 			ballCloneRef.current.visible = true;
 		} else {
-			ballCloneRef.current.position.copy(ballRef.current.position.clone());
-			ballClonedMaskRef.current.position.copy(ballCloneRef.current.position.clone());
+			ballCloneRef.current.position.copy(ballRef.current.position);
+			ballClonedMaskRef.current.position.copy(ballCloneRef.current.position);
 		}
 	}
 
-	function createBallClone() {
+	useEffect(() => {
 		if (!ballCloneRef.current) {
 			ballCloneRef.current = ballRef.current.clone();
-			// ballCloneRef.current.material = new MeshBasicMaterial({ color: 'green' });
 			ballCloneRef.current.visible = false;
 			scene.add(ballCloneRef.current);
 		}
-	}
-
-	function ballRotationRefUpdate(elapsedTime) {
-		const speed = isBallPress ? 4 : 1.2;
-		const targetRotationX = Math.cos(elapsedTime) * speed;
-		const targetRotationY = Math.sin(elapsedTime) * speed;
-		const targetRotationZ = Math.sin(elapsedTime) * speed;
-
-		ballRef.current.rotation.x = lerp(ballRef.current.rotation.x, targetRotationX, 0.1);
-		ballRef.current.rotation.y = lerp(ballRef.current.rotation.y, targetRotationY, 0.1);
-		ballRef.current.rotation.z = lerp(ballRef.current.rotation.z, targetRotationZ, 0.1);
-
-		if (ballCloneRef.current) {
-			ballCloneRef.current.rotation.copy(ballRef.current.rotation.clone());
-		}
-	}
-
-	function ballCenterUpdate() {
-		// const scrollOverHalfH = scrollOffsetRef.current < size.height / 2;
-		// const shouldCenter = epsilon && scrollOverHalfH;
-	}
+	}, [scene]);
 
 	function ballMaterialUpdate(elapsedTime: number) {
-		materialRef.current.uniforms.uTime.value = elapsedTime;
+		ballRef.current.material.uniforms.uTime.value = elapsedTime;
 	}
 
 	function calcFactorCamZ(zPosition: number) {
@@ -323,7 +257,23 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		return factor;
 	}
 
-	console.log('ball rerender');
+	const ballMaterialRef = useRef(
+		new CustomShaderMaterial({
+			baseMaterial: new MeshPhysicalMaterial(),
+			vertexShader: vertexShader,
+			fragmentShader: fragmentShader,
+			roughness: 0.1,
+			metalness: 0.1,
+			reflectivity: 0.46,
+			clearcoat: 1.0,
+			ior: 0,
+			iridescence: 0,
+			iridescenceIOR: 1.3,
+			uniforms: uniformsRef.current,
+			displacementMap: displacementTexture,
+			displacementScale: 0,
+		}),
+	);
 
 	return (
 		<group>
@@ -332,25 +282,92 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 				geometry={ballGeometry}
 				ref={ballRef}
 				position={ballInitPosRef.current}
-				frustumCulled={false}>
-				<CustomShaderMaterial
-					ref={materialRef}
-					baseMaterial={MeshPhysicalMaterial}
-					vertexShader={vertexShader}
-					fragmentShader={fragmentShader}
-					roughness={0.1}
-					metalness={0.1}
-					reflectivity={0.46}
-					clearcoat={1.0}
-					ior={0}
-					iridescence={0}
-					iridescenceIOR={1.3}
-					uniforms={uniformsRef.current}
-					displacementMap={waterNormals}
-					displacementScale={0}
-				/>
-			</mesh>
+				frustumCulled={false}
+				material={ballMaterialRef.current}></mesh>
+
+			<MaskBall
+				ballRef={ballRef}
+				ballMaskRef={ballMaskRef}
+				ballClonedMaskRef={ballClonedMaskRef}
+			/>
+		</group>
+	);
+}
+
+function MaskBall({ ballRef, ballMaskRef, ballClonedMaskRef }) {
+	const [isBallPress, setIsBallPress] = useState(false);
+	const ballMaskGeo = useRef(new CircleGeometry(1, 8));
+	const ballMaskMaterialRef = useRef(
+		new MeshBasicMaterial({ visible: true, depthTest: false, depthWrite: false, transparent: true, opacity: 0 }),
+	);
+
+	useFrame(({ clock, scene, gl, raycaster }) => {
+		const elapsedTime = clock.getElapsedTime();
+		ballRotationRefUpdate(elapsedTime);
+	});
+
+	function ballRotationRefUpdate(elapsedTime) {
+		const speed = isBallPress ? 4 : 1.2;
+		const targetRotationX = Math.cos(elapsedTime) * speed;
+		const targetRotationY = Math.sin(elapsedTime) * speed;
+		const targetRotationZ = Math.sin(elapsedTime) * speed;
+
+		ballRef.current.rotation.x = lerp(ballRef.current.rotation.x, targetRotationX, 0.1);
+		ballRef.current.rotation.y = lerp(ballRef.current.rotation.y, targetRotationY, 0.1);
+		ballRef.current.rotation.z = lerp(ballRef.current.rotation.z, targetRotationZ, 0.1);
+	}
+
+	useGSAP(
+		() => {
+			if (ballRef.current && ballRef.current.material) {
+				if (isBallPress) {
+					gsap.to(ballRef.current.material.uniforms.uNoiseStrength, {
+						value: 3.5,
+						duration: 3,
+						ease: 'elastic.out(1, 0.1)',
+					});
+					gsap.to(ballRef.current.material.uniforms.uDisplacementStrength, {
+						value: 1.1,
+						duration: 3,
+						ease: 'elastic.out(1, 0.1)',
+					});
+					gsap.to(ballRef.current.material, {
+						iridescence: 1,
+						metalness: 0.6,
+						roughness: 1,
+						clearcoat: 0,
+						duration: 3,
+						ease: 'elastic.out(1, 0.1)',
+					});
+				} else {
+					gsap.to(ballRef.current.material.uniforms.uNoiseStrength, {
+						value: 2.5,
+						duration: 3,
+						ease: 'elastic.out(1, 0.1)',
+					});
+					gsap.to(ballRef.current.material.uniforms.uDisplacementStrength, {
+						value: 1,
+						duration: 3,
+						ease: 'elastic.out(1, 0.1)',
+					});
+					gsap.to(ballRef.current.material, {
+						iridescence: 0.1,
+						metalness: 0.5,
+						roughness: 0.1,
+						clearcoat: 1.0,
+						duration: 3,
+						ease: 'elastic.out(1, 0.1)',
+					});
+				}
+			}
+		},
+		{ dependencies: [isBallPress], scope: ballRef },
+	);
+
+	return (
+		<>
 			<mesh
+				raycast={meshBounds}
 				ref={ballMaskRef}
 				position={[0, 0, -1]}
 				material={ballMaskMaterialRef.current}
@@ -361,10 +378,10 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 					setIsBallPress(false);
 					document.body.style.cursor = 'default';
 				}}
-				scale={1.2}>
-				<circleGeometry args={[1, 8]} />
-			</mesh>
+				scale={1.2}
+				geometry={ballMaskGeo.current}></mesh>
 			<mesh
+				raycast={meshBounds}
 				ref={ballClonedMaskRef}
 				material={ballMaskMaterialRef.current}
 				position={[0, 0, 1]}
@@ -375,26 +392,8 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 					setIsBallPress(false);
 					document.body.style.cursor = 'default';
 				}}
-				scale={1.2}>
-				<circleGeometry args={[1, 8]} />
-			</mesh>
-		</group>
+				scale={1.2}
+				geometry={ballMaskGeo.current}></mesh>
+		</>
 	);
-}
-
-{
-	/* <mesh
-				name=''
-				geometry={ballGeometry}
-				ref={ballRef}
-				position={ballInitPosRef.current}>
-				<meshPhysicalMaterial
-					color={'white'}
-					transmission={1} // Full transmission for transparency
-					thickness={1} // Adjust thickness for refraction depth
-					roughness={0.1} // Smooth surface like glass
-					metalness={0} // Non-metallic material
-					ior={1.5} // Index of Refraction (default is 1.5 for glass)
-				></meshPhysicalMaterial>
-			</mesh> */
 }
