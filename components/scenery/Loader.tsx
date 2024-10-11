@@ -3,24 +3,28 @@ import React, { LegacyRef, useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
+import { useWebGlStore } from '@/store';
+
 gsap.registerPlugin(useGSAP);
 
 export default function Loader() {
-	const { progress, item } = useProgress();
+	const progress = useProgress(state => state.progress);
+	const item = useProgress(state => state.item);
+	const isLoaded = useWebGlStore(state => state.isLoaded);
 	const loaderRef = useRef(null);
 
 	useGSAP(
 		() => {
-			if (progress === 100) {
+			if (isLoaded) {
 				gsap.to(loaderRef.current, {
-					delay: 2,
+					delay: 0,
 					opacity: 0,
-					duration: 0.2,
+					duration: 1,
 					ease: 'power2.inOut',
 				});
 			}
 		},
-		{ dependencies: [progress], scope: loaderRef },
+		{ dependencies: [isLoaded], scope: loaderRef },
 	);
 
 	useGSAP(
@@ -51,14 +55,16 @@ export default function Loader() {
 	);
 
 	return (
-		<div
-			ref={loaderRef}
-			className={`z-[100] fixed top-0 left-0 w-lvw h-lvh bg-red-800 bg-primary text-neutral font-boxing leading-none pointer-events-none`}>
-			<Indicator
-				progress={progress}
-				item={item}
-			/>
-		</div>
+		<>
+			<div
+				ref={loaderRef}
+				className={`z-[100] fixed top-0 left-0 w-lvw h-lvh bg-primary text-neutral font-boxing leading-none pointer-events-none`}>
+				<Indicator
+					progress={progress}
+					item={item}
+				/>
+			</div>
+		</>
 	);
 }
 
@@ -79,7 +85,7 @@ function Indicator({ progress, item }) {
 		<div
 			className='h-full w-full whitespace-pre-line relative'
 			style={{
-				transform: `translate(-6rem, -5.75rem)`,
+				transform: `translate(-6rem, -6.5rem)`,
 			}}>
 			<p
 				className='text-2xl text-right absolute flex justify-center items-center h-full w-full'
@@ -107,7 +113,7 @@ function Indicator({ progress, item }) {
 			<p
 				className='text-right text-[9.875rem] absolute flex justify-center items-center h-full w-full text-neutralContrast'
 				style={{
-					transform: `rotateX(45deg) rotateY(-45deg) rotateZ(0deg) translate3d(25rem, 33.125rem, -8.125rem)`,
+					transform: `rotateX(45deg) rotateY(-45deg) rotateZ(0deg) translate3d(25rem, 38rem, -8.125rem) scaleY(2.25)`,
 					opacity: 0.5,
 				}}>
 				<span>{`${progress.toFixed(0).padStart(3, '0')}%`}</span>
