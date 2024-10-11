@@ -1,18 +1,3 @@
-// import { create } from 'zustand';
-
-// const useDomStore = create(set => ({
-// 	textEls: new Set(),
-// 	torsoEl: null,
-// 	textElRegister: el => {
-// 		set(state => state.textEls.add(el));
-// 	},
-// 	torsoElRegister: el => {
-// 		set(state => (state.torsoEl = el));
-// 	},
-// }));
-
-// export { useDomStore };
-
 import { create } from 'zustand';
 
 const useDomStore = create(set => ({
@@ -23,49 +8,54 @@ const useDomStore = create(set => ({
 
 	textElRegister: el => {
 		set(state => {
-			if (state && el) {
-				state.textEls.add(el);
+			if (state && el && !state.textEls.has(el)) {
+				return { textEls: new Set(state.textEls).add(el) };
 			}
-			return state;
+			return;
 		});
 	},
 	torsoElRegister: el => {
 		set(state => {
 			if (state && el) {
-				state.torsoEl = el;
+				return { torsoEl: el };
 			}
-			return state;
+			return;
 		});
 	},
 	containerElRegister: el => {
 		set(state => {
-			if (state && el) {
-				state.containerEls.add(el);
+			if (state && el && !state.containerEls.has(el)) {
+				return { containerEls: new Set(state.containerEls).add(el) };
 			}
-			return state;
+			return;
 		});
 	},
 	anchorElRegister: el => {
 		set(state => {
-			if (state && el) {
-				state.anchorEls.add(el);
+			if (state && el && !state.anchorEls.has(el)) {
+				return { anchorEls: new Set(state.anchorEls).add(el) };
 			}
-			return state;
+			return;
 		});
 	},
 }));
 
-const usePortFboStore = create(set => ({
-	portFbo: null,
+const useWebGlStore = create(set => ({
+	isLoaded: false,
+	passivePortBuffer: null,
+	containerMaskedMeshes: null,
 
-	portFboRegister: item => {
-		set(state => {
-			if (state && item) {
-				state.portFbo = item;
-			}
-			return state;
-		});
+	loadedRegister: item => {
+		set(state => ({ isLoaded: item }));
+	},
+
+	passivePortBufferRegister: item => {
+		set(state => ({ passivePortBuffer: item }));
+	},
+
+	containerMaskedMeshesRegister: item => {
+		set(state => ({ containerMaskedMeshes: item }));
 	},
 }));
 
-export { useDomStore, usePortFboStore };
+export { useDomStore, useWebGlStore };
