@@ -19,6 +19,7 @@ import {
 	UnsignedByteType,
 	LinearEncoding,
 	HalfFloatType,
+	PlaneGeometry,
 } from 'three';
 import { easing } from 'maath';
 
@@ -29,50 +30,38 @@ import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 
 import { lerp } from 'three/src/math/MathUtils.js';
 
-import { useDomStore, usePortFboStore } from '@/store';
+import { useDomStore, useWebGlStore } from '@/store';
 
-// Create the shader material
-const RippleMaterial = shaderMaterial(
-	{
-		uResolution: new Vector2(window.innerWidth, window.innerHeight),
-		uTime: 0,
-		uCursor: new Vector2(0.5, 0.5),
-		uScrollVelocity: 0,
-		uTexture: null,
-		uTextureSize: new Vector2(100, 100),
-		uQuadSize: new Vector2(100, 100),
-		uBorderRadius: 0,
-		uMouseEnter: 0,
-		uMouseOverPos: new Vector2(0.5, 0.5),
-	},
-	vertexShader,
-	fragmentShader,
-);
+// gsap
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-extend({ RippleMaterial });
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Ripple({ children, damping = 0.15, ...props }) {
 	const ref = useRef();
-	const { viewport, size, camera, pointer } = useThree();
-	// const { portFboRegister } = usePortFboStore(state => state);
 
-	const devicePixelRatio = window.devicePixelRatio || 1;
-	const memory = navigator.deviceMemory || 4;
-	const resolutionScale = devicePixelRatio > 1.5 || memory <= 4 ? 0.5 : 0.75;
+	const viewport = useThree(state => state.viewport);
+	const size = useThree(state => state.size);
+	const camera = useThree(state => state.camera);
+
+	const containerMaskedMeshes = useWebGlStore(state => state.containerMaskedMeshes);
+
+	// const devicePixelRatio = window.devicePixelRatio || 1;
+	// const memory = navigator.deviceMemory || 4;
+	// const resolutionScale = devicePixelRatio > 1.5 || memory <= 4 ? 0.5 : 0.75;
 
 	const portBuffer = useFBO(size.width, size.height, {
-		// minFilter: NearestFilter,
-		// magFilter: NearestFilter,
-		samples: 0,
 		minFilter: LinearFilter,
 		magFilter: LinearFilter,
+		samples: 0,
 		stencilBuffer: false,
 		type: UnsignedByteType,
 		generateMipmaps: false,
 		anisotropy: 0,
 		colorSpace: '',
 		format: RGBFormat,
-		// depthBuffer: false,
 	});
 
 	const rippleBuffer = useFBO(32, 32, {
@@ -87,15 +76,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		anisotropy: 0,
 		colorSpace: '',
 		generateMipmaps: false,
-
-		// colorSpace: '',
-		// anisotropy: 0,
 	});
-
-	useEffect(() => {
-		// portBuffer.setSize(size.width * 1.2, size.height * 1.2);
-		// portFboRegister(portBuffer);
-	}, []);
 
 	const [portScene] = useState(() => new Scene());
 	const [rippleScene] = useState(() => new Scene());
@@ -106,7 +87,19 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	const rippleTexture = useLoader(TextureLoader, '/scenery/textures/ripple.png');
 	const rippleRefs = useRef([]);
 	const rippleCurrIdx = useRef(-1);
+	const rippleGeoRef = useRef(new PlaneGeometry(0.5, 0.5, 1, 1));
+	const rippleMaterialRef = useRef(
+		new MeshBasicMaterial({
+			map: rippleTexture,
+			transparent: true,
+			visible: false,
+			depthTest: false,
+			depthWrite: false,
+			stencilWrite: false,
+		}),
+	);
 
+	const portGeoRef = useRef(new PlaneGeometry(1, 1, 64, 64));
 	const portMaterialRef = useRef(
 		new ShaderMaterial({
 			uniforms: {
@@ -114,10 +107,10 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 				uTime: { value: 0 },
 				uCursor: { value: new Vector2(0.5, 0.5) },
 				uScrollVelocity: { value: 0 },
-				uTexture: { value: null },
+				uTexture: { value: portBuffer.texture },
 				uTextureSize: { value: new Vector2(100, 100) },
 				uQuadSize: { value: new Vector2(100, 100) },
-				uDisplacement: { value: null },
+				uDisplacement: { value: rippleBuffer.texture },
 			},
 			vertexShader,
 			fragmentShader,
@@ -126,6 +119,8 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			depthWrite: false,
 		}),
 	);
+
+	const ballRef = useRef(null);
 
 	useLenis(event => {
 		velocityRef.current = event.velocity;
@@ -140,19 +135,10 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 				<mesh
 					key={i}
 					ref={el => (rippleRefs.current[i] = el)}
-					material={
-						new MeshBasicMaterial({
-							map: rippleTexture,
-							transparent: true,
-							visible: false,
-							depthTest: false,
-							depthWrite: false,
-						})
-					}
+					material={rippleMaterialRef.current.clone()}
 					position={[0, 0, 1]}
-					rotation={[0, 0, 2 * Math.PI * Math.random()]}>
-					<planeGeometry args={[0.5, 0.5, 1, 1]} />
-				</mesh>,
+					rotation={[0, 0, 2 * Math.PI * Math.random()]}
+					geometry={rippleGeoRef.current}></mesh>,
 			);
 		}
 
@@ -187,8 +173,22 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			}
 			preMousePos.current = { x: event.clientX, y: event.clientY };
 		},
-		[camera, pointer.x, pointer.y],
+		[camera, size.width, size.height],
 	);
+
+	const maskBufferConfig = {
+		samples: 0,
+		minFilter: NearestFilter,
+		magFilter: NearestFilter,
+		format: RGBAFormat,
+		type: HalfFloatType,
+		anisotropy: 0,
+		colorSpace: '',
+		generateMipmaps: false,
+		stencilBuffer: false,
+		// depthBuffer: false,
+		// depth: false,
+	};
 
 	useEffect(() => {
 		window.addEventListener('mousemove', handleMouseMove);
@@ -198,17 +198,17 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		};
 	}, [handleMouseMove]);
 
+	const maskBufferType = ['ABOUT', 'SKILL', 'EXPERIENCE'];
+
 	useFrame(({ clock, gl, camera, scene }, delta) => {
 		const elapsedTime = clock.getElapsedTime();
 
 		if (portMaterialRef.current) {
 			portMaterialRef.current.uniforms.uTime.value = elapsedTime;
 			portMaterialRef.current.uniforms.uTexture.value = portBuffer.texture;
-			portMaterialRef.current.uniforms.uDisplacement.value = rippleBuffer.texture;
-
 			const currentVelocity = portMaterialRef.current.uniforms.uScrollVelocity.value;
 			const targetVelocity = velocityRef.current;
-			const smoothingFactor = 0.025; // Adjust this value for more or less smoothing
+			const smoothingFactor = 0.025;
 			const smoothedVelocity = lerp(currentVelocity, targetVelocity, smoothingFactor);
 			portMaterialRef.current.uniforms.uScrollVelocity.value = smoothedVelocity;
 		}
@@ -219,6 +219,52 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			mesh.scale.x = 0.98 * mesh.scale.x + 0.155;
 			mesh.scale.y = mesh.scale.x;
 		});
+
+		if (!ballRef.current) {
+			ballRef.current = portScene.getObjectByName('psychedelic-ball');
+		} else {
+			const containerMeshGroup = portScene.getObjectByName('container-mesh-group');
+			const textMeshGroup = portScene.getObjectByName('text-mesh-group');
+			const torsoMesh = portScene.getObjectByName('torso-mesh');
+			const psychedelicBallMesh = ballRef.current;
+			containerMeshGroup.visible = false;
+			textMeshGroup.visible = false;
+			const ogRoughness = psychedelicBallMesh.material.roughness;
+			const ogMetalness = psychedelicBallMesh.material.metalness;
+			const ogIridescence = psychedelicBallMesh.material.iridescence;
+			const ogClearcoat = psychedelicBallMesh.material.clearcoat;
+
+			const maskMeshesArr = [...containerMaskedMeshes];
+
+			if (maskMeshesArr.length) {
+				maskMeshesArr.forEach(mesh => {
+					const inView = ScrollTrigger.isInViewport(mesh.userData.el);
+					if (mesh && inView && maskBufferType.includes(mesh.name)) {
+						maskBufferMap[mesh.name].mutateScene(psychedelicBallMesh, mesh, torsoMesh);
+						gl.setRenderTarget(maskBufferMap[mesh.name].buffer);
+						gl.clear();
+						gl.render(portScene, camera);
+						mesh.material.uniforms.uMask.value = maskBufferMap[mesh.name].buffer.texture || null;
+					}
+				});
+			}
+
+			containerMeshGroup.visible = true;
+			textMeshGroup.visible = true;
+			torsoMesh.material.uniforms.uBrightColor.value.set('#69D2B7');
+			torsoMesh.material.uniforms.uDarkColor.value.set('#868686');
+			psychedelicBallMesh.material.roughness = ogRoughness;
+			psychedelicBallMesh.material.metalness = ogMetalness;
+			psychedelicBallMesh.material.iridescence = ogIridescence;
+			psychedelicBallMesh.material.clearcoat = ogClearcoat;
+			psychedelicBallMesh.material.wireframe = false;
+			psychedelicBallMesh.material.sheen = 0;
+			psychedelicBallMesh.material.displacementScale = 0;
+			psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 0;
+			psychedelicBallMesh.material.uniforms.uColor.value.set('#e6ff00');
+			psychedelicBallMesh.material.uniforms.uFractAmount.value = 0.8;
+			psychedelicBallMesh.scale.set(1, 1, 1);
+		}
 
 		gl.setRenderTarget(rippleBuffer);
 		gl.clear();
@@ -232,21 +278,63 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		gl.clear();
 	});
 
+	const maskBufferMap = {
+		ABOUT: {
+			buffer: useFBO(size.width / 2, size.height / 2, maskBufferConfig),
+			mutateScene: (ballMesh, containerMesh, torsoMesh) => {
+				ballMesh.material.uniforms.uIsNormalColor.value = 1;
+				torsoMesh.material.uniforms.uBrightColor.value.set('#7B60FB');
+				torsoMesh.material.uniforms.uDarkColor.value.set('#FF00C7');
+				ballMesh.material.wireframe = true;
+				ballMesh.material.roughness = 0.5;
+				ballMesh.material.displacementScale = 1;
+			},
+		},
+		SKILL: {
+			buffer: useFBO(128, 128, maskBufferConfig),
+			mutateScene: (ballMesh, containerMesh, torsoMesh) => {
+				torsoMesh.material.uniforms.uBrightColor.value.set('#FF0000');
+				torsoMesh.material.uniforms.uDarkColor.value.set('#0500FF');
+				ballMesh.material.uniforms.uColor.value.set('#FF0000');
+				ballMesh.material.uniforms.uIsNormalColor.value = 0;
+				ballMesh.material.wireframe = false;
+				ballMesh.material.roughness = 0.3;
+				ballMesh.material.metalness = 0.3;
+				ballMesh.material.iridescence = 0.5;
+				ballMesh.material.displacementScale = 0;
+				ballMesh.material.sheen = 1.0;
+				ballMesh.material.clearcoat = 0.0;
+				ballMesh.material.sheenColor.set('#fd267a');
+			},
+		},
+		EXPERIENCE: {
+			buffer: useFBO(size.width / 2, size.height / 2, maskBufferConfig),
+			mutateScene: (ballMesh, containerMesh, torsoMesh) => {
+				torsoMesh.material.uniforms.uBrightColor.value.set('#FF0000');
+				torsoMesh.material.uniforms.uDarkColor.value.set('#0500FF');
+				containerMesh.material.uniforms.uHeatMap.value = 1;
+				ballMesh.material.uniforms.uIsNormalColor.value = 1;
+				ballMesh.material.wireframe = true;
+				ballMesh.material.roughness = 0;
+				ballMesh.material.metalness = 0;
+				ballMesh.material.uniforms.uFractAmount.value = 0.1;
+				ballMesh.scale.set(0.5, 0.5, 0.5);
+			},
+		},
+	};
+
 	return (
 		<>
 			{createPortal(children, portScene)}
 			{createPortal(ripples, rippleScene)}
 			<mesh
-				name='billboard'
-				onPointerOver={() => null}
 				castShadow={false}
 				receiveShadow={false}
 				ref={ref}
 				scale={[viewport.width, viewport.height, 1]}
 				material={portMaterialRef.current}
-				position={[0, 0, 0]}>
-				<planeGeometry args={[1, 1, 64, 64]} />
-			</mesh>
+				position={[0, 0, 0]}
+				geometry={portGeoRef.current}></mesh>
 		</>
 	);
 }
