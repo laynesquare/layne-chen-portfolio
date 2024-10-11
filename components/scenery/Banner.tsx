@@ -45,14 +45,10 @@ import {
 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line } from '@react-three/drei';
-import CustomShaderMaterial from 'three-custom-shader-material';
+import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
-import { useDomStore, usePortFboStore } from '@/store';
-
-import { useGSAP } from '@gsap/react';
-
-import gsap from 'gsap';
+import { useDomStore, usePortFboStore, useWebGlStore } from '@/store';
 
 import vertexShaderRoundedRec from '@/shaders/rounded-rectangle/vertex';
 import fragmentShaderRoundedRec from '@/shaders/rounded-rectangle/fragment';
@@ -65,12 +61,23 @@ import debounce from 'lodash/debounce';
 import { Vector } from 'html2canvas/dist/types/render/vector';
 import { depth } from 'three/webgpu';
 
-gsap.registerPlugin(useGSAP);
+// gsap
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const Banner = () => {
-	const { viewport, size, camera } = useThree();
+	const viewport = useThree(state => state.viewport);
+	const size = useThree(state => state.size);
+	const camera = useThree(state => state.camera);
 
-	const { torsoEl: torsoDomEl, containerEls: containerDomEls, textEls: textDomEls } = useDomStore(state => state);
+	const torsoDomEl = useDomStore(state => state.torsoEl);
+	const containerDomEls = useDomStore(state => state.containerEls);
+	const textDomEls = useDomStore(state => state.textEls);
+
+	const containerMaskedMeshesRegister = useWebGlStore(state => state.containerMaskedMeshesRegister);
 
 	const pointerRef = useRef(new Vector2(0, 0));
 	const pointerCenterRef = useRef(new Vector2(0, 0));
@@ -84,20 +91,30 @@ const Banner = () => {
 
 	const containerGroupRef = useRef(null);
 	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(2.9);
-	const containerMaterialParallaxRefs = useRef([]);
+	const containerMaterialParallaxRefs = useRef({
+		previewShareYourMemoriesTemp: null,
+		previewShareYourMemories: null,
+		previewLearnEnglishDictionary: null,
+	});
 	const containerMaskedMeshesRef = useRef(new Set());
-	const containerMirrorMaskedMeshesRef = useRef(new Set());
 
-	const previewShareYourMemories = useLoader(TextureLoader, '/frame/project-preview-share-your-memories.jpg');
+	const previewShareYourMemories = useLoader(TextureLoader, '/frame/project-preview-share-your-memories.webp');
 	const previewLearnEnglishDictionary = useLoader(
 		TextureLoader,
-		'/frame/project-preview-learn-english-dictionary.jpg',
+		'/frame/project-preview-learn-english-dictionary.webp',
 	);
 
 	const previewMap = {
+		previewShareYourMemoriesTemp: previewShareYourMemories,
 		previewShareYourMemories: previewShareYourMemories,
 		previewLearnEnglishDictionary: previewLearnEnglishDictionary,
 	};
+
+	const ballRef = useRef(null);
+
+	useEffect(() => {
+		containerMaskedMeshesRegister(containerMaskedMeshesRef.current);
+	}, []);
 
 	function calcFactorCamZ(zPosition: number) {
 		const fov = (camera.fov * Math.PI) / 180;
@@ -113,7 +130,6 @@ const Banner = () => {
 			dithering: true,
 			depthWrite: false,
 			depthTest: false,
-			// blending: NoBlending,
 		}),
 	);
 
@@ -123,7 +139,6 @@ const Banner = () => {
 			dithering: true,
 			depthWrite: false,
 			depthTest: false,
-			// blending: SubtractiveBlending,
 		}),
 	);
 
@@ -141,135 +156,27 @@ const Banner = () => {
 		}),
 	);
 
-	const meshMetalRef = useRef(null);
-
 	useFrame(({ scene, camera, gl, clock, pointer }) => {
-		if (meshMetalRef.current) {
-			meshMetalRef.current.rotation.x = Math.cos(clock.elapsedTime / 2);
-			meshMetalRef.current.rotation.y = Math.sin(clock.elapsedTime / 2);
-			meshMetalRef.current.rotation.z = Math.sin(clock.elapsedTime / 2);
-		}
-
 		if (materialAcidBg.current) {
 			materialAcidBg.current.uniforms.uTime.value = clock.elapsedTime;
 		}
 
-		if (containerMaterialParallaxRefs.current.length) {
-			const target =
-				pointerRef.current.distanceTo(pointer) > 0
-					? pointerRef.current.clone().sub(pointer).negate()
-					: pointerCenterRef.current;
+		// const containerMaterialParallaxRefsKeys = Object.keys(containerMaterialParallaxRefs.current);
 
-			pointerRef.current.copy(pointer);
-			containerMaterialParallaxRefs.current.forEach(ref => {
-				ref.uniforms.uMouse.value.lerp(target, 0.025);
-			});
-		}
+		// const target =
+		// 	pointerRef.current.distanceTo(pointer) > 0
+		// 		? pointerRef.current.clone().sub(pointer).negate()
+		// 		: pointerCenterRef.current;
 
-		textGroupRef.current.visible = false;
-		containerGroupRef.current.visible = false;
+		// pointerRef.current.copy(pointer);
 
-		const psychedelicBallMesh = scene.getObjectByName('psychedelic-ball');
-		const ogRoughness = psychedelicBallMesh.material.roughness;
-		const ogMetalness = psychedelicBallMesh.material.metalness;
-		const ogIridescence = psychedelicBallMesh.material.iridescence;
-		const ogClearcoat = psychedelicBallMesh.material.clearcoat;
+		// containerMaterialParallaxRefsKeys.forEach(key => {
+		// 	containerMaterialParallaxRefs.current[key].uniforms.uMouse.value.lerp(target, 0.025);
+		// });
 
-		const maskMeshesArr = [...containerMaskedMeshesRef.current];
-		if (maskMeshesArr.length) {
-			maskMeshesArr.forEach(mesh => {
-				if (mesh && maskBufferType.includes(mesh.name)) {
-					maskBufferMap[mesh.name].mutateScene(psychedelicBallMesh, mesh);
-					gl.setRenderTarget(maskBufferMap[mesh.name].buffer);
-					gl.clear();
-					gl.render(scene, camera);
-					mesh.material.uniforms.uMask.value = maskBufferMap[mesh.name]?.buffer.texture || null;
-				}
-			});
-		}
-
-		textGroupRef.current.visible = true;
-		containerGroupRef.current.visible = true;
-
-		materialAcidBg.current.uniforms.uBrightColor.value = new Color('#69D2B7');
-		materialAcidBg.current.uniforms.uDarkColor.value = new Color('#868686');
-		psychedelicBallMesh.material.roughness = ogRoughness;
-		psychedelicBallMesh.material.metalness = ogMetalness;
-		psychedelicBallMesh.material.iridescence = ogIridescence;
-		psychedelicBallMesh.material.clearcoat = ogClearcoat;
-		psychedelicBallMesh.material.wireframe = false;
-		psychedelicBallMesh.material.sheen = 0;
-		psychedelicBallMesh.material.displacementScale = 0;
-		psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 0;
-		psychedelicBallMesh.material.uniforms.uColor.value = new Color('#e6ff00');
-		psychedelicBallMesh.material.uniforms.uFractAmount.value = 0.8;
-		psychedelicBallMesh.scale.set(1, 1, 1);
-
-		gl.setRenderTarget(null);
-		gl.clear();
+		// textGroupRef.current.visible = false;
+		// containerGroupRef.current.visible = false;
 	});
-
-	const maskBufferConfig = {
-		samples: 0,
-		minFilter: NearestFilter,
-		magFilter: NearestFilter,
-		format: RGBAFormat,
-		type: HalfFloatType,
-		anisotropy: 0,
-		colorSpace: '',
-		generateMipmaps: false,
-		stencilBuffer: false,
-		// depthBuffer: false,
-		// depth: false,
-	};
-
-	const maskBufferType = ['ABOUT', 'SKILL', 'EXPERIENCE'];
-
-	const maskBufferMap = {
-		ABOUT: {
-			buffer: useFBO(size.width / 2, size.height / 2, maskBufferConfig),
-			mutateScene: (ballMesh, containerMesh) => {
-				ballMesh.material.uniforms.uIsNormalColor.value = 1;
-				materialAcidBg.current.uniforms.uBrightColor.value = new Color('#7B60FB');
-				materialAcidBg.current.uniforms.uDarkColor.value = new Color('#FF00C7');
-				ballMesh.material.wireframe = true;
-				ballMesh.material.roughness = 0.5;
-				ballMesh.material.displacementScale = 1;
-			},
-		},
-		SKILL: {
-			buffer: useFBO(128, 128, maskBufferConfig),
-			mutateScene: (ballMesh, containerMesh) => {
-				materialAcidBg.current.uniforms.uBrightColor.value = new Color('#FF0000');
-				materialAcidBg.current.uniforms.uDarkColor.value = new Color('#0500FF');
-				ballMesh.material.uniforms.uIsNormalColor.value = 0;
-				ballMesh.material.uniforms.uColor.value = new Color('#FF0000');
-				ballMesh.material.wireframe = false;
-				ballMesh.material.roughness = 0.3;
-				ballMesh.material.metalness = 0.3;
-				ballMesh.material.iridescence = 0.5;
-				ballMesh.material.displacementScale = 0;
-				ballMesh.material.sheen = 1.0;
-				ballMesh.material.clearcoat = 0.0;
-				ballMesh.material.sheenColor = new Color('#fd267a');
-			},
-		},
-		EXPERIENCE: {
-			buffer: useFBO(size.width / 2, size.height / 2, maskBufferConfig),
-			mutateScene: (ballMesh, containerMesh) => {
-				ballMesh.material.uniforms.uIsNormalColor.value = 1;
-				containerMesh.material.uniforms.uHeatMap.value = 1;
-				ballMesh.material.uniforms.uFractAmount.value = 2;
-				ballMesh.material.wireframe = true;
-				// ballMesh.material.wireframeLinecap = 'square';
-				// ballMesh.material.wireframeLinejoin = 'square';
-				ballMesh.material.roughness = 0;
-				ballMesh.material.metalness = 0;
-				ballMesh.material.uniforms.uFractAmount.value = 0.1;
-				ballMesh.scale.set(0.5, 0.5, 0.5);
-			},
-		},
-	};
 
 	useLenis(
 		event => {
@@ -287,9 +194,52 @@ const Banner = () => {
 		}
 	}
 
+	const materialOptRec2 = useRef(
+		new ShaderMaterial({
+			uniforms: {
+				uTexture: { value: null },
+				uResolution: { value: new Vector2(0, 0) },
+				uRadii: { value: new Vector4(0, 0, 0, 0) },
+				uMouse: { value: new Vector2(0.5, 0.5) },
+				uAnchor: { value: 0 },
+				uHeatMap: { value: 0 },
+				uMask: { value: null },
+				uMaskResolution: { value: new Vector2(size.width, size.height) },
+			},
+			vertexShader: vertexShaderRoundedRec,
+			fragmentShader: fragmentShaderRoundedRec,
+			transparent: true,
+			depthWrite: false,
+			depthTest: false,
+			stencilWrite: false,
+		}),
+	);
+
+	const materialOptParallax2 = useRef(
+		new ShaderMaterial({
+			uniforms: {
+				uTexture: { value: null },
+				uResolution: { value: new Vector2(0, 0) },
+				uRadii: { value: new Vector4(0, 0, 0, 0) },
+				uMouse: { value: new Vector2(0.5, 0.5) },
+				uAnchor: { value: 0 },
+				uHeatMap: { value: 0 },
+				uMask: { value: null },
+				uMaskResolution: { value: new Vector2(size.width, size.height) },
+			},
+			vertexShader: vertexShaderParallaxDepth,
+			fragmentShader: fragmentShaderParallaxDepth,
+			transparent: true,
+			depthWrite: false,
+			depthTest: false,
+			stencilWrite: false,
+		}),
+	);
+
 	return (
 		<>
 			<group
+				name='text-mesh-group'
 				ref={textGroupRef}
 				onPointerOver={() => null}>
 				{[...textDomEls].map((el, idx) => {
@@ -322,7 +272,6 @@ const Banner = () => {
 					return (
 						<Text
 							key={idx}
-							// name={fontHighlight || null}
 							{...domTextShared(fontFamily)}
 							position={[pX, pY, pZ]}
 							material={material}
@@ -338,7 +287,9 @@ const Banner = () => {
 				})}
 			</group>
 
-			<group ref={containerGroupRef}>
+			<group
+				ref={containerGroupRef}
+				name='container-mesh-group'>
 				{[...containerDomEls].map((el, idx) => {
 					const {
 						borderBottomLeftRadius: rbl,
@@ -363,26 +314,16 @@ const Banner = () => {
 
 					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
-					const vs = parallax ? vertexShaderParallaxDepth : vertexShaderRoundedRec;
-					const fs = parallax ? fragmentShaderParallaxDepth : fragmentShaderRoundedRec;
+					const material = parallax ? materialOptParallax2.current.clone() : materialOptRec2.current.clone();
 
-					const uniforms = parallax
-						? {
-								uTexture: { value: previewMap[parallax] },
-								uResolution: { value: new Vector2(width, height) },
-								uRadii: { value: new Vector4(...radius) },
-								uMouse: { value: new Vector2(0.5, 0.5) },
-						  }
-						: {
-								uResolution: { value: new Vector2(width, height) },
-								uRadii: { value: new Vector4(...radius) },
-								uAnchor: { value: +!!anchor },
-								uHeatMap: { value: 0 },
-								uMask: { value: null },
-								uMaskResolution: { value: new Vector2(size.width, size.height) },
-						  };
-
-					const materialRef = parallax ? el => (containerMaterialParallaxRefs.current[idx] = el) : null;
+					material.uniforms.uTexture.value = previewMap[parallax] || null;
+					material.uniforms.uResolution.value.set(width, height);
+					material.uniforms.uRadii.value.set(...radius);
+					material.uniforms.uMouse.value.set(0.5, 0.5);
+					material.uniforms.uAnchor.value = +!!anchor;
+					material.uniforms.uHeatMap.value = 0;
+					material.uniforms.uMask.value = null;
+					material.uniforms.uMaskResolution.value.set(size.width, size.height);
 
 					return (
 						<mesh
@@ -390,26 +331,12 @@ const Banner = () => {
 							name={anchor}
 							ref={el => {
 								anchor && el ? containerMaskedMeshesRef.current.add(el) : null;
-								anchorMirror && el ? containerMirrorMaskedMeshesRef.current.add(el) : null;
 							}}
 							position={[x, y, z]}
 							frustumCulled={false}
-							userData={el.dataset}>
+							userData={{ dataset: el.dataset, el }}
+							material={material}>
 							<planeGeometry args={[(width / factor) * ratio, (height / factor) * ratio, 1, 1]} />
-							<CustomShaderMaterial
-								ref={materialRef}
-								baseMaterial={MeshBasicMaterial}
-								silent
-								vertexShader={vs}
-								fragmentShader={fs}
-								uniforms={uniforms}
-								transparent
-								depthTest={false}
-								depthWrite={false}
-								// transmission={1.1}
-								// roughness={0.5}
-								// color={new Color('#7B60FB')}
-							/>
 						</mesh>
 					);
 				})}
@@ -417,6 +344,7 @@ const Banner = () => {
 
 			<group ref={torsoGroupRef}>
 				<mesh
+					name='torso-mesh'
 					ref={torsoMeshRef}
 					scale={[
 						(torsoDomEl.offsetWidth / viewport.factor) * torsoMeshRatio + 1,
