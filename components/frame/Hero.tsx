@@ -14,61 +14,12 @@ import previewLearnEnglishDictionary from '@/public/frame/project-preview-learn-
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Hero({}) {
-	const { progress, item } = useProgress();
-	const torsoRef = useRef(null);
-
 	const [isVisible, setIsVisible] = useState(true);
 
-	// const textElStoreRegister = useDomStore(state => state.textElRegister);
-	// const torsoElStoreRegister = useDomStore(state => state.torsoElRegister);
-	// const containerElStoreRegister = useDomStore(state => state.containerElRegister);
-
-	const {
-		textElRegister: textElStoreRegister,
-		torsoElRegister: torsoElStoreRegister,
-		containerElRegister: containerElStoreRegister,
-		anchorElRegister: anchorElStoreRegister,
-	} = useDomStore(state => state);
-
-	// useGSAP(() => {
-	// 	if (progress === 100 && someRef.current) {
-	// 		gsap.fromTo(
-	// 			someRef.current,
-	// 			{ opacity: 0, scale: 0.5, color: 'red', transform: 'none' },
-	// 			{ opacity: 1, scale: 1, color: 'green', duration: 5, transform: 'none', ease: 'elastic.out(1, 0.5)' },
-	// 		);
-	// 	}
-	// }, [progress]);
-
-	// function register(el) {
-	// 	if (el) {
-	// 		torsoRef.current = el;
-	// 		torsoElStoreRegister(el);
-	// 	}
-	// }
-
-	// function register2(el) {
-	// 	if (el) {
-	// 		textElStoreRegister(el);
-	// 		someRef.current = el;
-	// 	}
-	// }
-
-	// useGSAP(() => {
-	// 	const inView = ScrollTrigger.isInViewport;
-	// 	if (inView('[data-anchor-about]', 0.5)) {
-	// 		console.log('working');
-	// 	}
-
-	// 	let st = ScrollTrigger.create({
-	// 		trigger: '[data-anchor-about]',
-	// 		start: 'top top',
-	// 		end: '+=500',
-
-	// 	});
-
-	// 	console.log(st.trigger); // trigger element (not selector text)
-	// }, []);
+	const textElStoreRegister = useDomStore(state => state.textElRegister);
+	const torsoElStoreRegister = useDomStore(state => state.torsoElRegister);
+	const containerElStoreRegister = useDomStore(state => state.containerElRegister);
+	const anchorElStoreRegister = useDomStore(state => state.anchorElRegister);
 
 	return (
 		<>
@@ -683,7 +634,7 @@ export default function Hero({}) {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
 							}}
-							data-parallax='previewShareYourMemories'
+							data-parallax='previewShareYourMemoriesTemp'
 							data-anchor='PROJECT'>
 							<Image
 								src={previewShareYourMemories}
