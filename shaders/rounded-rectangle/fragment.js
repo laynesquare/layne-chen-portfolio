@@ -88,7 +88,8 @@ void main() {
 
     // Output the final color with the calculated alpha
     // csm_DiffuseColor = vec4(color, alpha * smoothedAlpha);
-    csm_FragColor = vec4(color, alpha * smoothedAlpha);
+    // csm_FragColor = vec4(color, alpha * smoothedAlpha);
+    gl_FragColor = vec4(color, alpha * smoothedAlpha);
 }
 `;
 

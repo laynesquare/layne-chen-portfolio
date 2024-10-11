@@ -17,18 +17,16 @@ float roundedBoxSDF(vec2 centerPosition, vec2 size, vec4 radius) {
 void main() {
     vec2 mouseNormalized = (uMouse + 1.0) / 2.0;
 
-    // - Compute the view direction from the fragment to the mouse position
-
     // - Parallax mapping parameters
     float parallaxScale = 2.0; // Controls the strength of the parallax effect
-    float numLayers = 15.0;
+    float numLayers = 5.0;
     float layerDepth = 1.0 / numLayers;
     float currentLayerDepth = 0.0;
     vec2 deltaTexCoords = uMouse * parallaxScale / numLayers;
     vec2 currentTexCoords = vUv;
 
     // - Perform parallax occlusion mapping
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 5; i++) {
         currentTexCoords -= deltaTexCoords;
         currentLayerDepth += layerDepth;
         float depthFromTexture = 1.0 - texture2D(uTexture, currentTexCoords).r;
@@ -62,7 +60,8 @@ void main() {
     vec3 color = mix(fillColor, borderColor, smoothstep(-borderWidth, 0.0, distance));
     float alpha = mix(fillAlpha, borderAlpha, smoothstep(-borderWidth, 0.0, distance));
 
-    csm_FragColor = vec4(color, alpha * smoothedAlpha);
+    // csm_FragColor = vec4(color, alpha * smoothedAlpha);
+    gl_FragColor = vec4(color, alpha * smoothedAlpha);
 }
 `;
 
