@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, use, useEffect, useRef } from 'react';
+import { memo, Suspense, use, useEffect, useRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import {
 	View,
@@ -18,6 +18,7 @@ import {
 	Scroll,
 	Sparkles,
 	OrthographicCamera,
+	useGLTF,
 } from '@react-three/drei';
 import {
 	EffectComposer,
@@ -47,72 +48,75 @@ import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import dynamic from 'next/dynamic';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useWebGlStore } from '@/store';
+import { useWebGlStore, useGSAPStore } from '@/store';
 
-const Port = dynamic(() => import('@/components/scenery/Port'), { ssr: false });
+import Port from './Port';
+
+// const Port = dynamic(() => import('@/components/scenery/Port'), { ssr: false });
 
 gsap.registerPlugin(useGSAP);
 
-export default function Scene({ wrapperRef }: SceneProps) {
+export default memo(function Scene({ wrapperRef }: SceneProps) {
 	const canvasRef = useRef(null);
 
 	return (
-		<Canvas
-			ref={canvasRef}
-			gl={{
-				antialias: true,
-				alpha: false,
-				stencil: false,
-				depth: false,
-				powerPreference: 'high-performance',
-				// pixelRatio: Math.min(2, window.devicePixelRatio),
-			}}
-			style={{
-				position: 'fixed',
-				top: 0,
-				left: 0,
-				width: '100lvw',
-				height: '100lvh',
-				pointerEvents: 'all',
-			}}
-			dpr={[1.1, 1.1]}
-			camera={{ position: [0, 0, 8], fov: 30 }}
-			resize={{ debounce: 100 }}
-			flat={true}
-			eventSource={wrapperRef?.current}>
+		<>
 			<Disclose canvasRef={canvasRef} />
-			<Port />
-			<Preload all />
-		</Canvas>
+			<Canvas
+				ref={canvasRef}
+				gl={{
+					antialias: true,
+					alpha: false,
+					stencil: false,
+					depth: false,
+					powerPreference: 'high-performance',
+					premultipliedAlpha: false,
+					preserveDrawingBuffer: false,
+				}}
+				linear
+				className='bg-neutral'
+				style={{
+					position: 'fixed',
+					top: 0,
+					left: 0,
+					width: '100lvw',
+					height: '100lvh',
+				}}
+				dpr={[1, 1]}
+				camera={{ position: [0, 0, 8], fov: 30 }}
+				resize={{ debounce: 100 }}
+				flat={true}
+				eventSource={wrapperRef?.current}>
+				<Port />
+				<Preload all={true} />
+			</Canvas>
+		</>
 	);
-}
+});
 
 function Disclose({ canvasRef }) {
-	const isLoaded = useWebGlStore(state => state.isLoaded);
+	const isEntryAnimationDone = useWebGlStore(state => state.isEntryAnimationDone);
 
 	useGSAP(
 		() => {
-			if (isLoaded) {
-				gsap.to(canvasRef.current, {
-					// delay: 0,
-					duration: 5,
-					maskSize: '100rem',
-					ease: 'power2.inOut',
-				});
-			} else {
-				gsap.to(canvasRef.current, {
-					duration: 0,
-					WebkitMaskImage: "url('/frame/star.c9387850.svg')",
-					maskImage: "url('/frame/star.c9387850.svg')",
-					WebkitMaskRepeat: 'no-repeat',
-					maskRepeat: 'no-repeat',
-					WebkitMaskPosition: 'center center',
-					maskPosition: 'center center',
-					maskSize: '50rem',
-				});
+			if (isEntryAnimationDone) {
+				const tl = gsap.timeline();
+				tl.to(canvasRef.current, {
+					duration: 1.5,
+					maskSize: '500%',
+					ease: 'none',
+				}).to(
+					canvasRef.current,
+					{
+						duration: 0,
+						webkitMaskImage: 'none',
+						maskImage: 'none',
+					},
+					'>',
+				);
 			}
 		},
-		{ dependencies: [isLoaded], scope: canvasRef },
+		{ dependencies: [isEntryAnimationDone], scope: canvasRef },
 	);
 
 	return null;
