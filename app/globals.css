@@ -96,46 +96,14 @@ body::-webkit-scrollbar,
 	font-style: normal;
 }
 
-/* Custom Components */
 @layer components {
-	.overall-ctn {
-		@apply relative overflow-y-scroll w-full h-full max-h-[100dvh] max-w-[100dvw];
-	}
-
-	.menu-btn-underlay {
-		z-index: -1;
-		position: absolute;
-		top: 0;
-		right: 0;
-		height: 100%;
-		/* width: 100%; */
-		pointer-events: none;
-		background-color: var(--color-secondary);
-	}
-
-	.canvas-mask {
+	canvas {
 		-webkit-mask-image: url('/frame/star.c9387850.svg');
 		mask-image: url('/frame/star.c9387850.svg');
 		-webkit-mask-repeat: no-repeat;
 		mask-repeat: no-repeat;
 		-webkit-mask-position: center center;
 		mask-position: center center;
-		mask-size: 50rem;
-		transition: ease-in 2s;
-		pointer-events: all !important;
-	}
-
-	.canvas-mask-disclose {
-		mask-size: 200rem;
-	}
-
-	.test-mask-2 {
-		-webkit-mask-image: url('/frame/star.c9387850.svg');
-		mask-image: url('/frame/star.c9387850.svg');
-		-webkit-mask-repeat: no-repeat;
-		mask-repeat: no-repeat;
-		-webkit-mask-position: center center;
-		mask-position: center center;
-		mask-size: 50rem;
+		mask-size: 0rem;
 	}
 }
