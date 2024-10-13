@@ -1,33 +1,42 @@
 'use client';
+
+import { useEffect, useRef, ReactNode, RefObject, LegacyRef } from 'react';
 import { ReactLenis } from '@studio-freight/react-lenis';
-import { useEffect, useRef } from 'react';
+import Lenis from '@studio-freight/lenis';
 import gsap from 'gsap';
 
-function SmoothScrolling({ children }) {
-	const lenisRef = useRef();
+interface SmoothScrollingProps {
+	children: ReactNode;
+}
+
+type LenisRef = {
+	wrapper?: HTMLElement;
+	content?: HTMLElement;
+	lenis?: Lenis;
+};
+
+function SmoothScrolling({ children }: SmoothScrollingProps) {
+	const lenisRef = useRef<LenisRef>(null);
+
+	function update(time: number) {
+		lenisRef?.current?.lenis?.raf(time * 1000);
+	}
 
 	useEffect(() => {
-		function update(time) {
-			lenisRef.current?.lenis?.raf(time * 1000);
-		}
-
 		gsap.ticker.add(update);
+		return () => gsap.ticker.remove(update);
+	}, []);
 
-		return () => {
-			gsap.ticker.remove(update);
-		};
-	});
+	const lenisOptions = {
+		lerp: 0.08,
+		duration: 3,
+	};
 
 	return (
 		<ReactLenis
 			root
-			options={{
-				lerp: 0.08,
-				duration: 3,
-				smoothTouch: true,
-				smooth: true,
-			}}
 			ref={lenisRef}
+			options={lenisOptions}
 			autoRaf={false}>
 			{children}
 		</ReactLenis>
