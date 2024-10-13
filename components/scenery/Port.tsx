@@ -1,20 +1,19 @@
-import { Suspense, useEffect, useLayoutEffect, useRef } from 'react';
-import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import { memo, Suspense, useEffect, useRef } from 'react';
 import { Preload, Environment, Lightformer } from '@react-three/drei';
 
-import { Vector2, BackSide, Vector3, Color } from 'three';
+import { Vector3 } from 'three';
 
 import Ripple from '@/components/scenery/Ripple';
 import Banner from '@/components/scenery/Banner';
 import Model from '@/components/scenery/Model';
+import { useWebGlStore } from '@/store';
 
-export default function Port() {
+export default memo(function Port() {
 	const lightDirRef = useRef(new Vector3(0, 0, 0));
 	return (
 		<>
 			{/* <OrbitControls /> */}
-			<Suspense fallback={null}>
-				<Precompile />
+			<Suspense fallback={<SuspenseMonitor />}>
 				<Ripple>
 					<Banner />
 					<Model />
@@ -36,10 +35,13 @@ export default function Port() {
 			</Suspense>
 		</>
 	);
-}
+});
 
-function Precompile() {
-	const { gl, scene, camera } = useThree();
-	useLayoutEffect(() => void gl.compile(scene, camera), []);
+/**
+ * use useEffect's clean-up callback to detect whether progress is 100 and 3D component is fully loaded,
+ * since even if progress is 100, the 3D components still take a little time to load.
+ */
+function SuspenseMonitor() {
+	useEffect(() => () => useWebGlStore.setState({ isLoaded: true }), []);
 	return null;
 }
