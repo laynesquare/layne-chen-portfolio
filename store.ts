@@ -42,19 +42,12 @@ const useDomStore = create(set => ({
 
 const useWebGlStore = create(set => ({
 	isLoaded: false,
+	isEntryAnimationDone: false,
 	passivePortBuffer: null,
 	containerMaskedMeshes: null,
 
 	loadedRegister: item => {
 		set(state => ({ isLoaded: item }));
-	},
-
-	passivePortBufferRegister: item => {
-		set(state => ({ passivePortBuffer: item }));
-	},
-
-	containerMaskedMeshesRegister: item => {
-		set(state => ({ containerMaskedMeshes: item }));
 	},
 }));
 
