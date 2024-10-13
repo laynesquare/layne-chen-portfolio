@@ -1,7 +1,7 @@
 // cSpell: ignore Raycaster, GLTF, metalness, clearcoat, matcap, drei, RGBE, GSAP, Satoshi
 
 import { extend, useFrame, useLoader, useThree } from '@react-three/fiber';
-import React, { useRef, useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useMemo, useState, useCallback, memo } from 'react';
 import {
 	Color,
 	MeshBasicMaterial,
@@ -44,11 +44,12 @@ import {
 	NoBlending,
 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
-import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line } from '@react-three/drei';
+import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line, useGLTF } from '@react-three/drei';
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
 import { useDomStore, usePortFboStore, useWebGlStore } from '@/store';
+import { useShallow } from 'zustand/react/shallow';
 
 import vertexShaderRoundedRec from '@/shaders/rounded-rectangle/vertex';
 import fragmentShaderRoundedRec from '@/shaders/rounded-rectangle/fragment';
@@ -57,10 +58,6 @@ import fragmentShaderAcidBg from '@/shaders/animated-underlay-acid-fluid/fragmen
 import fragmentShaderParallaxDepth from '@/shaders/animated-parallax-depth/fragment';
 import vertexShaderParallaxDepth from '@/shaders/animated-parallax-depth/vertex';
 
-import debounce from 'lodash/debounce';
-import { Vector } from 'html2canvas/dist/types/render/vector';
-import { depth } from 'three/webgpu';
-
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -68,16 +65,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-const Banner = () => {
-	const viewport = useThree(state => state.viewport);
-	const size = useThree(state => state.size);
-	const camera = useThree(state => state.camera);
+const Banner = memo(function Banner() {
+	// const viewport = useThree(state => state.viewport);
+	// const size = useThree(state => state.size);
+	// const camera = useThree(state => state.camera);
 
-	const torsoDomEl = useDomStore(state => state.torsoEl);
-	const containerDomEls = useDomStore(state => state.containerEls);
-	const textDomEls = useDomStore(state => state.textEls);
-
-	const containerMaskedMeshesRegister = useWebGlStore(state => state.containerMaskedMeshesRegister);
+	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
 
 	const pointerRef = useRef(new Vector2(0, 0));
 	const pointerCenterRef = useRef(new Vector2(0, 0));
@@ -98,11 +91,10 @@ const Banner = () => {
 	});
 	const containerMaskedMeshesRef = useRef(new Set());
 
-	const previewShareYourMemories = useLoader(TextureLoader, '/frame/project-preview-share-your-memories.webp');
-	const previewLearnEnglishDictionary = useLoader(
-		TextureLoader,
+	const [previewShareYourMemories, previewLearnEnglishDictionary] = useLoader(TextureLoader, [
+		'/frame/project-preview-share-your-memories.webp',
 		'/frame/project-preview-learn-english-dictionary.webp',
-	);
+	]);
 
 	const previewMap = {
 		previewShareYourMemoriesTemp: previewShareYourMemories,
@@ -110,10 +102,9 @@ const Banner = () => {
 		previewLearnEnglishDictionary: previewLearnEnglishDictionary,
 	};
 
-	const ballRef = useRef(null);
-
 	useEffect(() => {
-		containerMaskedMeshesRegister(containerMaskedMeshesRef.current);
+		// containerMaskedMeshesRegister(containerMaskedMeshesRef.current);
+		useWebGlStore.setState({ containerMaskedMeshes: containerMaskedMeshesRef.current });
 	}, []);
 
 	function calcFactorCamZ(zPosition: number) {
@@ -161,29 +152,26 @@ const Banner = () => {
 			materialAcidBg.current.uniforms.uTime.value = clock.elapsedTime;
 		}
 
-		// const containerMaterialParallaxRefsKeys = Object.keys(containerMaterialParallaxRefs.current);
+		const containerMaterialParallaxRefsKeys = Object.keys(containerMaterialParallaxRefs.current);
 
-		// const target =
-		// 	pointerRef.current.distanceTo(pointer) > 0
-		// 		? pointerRef.current.clone().sub(pointer).negate()
-		// 		: pointerCenterRef.current;
+		const target =
+			pointerRef.current.distanceTo(pointer) > 0
+				? pointerRef.current.clone().sub(pointer).negate()
+				: pointerCenterRef.current;
 
-		// pointerRef.current.copy(pointer);
+		pointerRef.current.copy(pointer);
 
-		// containerMaterialParallaxRefsKeys.forEach(key => {
-		// 	containerMaterialParallaxRefs.current[key].uniforms.uMouse.value.lerp(target, 0.025);
-		// });
+		containerMaterialParallaxRefsKeys.forEach(key => {
+			containerMaterialParallaxRefs.current[key].uniforms.uMouse.value.lerp(target, 0.025);
+		});
 
-		// textGroupRef.current.visible = false;
-		// containerGroupRef.current.visible = false;
+		textGroupRef.current.visible = false;
+		containerGroupRef.current.visible = false;
 	});
 
-	useLenis(
-		event => {
-			updatePosition(event.scroll);
-		},
-		[size],
-	);
+	useLenis(event => {
+		updatePosition(event.scroll);
+	});
 
 	function updatePosition(offset: number) {
 		if (textGroupRef.current && containerGroupRef.current) {
@@ -194,7 +182,7 @@ const Banner = () => {
 		}
 	}
 
-	const materialOptRec2 = useRef(
+	const containerMeshMaterial = useRef(
 		new ShaderMaterial({
 			uniforms: {
 				uTexture: { value: null },
@@ -215,7 +203,7 @@ const Banner = () => {
 		}),
 	);
 
-	const materialOptParallax2 = useRef(
+	const containerMeshParallaxMaterial = useRef(
 		new ShaderMaterial({
 			uniforms: {
 				uTexture: { value: null },
@@ -236,13 +224,15 @@ const Banner = () => {
 		}),
 	);
 
+	console.log('banner re rerenders');
+
 	return (
 		<>
 			<group
 				name='text-mesh-group'
-				ref={textGroupRef}
-				onPointerOver={() => null}>
-				{[...textDomEls].map((el, idx) => {
+				ref={textGroupRef}>
+				{/* {[...domTexts].map((el, idx) => { */}
+				{[...useDomStore.getState().textEls].map((el, idx) => {
 					const { fontSize, lineHeight, textAlign } = window.getComputedStyle(el);
 					const { scrollY } = window;
 					const { left, top, height, width } = el.getBoundingClientRect();
@@ -280,7 +270,8 @@ const Banner = () => {
 							scale={[sX, sY, sZ]}
 							textAlign={textAlign}
 							fontSize={(parsedFontSize / factor) * ratio}
-							userData={el.dataset}>
+							userData={el.dataset}
+							characters={el.innerText}>
 							{el.textContent}
 						</Text>
 					);
@@ -290,7 +281,7 @@ const Banner = () => {
 			<group
 				ref={containerGroupRef}
 				name='container-mesh-group'>
-				{[...containerDomEls].map((el, idx) => {
+				{[...useDomStore.getState().containerEls].map((el, idx) => {
 					const {
 						borderBottomLeftRadius: rbl,
 						borderBottomRightRadius: rbr,
@@ -314,7 +305,11 @@ const Banner = () => {
 
 					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
-					const material = parallax ? materialOptParallax2.current.clone() : materialOptRec2.current.clone();
+					const material = parallax
+						? containerMeshParallaxMaterial.current.clone()
+						: containerMeshMaterial.current.clone();
+
+					containerMaterialParallaxRefs.current[parallax] = material;
 
 					material.uniforms.uTexture.value = previewMap[parallax] || null;
 					material.uniforms.uResolution.value.set(width, height);
@@ -333,7 +328,6 @@ const Banner = () => {
 								anchor && el ? containerMaskedMeshesRef.current.add(el) : null;
 							}}
 							position={[x, y, z]}
-							frustumCulled={false}
 							userData={{ dataset: el.dataset, el }}
 							material={material}>
 							<planeGeometry args={[(width / factor) * ratio, (height / factor) * ratio, 1, 1]} />
@@ -347,14 +341,14 @@ const Banner = () => {
 					name='torso-mesh'
 					ref={torsoMeshRef}
 					scale={[
-						(torsoDomEl.offsetWidth / viewport.factor) * torsoMeshRatio + 1,
-						(torsoDomEl.offsetHeight / viewport.factor) * torsoMeshRatio,
+						(useDomStore.getState().torsoEl.offsetWidth / viewport.factor) * torsoMeshRatio + 1,
+						(useDomStore.getState().torsoEl.offsetHeight / viewport.factor) * torsoMeshRatio,
 						1,
 					]}
 					position={[
 						0,
 						(viewport.height / 2) * torsoMeshRatio -
-							((torsoDomEl.offsetHeight / viewport.factor) * torsoMeshRatio) / 2,
+							((useDomStore.getState().torsoEl.offsetHeight / viewport.factor) * torsoMeshRatio) / 2,
 						0,
 					]}
 					material={materialAcidBg.current}>
@@ -363,7 +357,7 @@ const Banner = () => {
 			</group>
 		</>
 	);
-};
+});
 
 export default Banner;
 

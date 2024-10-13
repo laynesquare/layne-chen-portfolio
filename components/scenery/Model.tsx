@@ -1,6 +1,6 @@
 /// cSpell: ignore Raycaster, GLTF, metalness, clearcoat, matcap, drei
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import {
 	MeshTransmissionMaterial,
 	useAnimations,
@@ -64,21 +64,23 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-export default function Model({ r = MathUtils.randFloatSpread }) {
-	const viewport = useThree(state => state.viewport);
-	const size = useThree(state => state.size);
-	const camera = useThree(state => state.camera);
-	const scene = useThree(state => state.scene);
+export default memo(function Model() {
+	// const viewport = useThree(state => state.viewport);
+	// const size = useThree(state => state.size);
+	// const camera = useThree(state => state.camera);
+	// const scene = useThree(state => state.scene);
+	// const [viewport] = useThree(state => [state.viewport]);
+	// const anchorDomEls = useDomStore(state => state.anchorEls);
 
-	const anchorDomEls = useDomStore(state => state.anchorEls);
+	const getThree = useThree(state => state.get);
 
 	const ballRef = useRef();
 	const ballCloneRef = useRef();
-	const ballInitPosRef = useRef(new Vector3(r(10), r(10), 1));
+	const ballInitPosRef = useRef(new Vector3(15, 15, 1));
 	const ballCenterPosRef = useRef(new Vector3(0, 0, 1));
 	const ballDynamicPosRef = useRef(new Vector3());
 	const ballClonedDynamicPosRef = useRef(new Vector3());
-
+	const ballMeshRatio = 1 - getThree().viewport.factor / calcFactorCamZ(1);
 	const ballGeometry = useMemo(() => {
 		const geometry = mergeVertices(new IcosahedronGeometry(0.5, 64));
 		geometry.computeTangents();
@@ -88,9 +90,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	const ballMaskRef = useRef(null);
 	const ballClonedMaskRef = useRef(null);
 
-	const scrollOffsetRef = useRef(0); // pixel
-
-	const ballMeshRatio = 1 - viewport.factor / calcFactorCamZ(1);
+	const scrollOffsetRef = useRef(0);
 
 	const displacementTexture = useLoader(TextureLoader, '/scenery/textures/test2.jpg');
 
@@ -166,7 +166,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	useFrame(({ clock, scene, gl, raycaster }) => {
 		const elapsedTime = clock.getElapsedTime();
 
-		const inViewEl = [...anchorDomEls].find(el => ScrollTrigger.isInViewport(el, 0.2));
+		const inViewEl = [...useDomStore.getState().anchorEls].find(el => ScrollTrigger.isInViewport(el, 0.2));
 
 		if (!inViewEl) {
 			const epsilon = ballRef.current.position.distanceTo(ballCenterPosRef.current) > 0.01;
@@ -183,21 +183,17 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 		ballMaterialUpdate(elapsedTime);
 	});
 
-	useLenis(
-		event => {
-			if (ballRef.current && ballCloneRef.current) {
-				// createBallClone();
-				updatePosByScroll();
-			}
-
-			scrollOffsetRef.current = event.scroll;
-		},
-		[size],
-	);
+	useLenis(event => {
+		if (ballRef.current && ballCloneRef.current) {
+			updatePosByScroll();
+		}
+		scrollOffsetRef.current = event.scroll;
+	});
 
 	function updatePosByScroll() {
-		const els = [...anchorDomEls];
+		const els = [...useDomStore.getState().anchorEls];
 		const inViewEl = els.find(el => ScrollTrigger.isInViewport(el, 0.2));
+		const { viewport } = getThree();
 
 		if (!ballRef.current || !inViewEl) {
 			ballCloneRef.current.position.lerp(ballRef.current.position, 0.1);
@@ -238,18 +234,18 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 	}
 
 	useEffect(() => {
-		if (!ballCloneRef.current) {
-			ballCloneRef.current = ballRef.current.clone();
-			ballCloneRef.current.visible = false;
-			scene.add(ballCloneRef.current);
-		}
-	}, [scene]);
+		const { scene } = getThree();
+		ballCloneRef.current = ballRef.current.clone();
+		ballCloneRef.current.visible = false;
+		scene.add(ballCloneRef.current);
+	}, []);
 
 	function ballMaterialUpdate(elapsedTime: number) {
 		ballRef.current.material.uniforms.uTime.value = elapsedTime;
 	}
 
 	function calcFactorCamZ(zPosition: number) {
+		const { camera, size } = getThree();
 		const fov = (camera.fov * Math.PI) / 180;
 		const h = 2 * Math.tan(fov / 2) * zPosition;
 		const w = h * (size.width / size.height);
@@ -272,8 +268,11 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 			uniforms: uniformsRef.current,
 			displacementMap: displacementTexture,
 			displacementScale: 0,
+			silent: true,
 		}),
 	);
+
+	console.log('model re rerenders');
 
 	return (
 		<group>
@@ -282,7 +281,6 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 				geometry={ballGeometry}
 				ref={ballRef}
 				position={ballInitPosRef.current}
-				frustumCulled={false}
 				material={ballMaterialRef.current}></mesh>
 
 			<MaskBall
@@ -292,7 +290,7 @@ export default function Model({ r = MathUtils.randFloatSpread }) {
 			/>
 		</group>
 	);
-}
+});
 
 function MaskBall({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 	const [isBallPress, setIsBallPress] = useState(false);

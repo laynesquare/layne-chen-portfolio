@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MeshTransmissionMaterial, shaderMaterial, useFBO, useScroll } from '@react-three/drei';
 import { createPortal, useFrame, useThree, extend, useLoader, ThreeElements } from '@react-three/fiber';
 import {
@@ -39,20 +39,22 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-export default function Ripple({ children, damping = 0.15, ...props }) {
+export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 	const ref = useRef();
 
-	const viewport = useThree(state => state.viewport);
-	const size = useThree(state => state.size);
-	const camera = useThree(state => state.camera);
+	// const viewport = useThree(state => state.viewport);
+	// const size = useThree(state => state.size);
+	// const camera = useThree(state => state.camera);
 
-	const containerMaskedMeshes = useWebGlStore(state => state.containerMaskedMeshes);
+	const getThree = useThree(state => state.get);
+
+	// const containerMaskedMeshes = useWebGlStore(state => state.containerMaskedMeshes);
 
 	// const devicePixelRatio = window.devicePixelRatio || 1;
 	// const memory = navigator.deviceMemory || 4;
 	// const resolutionScale = devicePixelRatio > 1.5 || memory <= 4 ? 0.5 : 0.75;
 
-	const portBuffer = useFBO(size.width, size.height, {
+	const portBuffer = useFBO(0, 0, {
 		minFilter: LinearFilter,
 		magFilter: LinearFilter,
 		samples: 0,
@@ -103,7 +105,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 	const portMaterialRef = useRef(
 		new ShaderMaterial({
 			uniforms: {
-				uResolution: { value: new Vector2(size.width, size.height) },
+				uResolution: { value: new Vector2(0, 0) },
 				uTime: { value: 0 },
 				uCursor: { value: new Vector2(0.5, 0.5) },
 				uScrollVelocity: { value: 0 },
@@ -119,8 +121,6 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			depthWrite: false,
 		}),
 	);
-
-	const ballRef = useRef(null);
 
 	useLenis(event => {
 		velocityRef.current = event.velocity;
@@ -147,6 +147,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 
 	const handleMouseMove = useCallback(
 		(event: MouseEvent) => {
+			const { size, camera } = getThree();
 			const ndcX = (event.clientX / size.width) * 2 - 1;
 			const ndcY = -((event.clientY / size.height) * 2 - 1);
 
@@ -173,7 +174,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			}
 			preMousePos.current = { x: event.clientX, y: event.clientY };
 		},
-		[camera, size.width, size.height],
+		[getThree],
 	);
 
 	const maskBufferConfig = {
@@ -186,8 +187,6 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		colorSpace: '',
 		generateMipmaps: false,
 		stencilBuffer: false,
-		// depthBuffer: false,
-		// depth: false,
 	};
 
 	useEffect(() => {
@@ -200,12 +199,17 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 
 	const maskBufferType = ['ABOUT', 'SKILL', 'EXPERIENCE'];
 
-	useFrame(({ clock, gl, camera, scene }, delta) => {
+	useFrame(({ clock, gl, camera, scene, size, viewport }, delta) => {
 		const elapsedTime = clock.getElapsedTime();
+		portBuffer.setSize(size.width, size.height);
+		maskBufferMap['ABOUT'].buffer.setSize(size.width / 2, size.height / 2);
+		maskBufferMap['EXPERIENCE'].buffer.setSize(size.width / 2, size.height / 2);
+
+		ref.current.scale.set(viewport.width, viewport.height, 1);
 
 		if (portMaterialRef.current) {
 			portMaterialRef.current.uniforms.uTime.value = elapsedTime;
-			portMaterialRef.current.uniforms.uTexture.value = portBuffer.texture;
+			portMaterialRef.current.uniforms.uResolution.value.set(size.width, size.height);
 			const currentVelocity = portMaterialRef.current.uniforms.uScrollVelocity.value;
 			const targetVelocity = velocityRef.current;
 			const smoothingFactor = 0.025;
@@ -220,13 +224,12 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			mesh.scale.y = mesh.scale.x;
 		});
 
-		if (!ballRef.current) {
-			ballRef.current = portScene.getObjectByName('psychedelic-ball');
-		} else {
-			const containerMeshGroup = portScene.getObjectByName('container-mesh-group');
-			const textMeshGroup = portScene.getObjectByName('text-mesh-group');
-			const torsoMesh = portScene.getObjectByName('torso-mesh');
-			const psychedelicBallMesh = ballRef.current;
+		const containerMeshGroup = portScene.getObjectByName('container-mesh-group');
+		const textMeshGroup = portScene.getObjectByName('text-mesh-group');
+		const torsoMesh = portScene.getObjectByName('torso-mesh');
+		const psychedelicBallMesh = portScene.getObjectByName('psychedelic-ball');
+
+		if (containerMeshGroup && textMeshGroup && torsoMesh && psychedelicBallMesh) {
 			containerMeshGroup.visible = false;
 			textMeshGroup.visible = false;
 			const ogRoughness = psychedelicBallMesh.material.roughness;
@@ -234,9 +237,10 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			const ogIridescence = psychedelicBallMesh.material.iridescence;
 			const ogClearcoat = psychedelicBallMesh.material.clearcoat;
 
-			const maskMeshesArr = [...containerMaskedMeshes];
+			const containerMaskedMeshes = useWebGlStore.getState().containerMaskedMeshes;
 
-			if (maskMeshesArr.length) {
+			if (containerMaskedMeshes?.size) {
+				const maskMeshesArr = [...containerMaskedMeshes];
 				maskMeshesArr.forEach(mesh => {
 					const inView = ScrollTrigger.isInViewport(mesh.userData.el);
 					if (mesh && inView && maskBufferType.includes(mesh.name)) {
@@ -278,9 +282,11 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 		gl.clear();
 	});
 
+	console.log('ripple re rerenders');
+
 	const maskBufferMap = {
 		ABOUT: {
-			buffer: useFBO(size.width / 2, size.height / 2, maskBufferConfig),
+			buffer: useFBO(0, 0, maskBufferConfig),
 			mutateScene: (ballMesh, containerMesh, torsoMesh) => {
 				ballMesh.material.uniforms.uIsNormalColor.value = 1;
 				torsoMesh.material.uniforms.uBrightColor.value.set('#7B60FB');
@@ -308,7 +314,7 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 			},
 		},
 		EXPERIENCE: {
-			buffer: useFBO(size.width / 2, size.height / 2, maskBufferConfig),
+			buffer: useFBO(0, 0, maskBufferConfig),
 			mutateScene: (ballMesh, containerMesh, torsoMesh) => {
 				torsoMesh.material.uniforms.uBrightColor.value.set('#FF0000');
 				torsoMesh.material.uniforms.uDarkColor.value.set('#0500FF');
@@ -331,13 +337,13 @@ export default function Ripple({ children, damping = 0.15, ...props }) {
 				castShadow={false}
 				receiveShadow={false}
 				ref={ref}
-				scale={[viewport.width, viewport.height, 1]}
+				scale={[1, 1, 1]}
 				material={portMaterialRef.current}
 				position={[0, 0, 0]}
 				geometry={portGeoRef.current}></mesh>
 		</>
 	);
-}
+});
 
 const useCustomViewport = () => {
 	const { viewport, camera, pointer, size } = useThree();
