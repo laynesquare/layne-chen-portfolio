@@ -42,17 +42,11 @@ import Model from '@/components/scenery/Model';
 // Import types
 import { SceneProps } from '@/types';
 
-import { suspend } from 'suspend-react';
-
-import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
-import dynamic from 'next/dynamic';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useWebGlStore, useGSAPStore } from '@/store';
+import { useWebGlStore } from '@/store';
 
 import Port from './Port';
-
-// const Port = dynamic(() => import('@/components/scenery/Port'), { ssr: false });
 
 gsap.registerPlugin(useGSAP);
 
@@ -84,7 +78,7 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 				}}
 				dpr={[1, 1]}
 				camera={{ position: [0, 0, 8], fov: 30 }}
-				resize={{ debounce: 100 }}
+				resize={{ debounce: 5 }}
 				flat={true}
 				eventSource={wrapperRef?.current}>
 				<Port />
@@ -94,7 +88,11 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 	);
 });
 
-function Disclose({ canvasRef }) {
+interface DiscloseProps {
+	canvasRef: React.RefObject<HTMLCanvasElement>;
+}
+
+function Disclose({ canvasRef }: DiscloseProps) {
 	const isEntryAnimationDone = useWebGlStore(state => state.isEntryAnimationDone);
 
 	useGSAP(
