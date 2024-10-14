@@ -281,7 +281,8 @@ export default memo(function Model() {
 				geometry={ballGeometry}
 				ref={ballRef}
 				position={ballInitPosRef.current}
-				material={ballMaterialRef.current}></mesh>
+				material={ballMaterialRef.current}
+				frustumCulled={false}></mesh>
 
 			<MaskBall
 				ballRef={ballRef}
