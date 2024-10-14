@@ -169,9 +169,12 @@ const Banner = memo(function Banner() {
 		containerGroupRef.current.visible = false;
 	});
 
-	useLenis(event => {
-		updatePosition(event.scroll);
-	});
+	useLenis(
+		event => {
+			updatePosition(event.scroll);
+		},
+		[size],
+	);
 
 	function updatePosition(offset: number) {
 		if (textGroupRef.current && containerGroupRef.current) {
@@ -266,7 +269,7 @@ const Banner = memo(function Banner() {
 							position={[pX, pY, pZ]}
 							material={material}
 							lineHeight={parsedLineHeight / parsedFontSize}
-							maxWidth={(width / factor) * ratio + 0.01}
+							maxWidth={(width / factor) * ratio + 0.0025}
 							scale={[sX, sY, sZ]}
 							textAlign={textAlign}
 							fontSize={(parsedFontSize / factor) * ratio}
