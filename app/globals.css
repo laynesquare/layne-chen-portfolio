@@ -11,6 +11,7 @@
 		--color-abysmal: #1a1a1a;
 		--color-white: #fff;
 		--color-neon-green: #25fea8;
+		--color-neon-yellow: #e8fe25;
 
 		--color--ivory: #fffff0;
 		--color-mayonnaise: #ffffde;
@@ -20,7 +21,7 @@
 
 		--color-font-neutral: var(--color-mayonnaise);
 		--color-font-neutral-contrast: var(--color-abysmal);
-		--color-font-highlight: var(--color-neon-green);
+		--color-font-highlight: var(--color-neon-yellow);
 
 		--color-bg-primary: var(--color-neon-green);
 		--color-bg-neutral: var(--color-mayonnaise);
@@ -40,7 +41,28 @@
 }
 
 html {
-	font-size: var(--font-base);
+	font-size: calc(0.8333vw);
+}
+
+span {
+	font-size: max(1em, 14px);
+}
+
+h1 > span,
+h2 > span,
+h3 > span,
+h4 > span,
+h5 > span,
+h6 > span,
+a > span,
+button > span {
+	font-size: max(1em, 18px);
+}
+
+@media screen and (max-width: 300px) {
+	html {
+		/* font-size: 2.4999px; */
+	}
 }
 
 html,
@@ -118,7 +140,7 @@ body::-webkit-scrollbar,
 }
 
 @layer components {
-	canvas {
+	main canvas {
 		-webkit-mask-image: url('/frame/star.c9387850.svg');
 		mask-image: url('/frame/star.c9387850.svg');
 		-webkit-mask-repeat: no-repeat;
