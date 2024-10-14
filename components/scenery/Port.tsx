@@ -1,11 +1,16 @@
+// react
 import { memo, Suspense, useEffect, useRef } from 'react';
-import { Preload, Environment, Lightformer } from '@react-three/drei';
+import { Environment, Lightformer } from '@react-three/drei';
 
+// three
 import { Vector3 } from 'three';
 
+// components
 import Ripple from '@/components/scenery/Ripple';
 import Banner from '@/components/scenery/Banner';
 import Model from '@/components/scenery/Model';
+
+// store
 import { useWebGlStore } from '@/store';
 
 export default memo(function Port() {
@@ -23,7 +28,6 @@ export default memo(function Port() {
 						preset='warehouse'>
 						<Lightformer
 							color='#FFFFF0'
-							// intensity={10}
 							intensity={3}
 							position={[10, 5, 0]}
 							scale={[10, 50, 1]}
@@ -38,7 +42,7 @@ export default memo(function Port() {
 });
 
 /**
- * use useEffect's clean-up callback to detect whether progress is 100 and 3D component is fully loaded,
+ * use useEffect's clean-up callback to detect whether progress is 100 and 3D components are fully loaded,
  * since even if progress is 100, the 3D components still take a little time to load.
  */
 function SuspenseMonitor() {
