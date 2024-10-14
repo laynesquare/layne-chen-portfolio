@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, ReactNode, RefObject, LegacyRef } from 'react';
+import { useNavStore } from '@/store';
 import { ReactLenis } from '@studio-freight/react-lenis';
 import Lenis from '@studio-freight/lenis';
 import gsap from 'gsap';
@@ -24,6 +25,7 @@ function SmoothScrolling({ children }: SmoothScrollingProps) {
 
 	useEffect(() => {
 		gsap.ticker.add(update);
+		useNavStore.setState({ lenisRef });
 		return () => gsap.ticker.remove(update);
 	}, []);
 
