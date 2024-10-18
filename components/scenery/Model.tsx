@@ -76,7 +76,7 @@ export default memo(function Model() {
 
 	const ballRef = useRef();
 	const ballCloneRef = useRef();
-	const ballInitPosRef = useRef(new Vector3(15, 15, 1));
+	const ballInitPosRef = useRef(new Vector3(5, 5, 1));
 	const ballCenterPosRef = useRef(new Vector3(0, 0, 1));
 	const ballDynamicPosRef = useRef(new Vector3());
 	const ballClonedDynamicPosRef = useRef(new Vector3());
@@ -166,40 +166,34 @@ export default memo(function Model() {
 	useFrame(({ clock, scene, gl, raycaster }) => {
 		const elapsedTime = clock.getElapsedTime();
 
-		const inViewEl = [...useDomStore.getState().anchorEls].find(el => ScrollTrigger.isInViewport(el, 0.2));
+		const inViewEl = [...useDomStore.getState().anchorEls].findLast(el => ScrollTrigger.isInViewport(el, 0.3));
 
 		if (!inViewEl) {
-			const epsilon = ballRef.current.position.distanceTo(ballCenterPosRef.current) > 0.01;
+			const epsilon = ballRef.current.position.distanceTo(ballCenterPosRef.current) > 0.005;
 			if (epsilon) {
-				ballRef.current.position.lerp(ballCenterPosRef.current, 0.05);
+				ballRef.current.position.lerp(ballCenterPosRef.current, 0.035);
+				ballMaskRef.current.position.copy(ballRef.current.position);
+				ballCloneRef.current?.position.copy(ballRef.current.position);
+				ballClonedMaskRef.current?.position.copy(ballRef.current.position);
 			}
-			ballMaskRef.current.position.copy(ballRef.current.position);
 		}
 
-		if (ballCloneRef.current) {
-			ballCloneRef.current.rotation.copy(ballRef.current.rotation);
-		}
+		ballCloneRef.current?.rotation.copy(ballRef.current.rotation);
 
 		ballMaterialUpdate(elapsedTime);
 	});
 
 	useLenis(event => {
-		if (ballRef.current && ballCloneRef.current) {
-			updatePosByScroll();
-		}
+		updatePosByScroll();
 		scrollOffsetRef.current = event.scroll;
 	});
 
 	function updatePosByScroll() {
 		const els = [...useDomStore.getState().anchorEls];
-		const inViewEl = els.find(el => ScrollTrigger.isInViewport(el, 0.2));
+		const inViewEl = els.findLast(el => ScrollTrigger.isInViewport(el, 0.3));
 		const { viewport } = getThree();
 
-		if (!ballRef.current || !inViewEl) {
-			ballCloneRef.current.position.lerp(ballRef.current.position, 0.1);
-			ballClonedMaskRef.current.position.lerp(ballRef.current.position, 0.1);
-			return;
-		}
+		if (!inViewEl) return;
 
 		const { anchor, anchorMirror } = inViewEl.dataset;
 		const { factor } = viewport;
@@ -217,18 +211,18 @@ export default memo(function Model() {
 
 		const { x: targetX, y: targetY } = getElementPosition(inViewEl);
 		const targetBallPos = ballDynamicPosRef.current.set(targetX, targetY, 1);
-		ballRef.current.position.lerp(targetBallPos, 0.05);
+		ballRef.current.position.lerp(targetBallPos, 0.035);
 		ballMaskRef.current.position.copy(ballRef.current.position);
 
 		if (anchorMirror) {
 			const inViewMirrorEl = els.find(el => el.dataset['anchor'] === anchor && el !== inViewEl);
 			const { x: mirrorX, y: mirrorY } = getElementPosition(inViewMirrorEl);
 			const targetBallClonePos = ballClonedDynamicPosRef.current.set(mirrorX, mirrorY, 1);
-			ballCloneRef.current.position.lerp(targetBallClonePos, 0.05);
+			ballCloneRef.current.position.lerp(targetBallClonePos, 0.035);
 			ballClonedMaskRef.current.position.copy(targetBallClonePos);
 			ballCloneRef.current.visible = true;
 		} else {
-			ballCloneRef.current.position.copy(ballRef.current.position);
+			ballCloneRef.current.position.lerp(targetBallPos, 0.035);
 			ballClonedMaskRef.current.position.copy(ballCloneRef.current.position);
 		}
 	}
@@ -236,6 +230,7 @@ export default memo(function Model() {
 	useEffect(() => {
 		const { scene } = getThree();
 		ballCloneRef.current = ballRef.current.clone();
+		ballCloneRef.current.name = 'psychedelic-ball-cloned';
 		ballCloneRef.current.visible = false;
 		scene.add(ballCloneRef.current);
 	}, []);
@@ -269,6 +264,7 @@ export default memo(function Model() {
 			displacementMap: displacementTexture,
 			displacementScale: 0,
 			silent: true,
+			transparent: true,
 		}),
 	);
 
@@ -278,8 +274,8 @@ export default memo(function Model() {
 		<group>
 			<mesh
 				name='psychedelic-ball'
-				geometry={ballGeometry}
 				ref={ballRef}
+				geometry={ballGeometry}
 				position={ballInitPosRef.current}
 				material={ballMaterialRef.current}
 				frustumCulled={false}></mesh>
