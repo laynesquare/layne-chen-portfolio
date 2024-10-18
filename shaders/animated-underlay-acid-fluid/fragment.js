@@ -1,4 +1,7 @@
 const fragmentShader = `
+precision lowp float;
+precision lowp int;
+
 uniform float uTime;
 varying vec2 vUv;
 varying vec3 vPosition;
@@ -53,6 +56,8 @@ float curvedLines(vec2 uv, float offset, float curveAmount) {
 }
 
 void main() {
+    // precision lowp float;
+
     // Create vertical gradient
     float gradient = smoothstep(0.1, 8.0, abs(vUv.x - 0.5) * 80.0); // Adjust gradient smoothness
     

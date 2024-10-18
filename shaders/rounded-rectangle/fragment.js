@@ -1,11 +1,15 @@
 const fragmentShader = `
+precision lowp float;
+precision lowp int;
+
 varying vec2 vUv;
 uniform vec2 uResolution;
 uniform vec4 uRadii;
 uniform float uAnchor;
 uniform float uHeatMap;
-uniform sampler2D uMask;
+uniform sampler2D uMaskTexture;
 uniform vec2 uMaskResolution;
+uniform sampler2D uTranslucentMaskTexture;
 
 float roundedBoxSDF(vec2 centerPosition, vec2 size, vec4 radius) {
     radius.xy = (centerPosition.x > 0.0) ? radius.xy : radius.zw;
@@ -17,14 +21,14 @@ float roundedBoxSDF(vec2 centerPosition, vec2 size, vec4 radius) {
 vec3 getHeatMapColor(float value) {
     // Clamp the value between 0.0 and 1.0
     value = clamp(value, 0.0, 1.0);
-    
+
     // Define color stops
     vec3 blue = vec3(0.0, 0.0, 1.0);
     vec3 cyan = vec3(0.0, 1.0, 1.0);
     vec3 green = vec3(0.0, 1.0, 0.0);
     vec3 yellow = vec3(1.0, 1.0, 0.0);
     vec3 red = vec3(1.0, 0.0, 0.0);
-    
+
     if (value < 0.25) {
         return mix(blue, cyan, value / 0.25);
     } else if (value < 0.5) {
@@ -48,36 +52,33 @@ void main() {
     float smoothedAlpha = 1.0 - smoothstep(0.0, 1.0, distance);
 
     // - Colors
-    // vec3 fillColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
-    // vec3 fillColor = vec3(0.0, 0.0, 0.0);
     vec3 borderColor = vec3(1.0, 1.0, 0.941); // #fffff0 in RGB
 
     // - masking and clipping
     vec2 maskUv = gl_FragCoord.xy / uMaskResolution.xy;
-    vec4 maskColor = texture2D(uMask, maskUv);
-    vec3 fillColor = vec3(1.0, 1.0, 0.941);
+    vec4 maskColor = texture2D(uMaskTexture, maskUv);
+    vec3 fillColor = vec3(0.0, 0.0, 0.0);
 
     // - alpha
     float fillAlpha = 1.0;
     float borderAlpha = 0.5;
 
-    // - Check if the mask is empty (texture not present or fully transparent)
-    bool hasMask = maskColor.a > 0.0; // Check if the mask's alpha is greater than 0
+    // - finalize texture
+    if (uAnchor == 1.0) {
+        vec4 maskColor = texture2D(uMaskTexture, maskUv);
 
-    // - heat map and distortion
-    if (uHeatMap == 1.0) {
-        // float frequency = 100.0;
-        // float amplitude = 0.003;
-        // float distortion = sin(maskUv.y * frequency) * amplitude;
-        // maskColor = texture2D(uMask, vec2(maskUv.x + distortion, maskUv.y));
-        float scalar = maskColor.b;
-        fillColor = getHeatMapColor(scalar);
-        fillAlpha = 1.0;
-    } else if (hasMask)  {
-        fillColor = maskColor.rgb;
-        fillAlpha = 1.0;
+        if (uHeatMap == 1.0) {
+            float scalar = maskColor.b;
+            fillColor = getHeatMapColor(scalar);
+            fillAlpha = 1.0;
+        } else {
+            fillColor = maskColor.rgb;
+            fillAlpha = 1.0;
+        }
     } else {
-        fillAlpha = 0.0;
+        vec4 translucentMaskColor = texture2D(uTranslucentMaskTexture, maskUv);
+        fillColor = translucentMaskColor.rgb;
+        fillAlpha = 1.0;
     }
 
     // - Mix the fill and border colors based on the distance
@@ -101,3 +102,9 @@ export default fragmentShader;
 // vec2 dir = vec2(sin(theta), cos(theta)); // Direction
 // maskUv += dir * displacement.r * 0.5;
 // fillColor = texture2D(uMask, maskUv).rgb;
+
+// - heatwave distortion
+// float frequency = 100.0;
+// float amplitude = 0.003;
+// float distortion = sin(maskUv.y * frequency) * amplitude;
+// maskColor = texture2D(uMask, vec2(maskUv.x + distortion, maskUv.y));

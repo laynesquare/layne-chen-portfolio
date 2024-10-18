@@ -1,4 +1,7 @@
 export default /*glsl*/ `
+precision lowp float;
+precision lowp int;
+
 attribute vec4 tangent;
 
 varying float vPattern;

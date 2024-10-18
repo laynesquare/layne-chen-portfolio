@@ -1,5 +1,7 @@
 const fragmentShader = `
-precision highp float;
+precision lowp float;
+precision lowp int;
+
 float PI = 3.141592653589793;
 uniform vec2 uResolution; // in pixel
 uniform float uTime; // in s

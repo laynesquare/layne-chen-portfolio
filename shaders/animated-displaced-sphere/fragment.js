@@ -1,4 +1,7 @@
 export default /*glsl*/ `
+precision lowp float;
+precision lowp int;
+
 varying float vPattern;
 uniform vec3 uColor;
 uniform float uIsNormalColor;

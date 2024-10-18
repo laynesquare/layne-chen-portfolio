@@ -1,4 +1,7 @@
 const fragmentShader = `
+precision lowp float;
+precision lowp int;
+
 varying vec2 vUv;
 uniform vec2 uResolution;
 uniform vec4 uRadii;
@@ -15,6 +18,8 @@ float roundedBoxSDF(vec2 centerPosition, vec2 size, vec4 radius) {
 }
 
 void main() {
+    // precision lowp float;
+
     vec2 mouseNormalized = (uMouse + 1.0) / 2.0;
 
     // - Parallax mapping parameters
@@ -53,7 +58,7 @@ void main() {
     vec3 fillColor = textureColorWithParallax.rgb;
 
     // - Determine the alpha for fill and border
-    float fillAlpha = 0.95;        // Make the fill fully transparent
+    float fillAlpha = 0.95;        // Make the fill opaque
     float borderAlpha = 0.2;      // Keep the border fully opaque
 
     // - Mix the fill and border colors based on the distance
