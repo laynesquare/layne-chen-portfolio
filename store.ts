@@ -45,6 +45,8 @@ const useWebGlStore = create(set => ({
 	isEntryAnimationDone: false,
 	passivePortBuffer: null,
 	containerMaskedMeshes: null,
+	containerTranslucentMaskedMeshes: null,
+	shareTranslucentBuffer: null,
 }));
 
 const useNavStore = create(set => ({
@@ -52,4 +54,8 @@ const useNavStore = create(set => ({
 	lenisRef: null,
 }));
 
-export { useDomStore, useWebGlStore, useNavStore };
+const usePlatformStore = create(set => ({
+	isMobile: false,
+}));
+
+export { useDomStore, useWebGlStore, useNavStore, usePlatformStore };
