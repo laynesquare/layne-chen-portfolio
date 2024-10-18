@@ -90,6 +90,7 @@ const Banner = memo(function Banner() {
 		previewLearnEnglishDictionary: null,
 	});
 	const containerMaskedMeshesRef = useRef(new Set());
+	const containerTranslucentMaskedMeshesRef = useRef(new Set());
 
 	const [previewShareYourMemories, previewLearnEnglishDictionary] = useLoader(TextureLoader, [
 		'/frame/project-preview-share-your-memories.webp',
@@ -104,7 +105,10 @@ const Banner = memo(function Banner() {
 
 	useEffect(() => {
 		// containerMaskedMeshesRegister(containerMaskedMeshesRef.current);
-		useWebGlStore.setState({ containerMaskedMeshes: containerMaskedMeshesRef.current });
+		useWebGlStore.setState({
+			containerMaskedMeshes: containerMaskedMeshesRef.current,
+			containerTranslucentMaskedMeshes: containerTranslucentMaskedMeshesRef.current,
+		});
 	}, []);
 
 	function calcFactorCamZ(zPosition: number) {
@@ -194,8 +198,9 @@ const Banner = memo(function Banner() {
 				uMouse: { value: new Vector2(0.5, 0.5) },
 				uAnchor: { value: 0 },
 				uHeatMap: { value: 0 },
-				uMask: { value: null },
-				uMaskResolution: { value: new Vector2(size.width, size.height) },
+				uMaskTexture: { value: null },
+				uMaskResolution: { value: new Vector2(0, 0) },
+				uTranslucentMaskTexture: { value: new Vector2(0, 0) },
 			},
 			vertexShader: vertexShaderRoundedRec,
 			fragmentShader: fragmentShaderRoundedRec,
@@ -215,8 +220,9 @@ const Banner = memo(function Banner() {
 				uMouse: { value: new Vector2(0.5, 0.5) },
 				uAnchor: { value: 0 },
 				uHeatMap: { value: 0 },
-				uMask: { value: null },
-				uMaskResolution: { value: new Vector2(size.width, size.height) },
+				uMaskTexture: { value: null },
+				uMaskResolution: { value: new Vector2(0, 0) },
+				uTranslucentMaskTexture: { value: new Vector2(0, 0) },
 			},
 			vertexShader: vertexShaderParallaxDepth,
 			fragmentShader: fragmentShaderParallaxDepth,
@@ -320,15 +326,23 @@ const Banner = memo(function Banner() {
 					material.uniforms.uMouse.value.set(0.5, 0.5);
 					material.uniforms.uAnchor.value = +!!anchor;
 					material.uniforms.uHeatMap.value = 0;
-					material.uniforms.uMask.value = null;
+					material.uniforms.uMaskTexture.value = null;
 					material.uniforms.uMaskResolution.value.set(size.width, size.height);
+					material.uniforms.uTranslucentMaskTexture.value =
+						useWebGlStore.getState().shareTranslucentBuffer?.texture || null;
 
 					return (
 						<mesh
 							key={idx}
 							name={anchor}
 							ref={el => {
-								anchor && el ? containerMaskedMeshesRef.current.add(el) : null;
+								if (el) {
+									if (!anchor && !parallax) {
+										containerTranslucentMaskedMeshesRef.current.add(el);
+									} else if (anchor) {
+										containerMaskedMeshesRef.current.add(el);
+									}
+								}
 							}}
 							position={[x, y, z]}
 							userData={{ dataset: el.dataset, el }}
