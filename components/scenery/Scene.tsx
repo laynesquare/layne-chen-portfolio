@@ -78,7 +78,7 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 				}}
 				dpr={[1, 1]}
 				camera={{ position: [0, 0, 8], fov: 30 }}
-				resize={{ debounce: 5 }}
+				// resize={{ debounce: 5 }}
 				flat={true}
 				eventSource={wrapperRef?.current}>
 				<Port />
