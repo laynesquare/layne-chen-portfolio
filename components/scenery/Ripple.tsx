@@ -40,11 +40,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default memo(function Ripple({ children, damping = 0.15, ...props }) {
-	const ref = useRef();
-
-	// const viewport = useThree(state => state.viewport);
-	// const size = useThree(state => state.size);
-	// const camera = useThree(state => state.camera);
+	const portRef = useRef();
 
 	const getThree = useThree(state => state.get);
 
@@ -177,18 +173,6 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 		[getThree],
 	);
 
-	const maskBufferConfig = {
-		samples: 0,
-		minFilter: NearestFilter,
-		magFilter: NearestFilter,
-		format: RGBAFormat,
-		type: HalfFloatType,
-		anisotropy: 0,
-		colorSpace: '',
-		generateMipmaps: false,
-		stencilBuffer: false,
-	};
-
 	useEffect(() => {
 		window.addEventListener('mousemove', handleMouseMove);
 
@@ -202,10 +186,11 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 	useFrame(({ clock, gl, camera, scene, size, viewport }, delta) => {
 		const elapsedTime = clock.getElapsedTime();
 		portBuffer.setSize(size.width, size.height);
+		translucentBuffer.current.setSize(size.width / 2, size.height / 2);
 		maskBufferMap['ABOUT'].buffer.setSize(size.width / 2, size.height / 2);
 		maskBufferMap['EXPERIENCE'].buffer.setSize(size.width / 2, size.height / 2);
 
-		ref.current.scale.set(viewport.width, viewport.height, 1);
+		portRef.current.scale.set(viewport.width, viewport.height, 1);
 
 		if (portMaterialRef.current) {
 			portMaterialRef.current.uniforms.uTime.value = elapsedTime;
@@ -228,8 +213,9 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 		const textMeshGroup = portScene.getObjectByName('text-mesh-group');
 		const torsoMesh = portScene.getObjectByName('torso-mesh');
 		const psychedelicBallMesh = portScene.getObjectByName('psychedelic-ball');
+		const psychedelicBallClonedMesh = portScene.getObjectByName('psychedelic-ball-cloned');
 
-		if (containerMeshGroup && textMeshGroup && torsoMesh && psychedelicBallMesh) {
+		if (containerMeshGroup && textMeshGroup && torsoMesh && psychedelicBallMesh && psychedelicBallClonedMesh) {
 			containerMeshGroup.visible = false;
 			textMeshGroup.visible = false;
 			const ogRoughness = psychedelicBallMesh.material.roughness;
@@ -240,34 +226,50 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 			const containerMaskedMeshes = useWebGlStore.getState().containerMaskedMeshes;
 
 			if (containerMaskedMeshes?.size) {
-				const maskMeshesArr = [...containerMaskedMeshes];
-				maskMeshesArr.forEach(mesh => {
+				const meshes = [...containerMaskedMeshes];
+				meshes.forEach(mesh => {
 					const inView = ScrollTrigger.isInViewport(mesh.userData.el);
 					if (mesh && inView && maskBufferType.includes(mesh.name)) {
 						maskBufferMap[mesh.name].mutateScene(psychedelicBallMesh, mesh, torsoMesh);
 						gl.setRenderTarget(maskBufferMap[mesh.name].buffer);
 						gl.clear();
 						gl.render(portScene, camera);
-						mesh.material.uniforms.uMask.value = maskBufferMap[mesh.name].buffer.texture || null;
+						mesh.material.uniforms.uMaskTexture.value = maskBufferMap[mesh.name].buffer.texture || null;
 					}
 				});
 			}
 
-			containerMeshGroup.visible = true;
-			textMeshGroup.visible = true;
+			portScene.environmentIntensity = 0.125;
 			torsoMesh.material.uniforms.uBrightColor.value.set('#69D2B7');
 			torsoMesh.material.uniforms.uDarkColor.value.set('#868686');
+			psychedelicBallMesh.material.wireframe = true;
+			psychedelicBallClonedMesh.material.wireframe = true;
+			psychedelicBallMesh.material.uniforms.uFractAmount.value = 0.8;
+			psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 0;
+			psychedelicBallMesh.material.uniforms.uColor.value.set('#002BF9');
+			psychedelicBallMesh.material.sheenColor.set('#fd267a');
+			psychedelicBallMesh.scale.set(1, 1, 1);
+			psychedelicBallMesh.material.displacementScale = 0.3;
+			psychedelicBallMesh.material.sheen = 1;
 			psychedelicBallMesh.material.roughness = ogRoughness;
 			psychedelicBallMesh.material.metalness = ogMetalness;
-			psychedelicBallMesh.material.iridescence = ogIridescence;
+			psychedelicBallMesh.material.iridescence = 1;
 			psychedelicBallMesh.material.clearcoat = ogClearcoat;
+
+			gl.setRenderTarget(translucentBuffer.current);
+			gl.clear();
+			gl.render(portScene, camera);
+
+			containerMeshGroup.visible = true;
+			textMeshGroup.visible = true;
+			portScene.environmentIntensity = 1.5;
+			psychedelicBallMesh.material.wireframe = false;
+			psychedelicBallClonedMesh.material.wireframe = false;
 			psychedelicBallMesh.material.wireframe = false;
 			psychedelicBallMesh.material.sheen = 0;
+			psychedelicBallMesh.material.iridescence = ogIridescence;
 			psychedelicBallMesh.material.displacementScale = 0;
-			psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 0;
 			psychedelicBallMesh.material.uniforms.uColor.value.set('#e6ff00');
-			psychedelicBallMesh.material.uniforms.uFractAmount.value = 0.8;
-			psychedelicBallMesh.scale.set(1, 1, 1);
 		}
 
 		gl.setRenderTarget(rippleBuffer);
@@ -282,7 +284,31 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 		gl.clear();
 	});
 
+	const currBallMaterialPropRef = useRef({
+		displacementScale: 0,
+	});
+
 	console.log('ripple re rerenders');
+
+	const maskBufferConfig = {
+		samples: 0,
+		minFilter: NearestFilter,
+		magFilter: NearestFilter,
+		format: RGBAFormat,
+		type: HalfFloatType,
+		anisotropy: 0,
+		colorSpace: '',
+		generateMipmaps: false,
+		stencilBuffer: false,
+	};
+
+	const translucentBuffer = useRef(useFBO(0, 0, maskBufferConfig));
+
+	useEffect(() => {
+		useWebGlStore.setState({
+			shareTranslucentBuffer: translucentBuffer.current,
+		});
+	}, []);
 
 	const maskBufferMap = {
 		ABOUT: {
@@ -294,6 +320,8 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 				ballMesh.material.wireframe = true;
 				ballMesh.material.roughness = 0.5;
 				ballMesh.material.displacementScale = 1;
+				// ballMesh.material.displacementScale = lerp(currBallMaterialPropRef.current.displacementScale, 1, 0.1);
+				// currBallMaterialPropRef.current.displacementScale = ballMesh.material.displacementScale;
 			},
 		},
 		SKILL: {
@@ -308,6 +336,8 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 				ballMesh.material.metalness = 0.3;
 				ballMesh.material.iridescence = 0.5;
 				ballMesh.material.displacementScale = 0;
+				// ballMesh.material.displacementScale = lerp(currBallMaterialPropRef.current.displacementScale, 0, 0.1);
+				// currBallMaterialPropRef.current.displacementScale = ballMesh.material.displacementScale;
 				ballMesh.material.sheen = 1.0;
 				ballMesh.material.clearcoat = 0.0;
 				ballMesh.material.sheenColor.set('#fd267a');
@@ -336,7 +366,7 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 			<mesh
 				castShadow={false}
 				receiveShadow={false}
-				ref={ref}
+				ref={portRef}
 				scale={[1, 1, 1]}
 				material={portMaterialRef.current}
 				position={[0, 0, 0]}
