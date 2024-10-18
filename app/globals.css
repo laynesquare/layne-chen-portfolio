@@ -59,6 +59,16 @@ button > span {
 	font-size: max(1em, 18px);
 }
 
+nav p > span,
+nav a > span,
+nav button > span {
+	font-size: max(1em, 14px);
+}
+
+/* nav #nav-open-btn-ctn * {
+	font-size: max(1em, 14px);
+} */
+
 @media screen and (max-width: 300px) {
 	html {
 		/* font-size: 2.4999px; */

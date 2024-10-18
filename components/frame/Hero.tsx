@@ -1,25 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, MouseEvent } from 'react';
 import Image from 'next/image';
 import { Html, useProgress } from '@react-three/drei';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import { useDomStore } from '@/store';
+import { useDomStore, useNavStore, usePlatformStore } from '@/store';
 import { useThree } from '@react-three/fiber';
 
 import previewShareYourMemories from '@/public/frame/project-preview-share-your-memories.jpg';
 import previewLearnEnglishDictionary from '@/public/frame/project-preview-learn-english-dictionary.jpg';
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(useGSAP);
 
 export default function Hero({}) {
 	const [isVisible, setIsVisible] = useState(true);
 
-	const textElStoreRegister = useDomStore(state => state.textElRegister);
-	const torsoElStoreRegister = useDomStore(state => state.torsoElRegister);
-	const containerElStoreRegister = useDomStore(state => state.containerElRegister);
-	const anchorElStoreRegister = useDomStore(state => state.anchorElRegister);
+	const textElStoreRegister = useDomStore(state => state?.textElRegister);
+	const torsoElStoreRegister = useDomStore(state => state?.torsoElRegister);
+	const containerElStoreRegister = useDomStore(state => state?.containerElRegister);
+	const anchorElStoreRegister = useDomStore(state => state?.anchorElRegister);
 
 	return (
 		<>
@@ -29,24 +29,28 @@ export default function Hero({}) {
 			<Menu />
 
 			<article
-				className={`w-full font-boxing z-20 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
-				ref={torsoElStoreRegister}
-				onClick={() => setIsVisible(pre => !pre)}>
+				className={`w-full font-boxing`}
+				ref={torsoElStoreRegister}>
 				{/* -------------------------------------------------------------------------- */
 				/*                                first page                                 */
 				/* -------------------------------------------------------------------------- */}
-				<section className='h-lvh w-full relative flex flex-col overflow-hidden'>
-					<div className='text-xl flex flex-1 justify-between items-center px-12'>
-						<h2
-							data-font-family='boxing'
-							ref={textElStoreRegister}>
-							{'Front-end Developer'}
+				<section
+					className='h-lvh w-full relative flex flex-col overflow-hidden'
+					id='home'>
+					<div className='flex flex-[1] justify-between items-center px-12 gap-60'>
+						<h2 className='text-xl leading-[1.25]'>
+							<span
+								data-font-family='boxing'
+								ref={textElStoreRegister}>
+								{'Front-end Developer'}
+							</span>
 						</h2>
-						<h2
-							data-font-family='boxing'
-							ref={textElStoreRegister}
-							className='text-right whitespace-pre-line leading-[1.5]'>
-							{'Based in Taipei,\nTaiwan'}
+						<h2 className='text-right whitespace-pre-line leading-[1.25]'>
+							<span
+								data-font-family='boxing'
+								ref={textElStoreRegister}>
+								{'Based in Taipei,\nTaiwan'}
+							</span>
 						</h2>
 					</div>
 					<header>
@@ -61,27 +65,30 @@ export default function Hero({}) {
 					</header>
 				</section>
 
-				<div className='p-[3rem_3rem] flex flex-col gap-12'>
+				<div className='p-[6rem_3rem] flex flex-col gap-12'>
 					{/* -------------------------------------------------------------------------- */
 					/*                                 second page                                 */
 					/* -------------------------------------------------------------------------- */}
 
-					<section className='flex gap-x-12 gap-y-6 flex-wrap'>
+					<section
+						className='flex flex-wrap gap-x-12 gap-y-6'
+						id='about'>
 						{/* -------------------------------------------------------------------------- */
 						/*                                    upper                                   */
 						/* -------------------------------------------------------------------------- */}
 						<div
-							className='flex-[0.3] text-6xl flex border border-neutral h-72 rounded-[9rem_9rem_9rem_0rem]'
+							className='flex-[0.3] flex border border-neutral min-h-72 rounded-[12rem_12rem_12rem_0rem] p-20'
 							ref={containerElStoreRegister}>
-							<span
-								className='m-auto'
-								data-font-family='boxing'
-								ref={textElStoreRegister}>
-								{'[02.]'}
-							</span>
+							<h2 className='m-auto text-6xl'>
+								<span
+									data-font-family='boxing'
+									ref={textElStoreRegister}>
+									{'[02.]'}
+								</span>
+							</h2>
 						</div>
 						<header
-							className='flex-[1] text-[13.75rem] border border-neutral h-72 flex rounded-[9rem_9rem_0rem_9rem]'
+							className='flex-[1] text-[13.75rem] border border-neutral min-h-72 flex rounded-[12rem_12rem_0rem_12rem] p-20'
 							ref={containerElStoreRegister}>
 							<h2
 								className='m-auto leading-none'
@@ -98,37 +105,40 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-neutral rounded-[0rem_0rem_0rem_9rem] h-[39rem] flex flex-[1] px-20'
+							className='border border-neutral min-h-[39rem] flex flex-[1] p-20 rounded-[0rem_0rem_0rem_0rem] md:rounded-[0rem_0rem_0rem_9rem]'
 							ref={containerElStoreRegister}>
-							<h2
-								data-font-family='satoshi'
-								className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'
-								ref={textElStoreRegister}>
-								{`Proficient in TypeScript/JavaScript, React, Angular, Node.js, and MongoDB. Skilled in SSG/SSR, RESTful APIs, and UX design, with a focus on performance and aesthetics.`}
-							</h2>
+							<h3 className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'>
+								<span
+									data-font-family='satoshi'
+									ref={textElStoreRegister}>
+									{`Proficient in TypeScript/JavaScript, React, Angular, Node.js, and MongoDB. Skilled in SSG/SSR, RESTful APIs, and UX design, with a focus on performance and aesthetics.`}
+								</span>
+							</h3>
 						</div>
 
+						<div className='flex-[1_0_100%] block md:hidden'></div>
+
 						<div
-							className='h-[39rem] flex-[1] border border-[--color-font-neutral rounded-[0rem_0rem_9rem_0rem]'
+							className='flex-[1] border border-[--color-font-neutral] min-h-[120rem] rounded-[0rem_0rem_9rem_9rem] p-20 md:rounded-[0rem_0rem_9rem_0rem] md:min-h-[39rem]'
 							ref={el => {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
 							}}
-							data-anchor='ABOUT'>
-							{'about'}
-						</div>
+							data-anchor='ABOUT'></div>
 					</section>
 
 					{/* -------------------------------------------------------------------------- */
 					/*                                 third page                                 */
 					/* -------------------------------------------------------------------------- */}
 
-					<section className='flex gap-x-12 gap-y-6 flex-wrap'>
+					<section
+						className='flex gap-x-12 gap-y-6 flex-wrap'
+						id='skill'>
 						{/* -------------------------------------------------------------------------- */
 						/*                                    upper                                   */
 						/* -------------------------------------------------------------------------- */}
 						<header
-							className='flex-[1] text-[13.75rem] border border-neutral h-72 flex rounded-[9rem_9rem_9rem_0rem]'
+							className='flex-[1] text-[13.75rem] border border-neutral min-h-72 flex rounded-[12rem_12rem_12rem_0rem] p-20'
 							ref={containerElStoreRegister}>
 							<h2
 								className='m-auto leading-none'
@@ -139,14 +149,15 @@ export default function Hero({}) {
 						</header>
 
 						<div
-							className='flex-[0.3] text-6xl flex border border-neutral h-72 rounded-[9rem_9rem_0rem_9rem]'
+							className='flex-[0.3] flex border border-neutral min-h-72 rounded-[12rem_12rem_0rem_12rem] p-20'
 							ref={containerElStoreRegister}>
-							<span
-								data-font-family='boxing'
-								className='m-auto'
-								ref={textElStoreRegister}>
-								{'[03.]'}
-							</span>
+							<h2 className='m-auto text-6xl'>
+								<span
+									data-font-family='boxing'
+									ref={textElStoreRegister}>
+									{'[03.]'}
+								</span>
+							</h2>
 						</div>
 
 						<div className='flex-[1_0_100%]'></div>
@@ -160,34 +171,35 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-neutral rounded-[0rem_0rem_0rem_9rem] h-[60rem] flex flex-[1]'
+							className='border border-neutral min-h-[60rem] flex flex-[1] rounded-[0rem_0rem_0rem_9rem]'
 							ref={el => {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
 							}}
-							data-anchor='SKILL'>
-							ball
-						</div>
+							data-anchor='SKILL'></div>
 
 						{/* -------------------------------------------------------------------------- */
 						/*                                  btm right                                  */
 						/* -------------------------------------------------------------------------- */}
-						<div className='h-[60rem] flex-[1] flex gap-12'>
+						<div className='min-h-[60rem] flex-[0.3] flex gap-12'>
 							{/* -------------------------------------------------------------------------- */
 							/*                                 btm 1st col                                */
 							/* -------------------------------------------------------------------------- */}
-							<div className='flex flex-col gap-12 w-full'>
+							<div className='flex flex-col gap-12 flex-[1] whitespace-nowrap'>
 								{/* -------------------------------------------------------------------------- */
 								/*                                btm language                                */
 								/* -------------------------------------------------------------------------- */}
 								<div
-									className='border border-neutral h-72 flex-1 flex flex-col'
+									className='border border-neutral flex-[1] flex p-20'
 									ref={containerElStoreRegister}>
 									<div className='m-auto text-center'>
-										<h3
-											className='text-4xl mb-6'
-											data-font-family='boxing'
-											ref={textElStoreRegister}>{`Languages`}</h3>
+										<h3 className='text-4xl mb-6 leading-[1.5]'>
+											<span
+												data-font-family='boxing'
+												ref={textElStoreRegister}>
+												{`Languages`}
+											</span>
+										</h3>
 										<ul className='font-satoshi text-xl leading-[1.5]'>
 											<li>
 												<span
@@ -209,98 +221,22 @@ export default function Hero({}) {
 										</ul>
 									</div>
 								</div>
-								{/* -------------------------------------------------------------------------- */
-								/*                                btm Backend                                */
-								/* -------------------------------------------------------------------------- */}
-								<div
-									className='border border-neutral h-72 flex flex-1 flex-col'
-									ref={containerElStoreRegister}>
-									<div className='m-auto text-center'>
-										<h3
-											className='text-4xl mb-6'
-											data-font-family='boxing'
-											ref={textElStoreRegister}>{`Backend`}</h3>
-										<ul className='font-satoshi text-xl leading-[1.5]'>
-											<li>
-												<span
-													data-font-family='satoshi'
-													ref={textElStoreRegister}>{`Node.js`}</span>
-											</li>
-											<li>
-												<span
-													data-font-family='satoshi'
-													ref={textElStoreRegister}>
-													{`Express`}
-												</span>
-											</li>
-											<li>
-												<span
-													data-font-family='satoshi'
-													ref={textElStoreRegister}>{`Mongoose`}</span>
-											</li>
-											<li>
-												<span
-													data-font-family='satoshi'
-													ref={textElStoreRegister}>{`MongoDB`}</span>
-											</li>
-											<li>
-												<span
-													data-font-family='satoshi'
-													ref={textElStoreRegister}>{`RESTful API`}</span>
-											</li>
-										</ul>
-									</div>
-								</div>
-								{/* -------------------------------------------------------------------------- */
-								/*                             btm Tools & Platforms                          */
-								/* -------------------------------------------------------------------------- */}
 
-								<div
-									className='border border-neutral h-72 flex flex-1 flex-col'
-									ref={containerElStoreRegister}>
-									<div className='m-auto text-center'>
-										<h3
-											className='text-4xl mb-6 whitespace-pre-line'
-											data-font-family='boxing'
-											ref={textElStoreRegister}>{`Tools &\nPlatforms`}</h3>
-										<ul className='font-satoshi text-xl leading-[1.5]'>
-											<li>
-												<span
-													data-font-family='satoshi'
-													ref={textElStoreRegister}>{`Git (Sourcetree)`}</span>
-											</li>
-											<li>
-												<span
-													data-font-family='satoshi'
-													ref={textElStoreRegister}>
-													{`GitLab`}
-												</span>
-											</li>
-											<li>
-												<span
-													data-font-family='satoshi'
-													ref={textElStoreRegister}>{`Webpack`}</span>
-											</li>
-										</ul>
-									</div>
-								</div>
-							</div>
-
-							{/* -------------------------------------------------------------------------- */
-							/*                                 btm 2nd col                                */
-							/* -------------------------------------------------------------------------- */}
-							<div className='flex flex-col gap-12 w-full'>
 								{/* -------------------------------------------------------------------------- */
 								/*                                btm frontend                                */
 								/* -------------------------------------------------------------------------- */}
+
 								<div
-									className='border border-neutral h-[39rem] flex flex-1 flex-col'
+									className='border border-neutral flex flex-[1] p-20'
 									ref={containerElStoreRegister}>
 									<div className='m-auto text-center'>
-										<h3
-											className='text-4xl mb-6 whitespace-pre-line'
-											data-font-family='boxing'
-											ref={textElStoreRegister}>{`Frontend`}</h3>
+										<h3 className='text-4xl mb-6 leading-[1.5]'>
+											<span
+												data-font-family='boxing'
+												ref={textElStoreRegister}>
+												{`Frontend`}
+											</span>
+										</h3>
 										<ul className='font-satoshi text-xl leading-[1.5]'>
 											<li>
 												<span
@@ -369,16 +305,101 @@ export default function Hero({}) {
 								</div>
 
 								{/* -------------------------------------------------------------------------- */
+								/*                                btm Backend                                */
+								/* -------------------------------------------------------------------------- */}
+								<div
+									className='border border-neutral flex flex-[1] p-20'
+									ref={containerElStoreRegister}>
+									<div className='m-auto text-center'>
+										<h3 className='text-4xl mb-6 leading-[1.5]'>
+											<span
+												data-font-family='boxing'
+												ref={textElStoreRegister}>
+												{`Backend`}
+											</span>
+										</h3>
+										<ul className='font-satoshi text-xl leading-[1.5]'>
+											<li>
+												<span
+													data-font-family='satoshi'
+													ref={textElStoreRegister}>{`Node.js`}</span>
+											</li>
+											<li>
+												<span
+													data-font-family='satoshi'
+													ref={textElStoreRegister}>
+													{`Express`}
+												</span>
+											</li>
+											<li>
+												<span
+													data-font-family='satoshi'
+													ref={textElStoreRegister}>{`Mongoose`}</span>
+											</li>
+											<li>
+												<span
+													data-font-family='satoshi'
+													ref={textElStoreRegister}>{`MongoDB`}</span>
+											</li>
+											<li>
+												<span
+													data-font-family='satoshi'
+													ref={textElStoreRegister}>{`RESTful API`}</span>
+											</li>
+										</ul>
+									</div>
+								</div>
+								{/* -------------------------------------------------------------------------- */
+								/*                             btm Tools & Platforms                          */
+								/* -------------------------------------------------------------------------- */}
+
+								<div
+									className='border border-neutral flex flex-[1] p-20'
+									ref={containerElStoreRegister}>
+									<div className='m-auto text-center'>
+										<h3 className='text-4xl mb-6 leading-[1.5] whitespace-pre-line'>
+											<span
+												data-font-family='boxing'
+												ref={textElStoreRegister}>
+												{`Tools &\nPlatforms`}
+											</span>
+										</h3>
+										<ul className='font-satoshi text-xl leading-[1.5]'>
+											<li>
+												<span
+													data-font-family='satoshi'
+													ref={textElStoreRegister}>{`Git (Sourcetree)`}</span>
+											</li>
+											<li>
+												<span
+													data-font-family='satoshi'
+													ref={textElStoreRegister}>
+													{`GitLab`}
+												</span>
+											</li>
+											<li>
+												<span
+													data-font-family='satoshi'
+													ref={textElStoreRegister}>{`Webpack`}</span>
+											</li>
+										</ul>
+									</div>
+								</div>
+
+								{/* -------------------------------------------------------------------------- */
 								/*                                btm Design                                   */
 								/* -------------------------------------------------------------------------- */}
 								<div
-									className='border border-neutral rounded-[0rem_0rem_9rem_0rem] h-72 flex flex-col'
+									className='border border-neutral rounded-[0rem_0rem_9rem_0rem] flex p-20'
 									ref={containerElStoreRegister}>
 									<div className='m-auto text-center'>
-										<h3
-											className='text-4xl mb-6 whitespace-pre-line'
-											data-font-family='boxing'
-											ref={textElStoreRegister}>{`Design`}</h3>
+										<h3 className='text-4xl mb-6 leading-[1.5]'>
+											<span
+												data-font-family='boxing'
+												ref={textElStoreRegister}>
+												{`Design`}
+											</span>
+										</h3>
 										<ul className='font-satoshi text-xl leading-[1.5]'>
 											<li>
 												<span
@@ -408,18 +429,21 @@ export default function Hero({}) {
 					/*                                 fourth page                                 */
 					/* -------------------------------------------------------------------------- */}
 
-					<section className='flex gap-x-12 gap-y-6 flex-wrap'>
+					<section
+						className='flex gap-x-12 gap-y-6 flex-wrap'
+						id='experience'>
 						{/* -------------------------------------------------------------------------- */
 						/*                                    upper 1st                                */
 						/* -------------------------------------------------------------------------- */}
 						<header
-							className='flex-[1] text-[13.75rem] border border-neutral h-72 flex rounded-[9rem_9rem_0rem_0rem]'
+							className='flex-[1] text-[13.75rem] border border-neutral min-h-72 flex rounded-[12rem_12rem_0rem_0rem] p-20'
 							ref={containerElStoreRegister}>
-							<h2
-								className='m-auto leading-none'
-								data-font-family='boxing'
-								ref={textElStoreRegister}>
-								{'experience'}
+							<h2 className='m-auto leading-none'>
+								<span
+									data-font-family='boxing'
+									ref={textElStoreRegister}>
+									{'experience'}
+								</span>
 							</h2>
 						</header>
 
@@ -430,23 +454,25 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='flex-[0.3] text-6xl flex border border-neutral h-72 rounded-[0rem_9rem_9rem_9rem]'
+							className='flex-[0.3] flex border border-neutral min-h-96 rounded-[0rem_12rem_12rem_12rem] p-20'
 							ref={containerElStoreRegister}>
-							<span
-								className='m-auto'
-								data-font-family='boxing'
-								ref={textElStoreRegister}>
-								{'[04.]'}
-							</span>
+							<h2 className='m-auto text-6xl'>
+								<span
+									data-font-family='boxing'
+									ref={textElStoreRegister}>
+									{'[04.]'}
+								</span>
+							</h2>
 						</div>
 						<div
-							className='flex-[1] text-7xl border border-neutral h-72 flex'
+							className='flex-[1] text-7xl border border-neutral min-h-96 flex p-20 rounded-[12rem_0rem_0rem_12rem]'
 							ref={containerElStoreRegister}>
-							<h3
-								className='m-auto leading-none'
-								data-font-family='boxing'
-								ref={textElStoreRegister}>
-								{'Frontend Developer'}
+							<h3 className='m-auto leading-none text-center'>
+								<span
+									data-font-family='boxing'
+									ref={textElStoreRegister}>
+									{'Frontend Developer'}
+								</span>
 							</h3>
 						</div>
 
@@ -457,35 +483,35 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='border border-neutral rounded-[0rem_0rem_0rem_9rem] h-[60rem] flex flex-[0.3]'
+							className='border border-neutral min-h-[60rem] flex flex-[1] rounded-[0rem_0rem_0rem_0rem] md:flex-[0.3] md:rounded-[0rem_0rem_0rem_9rem] p-[3.25rem]'
 							ref={el => {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
 							}}
 							data-anchor='EXPERIENCE'
-							data-anchor-mirror>
-							ball
-						</div>
+							data-anchor-mirror></div>
+
+						<div className='block flex-[1_0_100%] md:hidden'></div>
 
 						{/* -------------------------------------------------------------------------- */
 						/*                                    btm right                                */
 						/* -------------------------------------------------------------------------- */}
 
-						<div className='flex-[1] text-7xl h-[60rem] flex gap-x-12 gap-y-6 flex-wrap'>
+						<div className='flex-[1] text-7xl min-h-[60rem] flex gap-12 flex-wrap'>
 							{/* -------------------------------------------------------------------------- */
 							/*                                btm right 1st row - title                    */
 							/* -------------------------------------------------------------------------- */}
 							<div
-								className='border border-neutral h-72 flex-1 flex flex-col'
+								className='border border-neutral min-h-72 flex-[1_1_100%] flex p-20'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center'>
 									<ul className='font-satoshi text-3xl leading-[1.5]'>
 										<li>
 											<span
 												data-font-family='satoshi'
-												ref={
-													textElStoreRegister
-												}>{`KUNYOU Technology Co., LTD., Full-time`}</span>
+												ref={textElStoreRegister}>
+												{`KUNYOU Technology Co., LTD., Full-time`}
+											</span>
 										</li>
 										<li>
 											<span
@@ -497,94 +523,95 @@ export default function Hero({}) {
 										<li>
 											<span
 												data-font-family='satoshi'
-												ref={
-													textElStoreRegister
-												}>{`Taipei, Taipei City, Taiwan, On-site`}</span>
+												ref={textElStoreRegister}>
+												{`Taipei, Taipei City, Taiwan, On-site`}
+											</span>
 										</li>
 									</ul>
 								</div>
 							</div>
 
-							<div className='flex-[1_0_100%]'></div>
-
 							{/* -------------------------------------------------------------------------- */
 							/*                                btm 2nd row - listed des                   */
 							/* -------------------------------------------------------------------------- */}
 							<div
-								className='border border-neutral h-72 flex-1 flex flex-col'
+								className='border border-neutral min-h-72 flex flex-[1_30%] p-20 min-w-[180px]'
 								ref={containerElStoreRegister}>
-								<div className='m-auto text-center px-6'>
-									<p
-										className='text-xl font-satoshi leading-[1.5]'
-										data-font-family='satoshi'
-										ref={
-											textElStoreRegister
-										}>{`Facilitate the official website's SEO and achieve 100 in the Lighthouse index with Angular Universal's SSG tech`}</p>
+								<div className='m-auto text-center'>
+									<p className='text-xl font-satoshi leading-[1.5]'>
+										<span
+											data-font-family='satoshi'
+											ref={textElStoreRegister}>
+											{`Facilitate the official website's SEO and achieve 100 in the Lighthouse index with Angular Universal's SSG tech`}
+										</span>
+									</p>
 								</div>
 							</div>
 							<div
-								className='border border-neutral h-72 flex-1 flex flex-col'
+								className='border border-neutral min-h-72 flex-[1_30%] flex min-w-[180px] p-20'
 								ref={containerElStoreRegister}>
-								<div className='m-auto text-center px-6 leading-[1.5]'>
-									<p
-										className='text-xl font-satoshi'
-										data-font-family='satoshi'
-										ref={
-											textElStoreRegister
-										}>{`Utilize UI framework PrimeNG and data-visualizing package ECharts to materialize UI/UX drafts and RWD`}</p>
+								<div className='m-auto text-center'>
+									<p className='text-xl font-satoshi leading-[1.5]'>
+										<span
+											data-font-family='satoshi'
+											ref={textElStoreRegister}>
+											{`Utilize UI framework PrimeNG and data-visualizing package ECharts to materialize UI/UX drafts and RWD`}
+										</span>
+									</p>
 								</div>
 							</div>
 							<div
-								className='border border-neutral h-72 flex-1 flex flex-col'
+								className='border border-neutral min-h-72 flex-[1_30%] flex min-w-[180px] p-20'
 								ref={containerElStoreRegister}>
-								<div className='m-auto text-center px-6 leading-[1.5]'>
-									<p
-										className='text-xl font-satoshi'
-										data-font-family='satoshi'
-										ref={
-											textElStoreRegister
-										}>{`Use RxJS to execute asynchronous requests and fulfill API integration`}</p>
+								<div className='m-auto text-center'>
+									<p className='text-xl font-satoshi leading-[1.5]'>
+										<span
+											data-font-family='satoshi'
+											ref={textElStoreRegister}>
+											{`Use RxJS to execute asynchronous requests and fulfill API integration`}
+										</span>
+									</p>
 								</div>
 							</div>
-
-							<div className='flex-[1_0_100%]'></div>
 
 							{/* -------------------------------------------------------------------------- */
 							/*                                btm 3nd row - listed des                   */
 							/* -------------------------------------------------------------------------- */}
 							<div
-								className='border border-neutral h-72 flex-1 flex flex-col'
+								className='border border-neutral min-h-72 flex-[1_30%] flex min-w-[180px] p-20'
 								ref={containerElStoreRegister}>
-								<div className='m-auto text-center px-6 leading-[1.5]'>
-									<p
-										className='text-xl font-satoshi'
-										data-font-family='satoshi'
-										ref={
-											textElStoreRegister
-										}>{`Use Karma/Jasmine to implement Unit Test and achieve 98% code coverage`}</p>
+								<div className='m-auto text-center'>
+									<p className='text-xl font-satoshi leading-[1.5]'>
+										<span
+											data-font-family='satoshi'
+											ref={textElStoreRegister}>
+											{`Use Karma/Jasmine to implement Unit Test and achieve 98% code coverage`}
+										</span>
+									</p>
 								</div>
 							</div>
 							<div
-								className='border border-neutral h-72 flex-1 flex flex-col'
+								className='border border-neutral min-h-72 flex-[1_30%] flex min-w-[180px] p-20'
 								ref={containerElStoreRegister}>
-								<div className='m-auto text-center px-6 leading-[1.5]'>
-									<p
-										className='text-xl font-satoshi'
-										data-font-family='satoshi'
-										ref={
-											textElStoreRegister
-										}>{`Acquire AA level of web accessibility standard in developing public sectors projects`}</p>
+								<div className='m-auto text-center'>
+									<p className='text-xl font-satoshi leading-[1.5]'>
+										<span
+											data-font-family='satoshi'
+											ref={textElStoreRegister}>
+											{`Acquire AA level of web accessibility standard in developing public sectors projects`}
+										</span>
+									</p>
 								</div>
 							</div>
 							<div
-								className='border border-neutral h-72 flex-1 flex flex-col rounded-[0rem_0rem_9rem_0rem]'
+								className='border border-neutral min-h-[120rem] flex-[1_100%] flex min-w-[180px] rounded-[0rem_0rem_9rem_9rem] p-20 md:rounded-[0rem_0rem_9rem_0rem] md:min-h-72'
 								ref={el => {
 									containerElStoreRegister(el);
 									anchorElStoreRegister(el);
 								}}
 								data-anchor='EXPERIENCE'
 								data-anchor-mirror>
-								<div className='m-auto text-center px-6'>{`square`}</div>
+								<div className='m-auto text-center'></div>
 							</div>
 						</div>
 					</section>
@@ -592,12 +619,14 @@ export default function Hero({}) {
 					{/* -------------------------------------------------------------------------- */
 					/*                                 fifth page                                 */
 					/* -------------------------------------------------------------------------- */}
-					<section className='flex gap-x-12 gap-y-6 flex-wrap'>
+					<section
+						className='flex gap-x-12 gap-y-6 flex-wrap'
+						id='project'>
 						{/* -------------------------------------------------------------------------- */
 						/*                                    upper                                   */
 						/* -------------------------------------------------------------------------- */}
 						<header
-							className='flex-[1] text-[13.75rem] border border-neutral h-72 flex rounded-[9rem_9rem_9rem_9rem]'
+							className='flex-[1] text-[13.75rem] border border-neutral min-h-72 flex rounded-[12rem_12rem_12rem_12rem] p-20'
 							ref={containerElStoreRegister}>
 							<h2
 								className='m-auto leading-none'
@@ -606,30 +635,26 @@ export default function Hero({}) {
 								{'project'}
 							</h2>
 						</header>
-
 						<div
-							className='flex-[0.3] text-6xl flex border border-neutral h-72 rounded-[9rem_9rem_9rem_9rem]'
+							className='flex-[0.3] flex border border-neutral min-h-72 rounded-[12rem_12rem_12rem_12rem] p-20'
 							ref={containerElStoreRegister}>
-							<span
-								data-font-family='boxing'
-								className='m-auto'
-								ref={textElStoreRegister}>
-								{'[05.]'}
-							</span>
+							<h2 className='m-auto text-6xl'>
+								<span
+									data-font-family='boxing'
+									ref={textElStoreRegister}>
+									{'[05.]'}
+								</span>
+							</h2>
 						</div>
-
 						<div className='flex-[1_0_100%]'></div>
-
 						{/* -------------------------------------------------------------------------- */
 						/*                                    content - port                           */
 						/* -------------------------------------------------------------------------- */}
-
 						{/* -------------------------------------------------------------------------- */
 						/*                                    1st row left                              */
 						/* -------------------------------------------------------------------------- */}
-
 						<figure
-							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3]'
+							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] min-h-[60rem] flex flex-[3]'
 							ref={el => {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
@@ -643,17 +668,17 @@ export default function Hero({}) {
 							/>
 						</figure>
 
+						<div className='block flex-[1_0_100%] md:hidden'></div>
+
 						{/* -------------------------------------------------------------------------- */
 						/*                                    1st row right                            */
 						/* -------------------------------------------------------------------------- */}
-
-						<div className='flex flex-[1] flex-col gap-12'>
+						<div className='flex flex-[1] gap-12 flex-wrap md:flex-col'>
 							<div
-								className='border border-neutral h-72 flex flex-col'
+								className='border border-neutral min-h-72 flex flex-[1] flex-col p-20 min-w-[180px]'
 								ref={containerElStoreRegister}>
-								<h3 className='m-auto text-center px-6'>
+								<h3 className='m-auto text-center text-5xl'>
 									<span
-										className='text-5xl'
 										data-font-family='boxing'
 										ref={textElStoreRegister}>
 										{`Layne Chen Portfolio ‘24`}
@@ -662,13 +687,14 @@ export default function Hero({}) {
 							</div>
 
 							<div
-								className='border border-neutral h-[39rem] flex flex-col'
+								className='border border-neutral min-h-[39rem] flex flex-[1] flex-col p-20 min-w-[180px]'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center'>
-									<h3
-										className='text-4xl mb-6'
-										data-font-family='boxing'
-										ref={textElStoreRegister}>{`# frontend`}</h3>
+									<h3 className='text-4xl mb-6 leading-[1.5]'>
+										<span
+											data-font-family='boxing'
+											ref={textElStoreRegister}>{`# frontend`}</span>
+									</h3>
 									<ul className='font-satoshi text-xl leading-[1.5]'>
 										<li>
 											<span
@@ -711,64 +737,66 @@ export default function Hero({}) {
 								</div>
 							</div>
 						</div>
-
 						<div className='flex-[1_0_100%]'></div>
-
 						{/* -------------------------------------------------------------------------- */
 						/*                                    2st row left                            */
 						/* -------------------------------------------------------------------------- */}
-
 						<div
-							className='flex flex-[2] gap-12'
+							className='flex flex-[2]'
 							ref={containerElStoreRegister}>
-							<div className='border border-neutral h-72 flex px-12 gap-12'>
-								<h3 className='m-auto text-center'>
+							<div className='border border-neutral min-h-72 flex p-20 gap-14 flex-col md:flex-row'>
+								<h3 className='m-auto text-center text-4xl leading-[1.5]'>
 									<span
-										className='text-4xl'
 										data-font-family='boxing'
 										ref={textElStoreRegister}>
 										{`overview`}
 									</span>
 								</h3>
 
-								<p
-									className='m-auto text-xl font-satoshi whitespace-pre-line'
-									data-font-family='satoshi'
-									ref={textElStoreRegister}>
-									{`Showcases my work and expertise as a front-end developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for lightning-fast load times while improving crawlability for better SEO.`}
+								<p className='m-auto text-xl font-satoshi whitespace-pre-line leading-[1.5]'>
+									<span
+										data-font-family='satoshi'
+										ref={textElStoreRegister}>
+										{`Showcases my work and expertise as a front-end developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for lightning-fast load times while improving crawlability for better SEO.`}
+									</span>
 								</p>
 							</div>
 						</div>
-
 						{/* -------------------------------------------------------------------------- */
 						/*                                    2st row right                            */
 						/* -------------------------------------------------------------------------- */}
 
+						<div className='block flex-[1_0_100%] md:hidden'></div>
+
 						<div
-							className='border border-neutral h-72 flex flex-[1] items-center justify-center gap-12 text-4xl text-highlight'
+							className='border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_0rem_0rem] leading-[1] gap-40 md:gap-12'
 							ref={containerElStoreRegister}>
-							<a
-								ref={textElStoreRegister}
-								data-font-family='boxing'
-								data-font-highlight='button'>{`[ demo ]`}</a>
-							<a
-								ref={textElStoreRegister}
-								data-font-highlight='button'
-								data-font-family='boxing'>{`[ code ]`}</a>
+							<a href=''>
+								<span
+									data-font-family='boxing'
+									data-font-highlight='button'
+									ref={textElStoreRegister}>
+									{`[ demo ]`}
+								</span>
+							</a>
+							<a href=''>
+								<span
+									data-font-highlight='button'
+									data-font-family='boxing'
+									ref={textElStoreRegister}>
+									{`[ code ]`}
+								</span>
+							</a>
 						</div>
-
 						<div className='flex-[1_0_100%]'></div>
-
 						{/* -------------------------------------------------------------------------- */
 						/*                                    content - share                         */
 						/* -------------------------------------------------------------------------- */}
-
 						{/* -------------------------------------------------------------------------- */
 						/*                                    1st row left                              */
 						/* -------------------------------------------------------------------------- */}
-
 						<figure
-							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3]'
+							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] min-h-[60rem] flex flex-[3]'
 							ref={el => {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
@@ -781,18 +809,18 @@ export default function Hero({}) {
 								className='frame-left-item-icon h-full w-full object-cover'
 							/>
 						</figure>
-
 						{/* -------------------------------------------------------------------------- */
 						/*                                    1st row right                            */
 						/* -------------------------------------------------------------------------- */}
 
-						<div className='flex flex-[1] flex-col gap-12'>
+						<div className='block flex-[1_0_100%] md:hidden'></div>
+
+						<div className='flex flex-[1] gap-12 flex-row flex-wrap md:flex-col'>
 							<div
-								className='border border-neutral h-72 flex flex-col'
+								className='border border-neutral min-h-72 flex flex-col p-20 flex-[1] min-w-[180px]'
 								ref={containerElStoreRegister}>
-								<h3 className='m-auto text-center px-6'>
+								<h3 className='m-auto text-center text-5xl'>
 									<span
-										className='text-5xl'
 										data-font-family='boxing'
 										ref={textElStoreRegister}>
 										{`Share Your Memories`}
@@ -801,13 +829,14 @@ export default function Hero({}) {
 							</div>
 
 							<div
-								className='border border-neutral h-[39rem] flex flex-col'
+								className='border border-neutral min-h-[39rem] flex flex-col p-20 flex-[1] md:flex-auto min-w-[180px]'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center'>
-									<h3
-										className='text-4xl mb-6'
-										data-font-family='boxing'
-										ref={textElStoreRegister}>{`# full stack`}</h3>
+									<h3 className='text-4xl mb-6 leading-[1.5]'>
+										<span
+											data-font-family='boxing'
+											ref={textElStoreRegister}>{`# full stack`}</span>
+									</h3>
 									<ul className='font-satoshi text-xl leading-[1.5]'>
 										<li>
 											<span
@@ -880,54 +909,54 @@ export default function Hero({}) {
 								</div>
 							</div>
 						</div>
-
 						<div className='flex-[1_0_100%]'></div>
-
 						{/* -------------------------------------------------------------------------- */
 						/*                                    2st row left                            */
 						/* -------------------------------------------------------------------------- */}
-
 						<div
-							className='flex flex-[2] gap-12'
+							className='flex flex-[2]'
 							ref={containerElStoreRegister}>
-							<div className='border border-neutral h-72 flex px-12 gap-12'>
-								<h3 className='m-auto text-center'>
+							<div className='border border-neutral min-h-72 flex p-20 gap-14 flex-col md:flex-row'>
+								<h3 className='m-auto text-center text-4xl leading-[1.5]'>
 									<span
-										className='text-4xl'
 										data-font-family='boxing'
 										ref={textElStoreRegister}>
 										{`overview`}
 									</span>
 								</h3>
 
-								<p
-									className='m-auto text-xl font-satoshi whitespace-pre-line'
-									data-font-family='satoshi'
-									ref={textElStoreRegister}>
-									{`Create a platform where people could share treasured memories with anyone throughout the globe. Each user can register a whole new account to enable full functionality coming with the application, or just simply log in via Google Oauth 2.0 to enjoy the full access.\n\nYou can create, delete, edit your posts, and bookmark, comment on, or give a thumbs-up to other users' posts. Each post delivers Youtube video recommendations based on respective content. You can venture around further if any posts pique your interest.`}
+								<p className='m-auto text-xl font-satoshi whitespace-pre-line leading-[1.5]'>
+									<span
+										data-font-family='satoshi'
+										ref={textElStoreRegister}>
+										{`Create a platform where people could share treasured memories with anyone throughout the globe. Each user can register a whole new account to enable full functionality coming with the application, or just simply log in via Google Oauth 2.0 to enjoy the full access.\n\nYou can create, delete, edit your posts, and bookmark, comment on, or give a thumbs-up to other users' posts. Each post delivers Youtube video recommendations based on respective content. You can venture around further if any posts pique your interest.`}
+									</span>
 								</p>
 							</div>
 						</div>
 
+						<div className='block flex-[1_0_100%] md:hidden'></div>
+
 						{/* -------------------------------------------------------------------------- */
 						/*                                    2st row right                            */
 						/* -------------------------------------------------------------------------- */}
-
 						<div
-							className='border border-neutral h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
+							className='border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_0rem_0rem] leading-[1] gap-40 md:gap-12'
 							ref={containerElStoreRegister}>
-							<a
-								ref={textElStoreRegister}
-								data-font-highlight='button'
-								data-font-family='boxing'>{`[ demo ]`}</a>
-							<a
-								ref={textElStoreRegister}
-								data-font-highlight='button'
-								data-font-family='boxing'>{`[ code ]`}</a>
+							<a href=''>
+								<span
+									data-font-highlight='button'
+									data-font-family='boxing'
+									ref={textElStoreRegister}>{`[ demo ]`}</span>
+							</a>
+							<a href=''>
+								<span
+									data-font-highlight='button'
+									data-font-family='boxing'
+									ref={textElStoreRegister}>{`[ code ]`}</span>
+							</a>
 						</div>
-
 						<div className='flex-[1_0_100%]'></div>
-
 						{/* -------------------------------------------------------------------------- */
 						/*                                    content - eng                           */
 						/* -------------------------------------------------------------------------- */}
@@ -935,7 +964,7 @@ export default function Hero({}) {
 						/*                                    1st row left                              */
 						/* -------------------------------------------------------------------------- */}
 						<figure
-							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] h-[60rem] flex flex-[3]'
+							className='border border-neutral rounded-[0rem_0rem_0rem_0rem] min-h-[60rem] flex flex-[3]'
 							ref={el => {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
@@ -949,17 +978,17 @@ export default function Hero({}) {
 							/>
 						</figure>
 
+						<div className='block flex-[1_0_100%] md:hidden'></div>
+
 						{/* -------------------------------------------------------------------------- */
 						/*                                    1st row right                             */
 						/* -------------------------------------------------------------------------- */}
-
-						<div className='flex flex-[1] flex-col gap-12'>
+						<div className='flex flex-[1] gap-12 flex-row flex-wrap md:flex-col'>
 							<div
-								className='border border-neutral h-72 flex flex-col'
+								className='border border-neutral min-h-72 flex p-20 flex-col flex-[1] min-w-[180px]'
 								ref={containerElStoreRegister}>
-								<h3 className='m-auto text-center px-6'>
+								<h3 className='m-auto text-center text-5xl'>
 									<span
-										className='text-5xl'
 										data-font-family='boxing'
 										ref={textElStoreRegister}>
 										{`Learn English with Dictionary`}
@@ -968,13 +997,14 @@ export default function Hero({}) {
 							</div>
 
 							<div
-								className='border border-neutral h-[39rem] flex flex-col'
+								className='border border-neutral min-h-[39rem] flex flex-col p-20 flex-[1] min-w-[180px]'
 								ref={containerElStoreRegister}>
 								<div className='m-auto text-center'>
-									<h3
-										className='text-4xl mb-6'
-										data-font-family='boxing'
-										ref={textElStoreRegister}>{`# frontend`}</h3>
+									<h3 className='text-4xl mb-6 leading-[1.5]'>
+										<span
+											data-font-family='boxing'
+											ref={textElStoreRegister}>{`# frontend`}</span>
+									</h3>
 									<ul className='font-satoshi text-xl leading-[1.5]'>
 										<li>
 											<span
@@ -1027,99 +1057,120 @@ export default function Hero({}) {
 								</div>
 							</div>
 						</div>
-
 						<div className='flex-[1_0_100%]'></div>
-
 						{/* -------------------------------------------------------------------------- */
 						/*                                    2st row left                            */
 						/* -------------------------------------------------------------------------- */}
 
 						<div
-							className='flex flex-[2] gap-12'
+							className='border border-neutral min-h-72 px-12 gap-14 p-20 flex flex-[2] flex-col rounded-[0rem_0rem_0rem_0rem] md:flex-row md:rounded-[0rem_0rem_0rem_9rem]'
 							ref={containerElStoreRegister}>
-							<div className='border border-neutral h-72 flex px-12 gap-12'>
-								<h3 className='m-auto text-center'>
-									<span
-										className='text-4xl'
-										data-font-family='boxing'
-										ref={textElStoreRegister}>
-										{`overview`}
-									</span>
-								</h3>
+							<h3 className='m-auto text-center text-4xl leading-[1.5]'>
+								<span
+									data-font-family='boxing'
+									ref={textElStoreRegister}>
+									{`overview`}
+								</span>
+							</h3>
 
-								<p
-									className='m-auto text-xl font-satoshi whitespace-pre-line'
+							<p className='m-auto text-xl font-satoshi whitespace-pre-line leading-[1.5]'>
+								<span
 									data-font-family='satoshi'
 									ref={textElStoreRegister}>
-									{`Solve the inconvenience of encountering unknown words upon reading an English passage and having to look up elsewhere. Read multiple professional-written passages fetched via New York Times API with a juxtaposed dictionary to facilitate English learning. Co-located design of text and relevant keyword tags. You can explore more in a topic-oriented way.`}
-								</p>
-							</div>
+									{`Solve the inconvenience of encountering unknown words upon reading an English passage and having to look up elsewhere.\n\nRead multiple professional-written passages fetched via New York Times API with a juxtaposed dictionary to facilitate English learning.\n\nCo-located design of text and relevant keyword tags. You can explore more in a topic-oriented way.`}
+								</span>
+							</p>
 						</div>
+
+						<div className='block flex-[1_0_100%] md:hidden'></div>
 
 						{/* -------------------------------------------------------------------------- */
 						/*                                    2st row right                            */
 						/* -------------------------------------------------------------------------- */}
-
 						<div
-							className='h-72 flex flex-[1] items-center justify-center gap-12 text-4xl'
+							className='border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_9rem_0rem] leading-[1] gap-40 md:gap-12'
 							ref={el => {
 								containerElStoreRegister(el);
 							}}>
-							<a
-								ref={textElStoreRegister}
-								data-font-highlight
-								data-font-family='boxing'>{`[ demo ]`}</a>
-							<a
-								ref={textElStoreRegister}
-								data-font-highlight
-								data-font-family='boxing'>{`[ code ]`}</a>
+							<a href=''>
+								<span
+									data-font-highlight
+									data-font-family='boxing'
+									ref={textElStoreRegister}>{`[ demo ]`}</span>
+							</a>
+							<a href=''>
+								<span
+									data-font-highlight
+									data-font-family='boxing'
+									ref={textElStoreRegister}>
+									{`[ code ]`}
+								</span>
+							</a>
 						</div>
 					</section>
 				</div>
 
-				<footer className='h-lvh w-full relative flex flex-col overflow-hidden'>
+				<footer
+					className='h-lvh w-full relative flex flex-col overflow-hidden'
+					id='contact'>
 					<div className='flex flex-col px-12 pt-6'>
-						<h3
-							data-font-family='boxing'
-							ref={textElStoreRegister}
-							className='whitespace-pre-line text-7xl mb-6'>
-							{`Let's connect.`}
+						<h3 className='whitespace-pre-line text-7xl mb-6'>
+							<span
+								data-font-family='boxing'
+								ref={textElStoreRegister}>{`Let's connect.`}</span>
 						</h3>
-						<h4
-							data-font-family='boxing'
-							ref={textElStoreRegister}
-							className='whitespace-pre-line text-3xl'>{`Open for new challenges\nand collaborations.`}</h4>
+						<h4 className='whitespace-pre-line text-3xl leading-[1.5]'>
+							<span
+								data-font-family='boxing'
+								ref={textElStoreRegister}>{`Open for new challenges\nand collaborations.`}</span>
+						</h4>
 					</div>
-					<div className='text-xl flex flex-1 justify-between items-end px-12 -translate-y-36 leading-none'>
-						<nav className='flex flex-col gap-6'>
-							<a
-								data-font-family='boxing'
-								ref={textElStoreRegister}
-								data-font-highlight='button'
-								href=''>{`[ github ]`}</a>
-							<a
-								data-font-family='boxing'
-								ref={textElStoreRegister}
-								data-font-highlight='button'
-								href=''>{`[ linkedin ]`}</a>
-							<a
-								data-font-family='boxing'
-								ref={textElStoreRegister}
-								data-font-highlight='button'
-								href=''>{`[ resume ]`}</a>
-							<a
-								data-font-family='boxing'
-								ref={textElStoreRegister}
-								data-font-highlight='button'
-								href=''>{`[ laynechensquare@gmail.com ]`}</a>
+					<div className='text-xl flex flex-[1] -translate-y-36 leading-none text-highlight flex-col justify-end items-start px-12 pb-12 md:flex-row md:justify-between md:items-end md:pb-0'>
+						<nav className='flex flex-col gap-12 md:gap-6'>
+							<a href=''>
+								<span
+									ref={textElStoreRegister}
+									data-font-family='boxing'
+									data-font-highlight='button'>{`[ github ]`}</span>
+							</a>
+							<a href=''>
+								<span
+									ref={textElStoreRegister}
+									data-font-family='boxing'
+									data-font-highlight='button'>{`[ linkedin ]`}</span>
+							</a>
+							<a href=''>
+								<span
+									ref={textElStoreRegister}
+									data-font-family='boxing'
+									data-font-highlight='button'>
+									{`[ resume ]`}
+								</span>
+							</a>
+							<a href=''>
+								<span
+									ref={textElStoreRegister}
+									data-font-family='boxing'
+									data-font-highlight='button'>
+									<DynamicText
+										large={'[ laynechensquare@gmail.com ]'}
+										small={'[ mail ]'}
+									/>
+								</span>
+							</a>
 						</nav>
-						<button
-							data-font-family='boxing'
-							ref={textElStoreRegister}
-							data-font-highlight='button'
-							className='text-right'>
-							{'[ Back to top ]'}
-						</button>
+						<nav>
+							<button
+								className='text-right mt-12'
+								onClick={() => useNavStore.getState().lenisRef.current.lenis.scrollTo('#home')}>
+								<span
+									ref={textElStoreRegister}
+									data-font-family='boxing'
+									data-font-highlight='button'>
+									{'[ Back to top ]'}
+								</span>
+							</button>
+						</nav>
 					</div>
 					<header>
 						<h1 className='text-center scale-y-[2] origin-bottom translate-y-11 text-[12.625rem] leading-none'>
@@ -1137,49 +1188,59 @@ export default function Hero({}) {
 	);
 }
 
+function DynamicText({ large, small }) {
+	const isMobile = usePlatformStore(state => state.isMobile);
+	return <>{isMobile ? small : large}</>;
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                    menu                                    */
 /* -------------------------------------------------------------------------- */
 
 function Menu() {
-	const [isOpen, setIsOpen] = useState(false);
-
 	return (
 		<>
 			<nav
-				className='flex gap-6 py-2 pl-12 pr-2 rounded-full items-center top-6 fixed text-sm z-20 max-w-[60rem] m-auto leading-none font-boxing backdrop-blur-lg backdrop-saturate-[250%] backdrop-hue-rotate-[9deg] border border-[#ffffff15] left-1/2 -translate-x-1/2'
-				style={{ textShadow: `0 0 1px black` }}>
+				className='flex py-2 rounded-full items-center fixed text-lg z-20 min-w-max m-auto leading-none font-boxing backdrop-blur-lg backdrop-saturate-[250%] backdrop-hue-rotate-[9deg] border border-[#ffffff15] left-1/2 -translate-x-1/2 gap-[12px] top-[12px] pl-[16px] md:gap-6 md:top-6 md:pr-2 md:pl-12 min-h-16'
+				style={{ textShadow: `0 0 0px black` }}>
 				<a
 					href=''
-					className=''>{`layne chen`}</a>
+					className='w-max'>
+					<span>{`layne chen`}</span>
+				</a>
 
-				<div className={`border-r border-neutral h-7`}></div>
+				<div className={`border-r border-neutral min-h-[14px] h-7 hidden md:block`}></div>
 
-				<p className='flex-1 text-center'>{`portfolio#2024`}</p>
+				<p className='flex-[1] text-center'>
+					<span>
+						<DynamicText
+							large={`portfolio#2024`}
+							small={'portfolio#24'}
+						/>
+					</span>
+				</p>
 
-				<div className={`border-r border-neutral h-7`}></div>
+				<div className={`border-r border-neutral min-h-[14px] h-7 hidden md:block`}></div>
 
-				<div className='flex gap-4 self-stretch'>
+				<div className={`gap-4 self-stretch hidden md:flex`}>
 					<NavLinkBtn label={`[ github ]`} />
 					<NavLinkBtn label={`[ linkedin ]`} />
 					<NavLinkBtn label={`[ resume ]`} />
 					<NavLinkBtn label={`[ mail ]`} />
 				</div>
 
-				<NavOpenBtn setIsOpen={setIsOpen} />
+				<NavOpenBtn />
 			</nav>
 
-			<OverlayNav
-				isOpen={isOpen}
-				setIsOpen={setIsOpen}
-			/>
+			<OverlayNav />
 		</>
 	);
 }
 
-function OverlayNav({ isOpen, setIsOpen }) {
+function OverlayNav() {
 	const overlayNavRef = useRef(null);
 	const [isOverlayCloseHover, setIsOverlayCloseHover] = useState(false);
+	const isOpen = useNavStore(state => state.isOpen);
 
 	useGSAP(
 		() => {
@@ -1193,7 +1254,8 @@ function OverlayNav({ isOpen, setIsOpen }) {
 					.to('[data-row="skill"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
 					.to('[data-row="experience"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
 					.to('[data-row="project"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
-					.to('[data-row="contact"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%');
+					.to('[data-row="contact"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
+					.to('[data-row="mobile-decor"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%');
 			}
 			if (!isOpen) {
 				gsap.to(overlayNavRef.current, { opacity: 0, pointerEvents: 'none', duration: 0.2, ease: 'sine.in' });
@@ -1203,7 +1265,8 @@ function OverlayNav({ isOpen, setIsOpen }) {
 					.to('[data-row="skill"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
 					.to('[data-row="experience"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
 					.to('[data-row="project"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
-					.to('[data-row="contact"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%');
+					.to('[data-row="contact"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to('[data-row="mobile-decor"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%');
 			}
 		},
 		{ dependencies: [isOpen], scope: overlayNavRef },
@@ -1241,26 +1304,28 @@ function OverlayNav({ isOpen, setIsOpen }) {
 
 	return (
 		<nav
-			className={`fixed z-30 top-0 right-0 h-lvh w-full font-boxing text-neutralContrast opacity-0 flex flex-col backdrop-blur-md backdrop-saturate-200 backdrop-hue-rotate-15`}
+			className={`fixed z-30 top-0 left-0 h-lvh w-full font-boxing text-neutralContrast opacity-0 flex flex-col backdrop-blur-md backdrop-saturate-200 backdrop-hue-rotate-15 overflow-y-auto overflow-x-hidden`}
+			data-lenis-prevent
 			ref={overlayNavRef}>
 			<div
-				className='bg-primary border border-primary text-4xl flex-[1] w-[max-content] flex px-12 py-4 items-center gap-20'
+				className={`bg-primary border border-primary text-4xl flex-[2.5] flex px-12 pt-12 pb-32 items-center gap-12 w-full justify-between flex-col md:w-[max-content] md:flex-row md:py-6 md:gap-20`}
 				data-row={`action`}>
 				<button
-					className='px-6 rounded-full border border-neutralContrast aspect-square h-[min-content] flex flex-col justify-center items-center origin-center'
-					onClick={() => setIsOpen(false)}
+					className='px-[max(1.5rem,24px)] border border-neutralContrast h-full flex flex-col justify-center items-center origin-center aspect-[4.5] w-full md:aspect-square md:rounded-full md:w-auto'
+					onClick={() => useNavStore.setState({ isOpen: false })}
 					onPointerEnter={() => setIsOverlayCloseHover(true)}
 					onPointerLeave={() => setIsOverlayCloseHover(false)}>
 					<div
-						className={`w-[3rem] h-[2px] bg-neutralContrast origin-center translate-y-1/2`}
+						className={`w-[max(3rem,48px)] h-[2px] bg-neutralContrast origin-center translate-y-1/2`}
 						data-close-up-bar></div>
 					<div
-						className={`w-[3rem] h-[2px] bg-neutralContrast origin-center -translate-y-1/2`}
+						className={`w-[max(3rem,48px)] h-[2px] bg-neutralContrast origin-center -translate-y-1/2`}
 						data-close-btm-bar></div>
 				</button>
-				<div className='flex gap-8 items-center'>
+				<div className='flex items-center flex-wrap w-full gap-y-4 gap-x-8 md:gap-8'>
 					<OverlayNavLinkBtn label={`github`} />
 					<OverlayNavLinkBtn label={`linkedin`} />
+					<div className='flex-[1_0_100%] block md:hidden'></div>
 					<OverlayNavLinkBtn label={`resume`} />
 					<OverlayNavLinkBtn label={`mail`} />
 				</div>
@@ -1268,57 +1333,61 @@ function OverlayNav({ isOpen, setIsOpen }) {
 
 			<OverlayNavLinkChapter
 				label={`home`}
-				chapter={`[00.]`}
-				container={`data-home-row`}
-				width={`w-[55rem]`}
-				justify={`justify-end`}
+				chapter={`00`}
+				width={`md:w-[55rem]`}
+				justify={`md:justify-end`}
 				isDecor={false}
 			/>
 
 			<OverlayNavLinkChapter
 				label={`about`}
-				chapter={`[01.]`}
-				container={`data-about-row`}
-				width={`w-[47.5rem]`}
-				justify={`justify-end`}
+				chapter={`01`}
+				width={`md:w-[47.5rem]`}
+				justify={`md:justify-end`}
 				isDecor={false}
 			/>
 
 			<OverlayNavLinkChapter
 				label={`skill`}
-				chapter={`[02.]`}
-				container={`data-skill-row`}
-				width={`w-[42rem]`}
-				justify={`justify-end`}
+				chapter={`02`}
+				width={`md:w-[42rem]`}
+				justify={`md:justify-end`}
 				isDecor={false}
 			/>
 
 			<OverlayNavLinkChapter
 				label={`experience`}
-				chapter={`[03.]`}
-				container={`data-experience-row`}
-				width={`w-[75rem]`}
-				justify={`justify-end`}
+				chapter={`03`}
+				width={`md:w-[75rem]`}
+				justify={`md:justify-end`}
 				isDecor={false}
 			/>
 
 			<OverlayNavLinkChapter
 				label={`project`}
-				chapter={`[04.]`}
-				container={`data-project-row`}
-				width={`w-[85rem]`}
-				justify={`justify-end`}
+				chapter={`04`}
+				width={`md:w-[85rem]`}
+				justify={`md:justify-end`}
 				isDecor={false}
 			/>
 
 			<OverlayNavLinkChapter
 				label={`contact`}
-				chapter={`[99.]`}
-				container={`data-project-row`}
-				width={`w-[95rem]`}
-				justify={`justify-start`}
+				chapter={`99`}
+				width={`md:w-[95rem]`}
+				justify={`md:justify-start`}
 				isDecor
 			/>
+
+			<div
+				className={`bg-primary border border-primary flex flex-[5] items-end p-12 pt-32 shadow-[0px_2px_0px_0px_var(--color-bg-primary)] w-full justify-between md:hidden`}
+				data-row={`mobile-decor`}>
+				<OverlayNavDecor />
+				<OverlayNavDecor />
+				<OverlayNavDecor />
+				<OverlayNavDecor />
+				{/* <OverlayNavDecor /> */}
+			</div>
 		</nav>
 	);
 }
@@ -1359,6 +1428,7 @@ function OverlayNavLinkBtn({ label }) {
 				yPercent,
 				duration: 0,
 			};
+
 			const configScale = {
 				scale: isHover ? 1 : 0,
 				duration: 0.25,
@@ -1391,7 +1461,7 @@ function OverlayNavLinkBtn({ label }) {
 				ref={btnRef}
 				onPointerEnter={e => handlePointerEnter(e)}
 				onPointerLeave={() => setIsHover(false)}
-				className='px-9 py-3.5 text-2xl rounded-full border border-neutralContrast bg-neutral h-[min-content] relative overflow-hidden cursor-pointer'>
+				className='px-[max(2.25rem,2.25rem)] py-[max(0.875rem,14px)] text-2xl border border-neutralContrast bg-neutral h-[min-content] relative overflow-hidden cursor-pointer min-w-[96px] text-center flex-[1] md:flex-auto md:rounded-full'>
 				<span
 					ref={flairRef}
 					className={`absolute top-0 left-0 bottom-0 right-0 pointer-events-none scale-0 origin-top-left 
@@ -1408,8 +1478,9 @@ function OverlayNavLinkBtn({ label }) {
 	);
 }
 
-function OverlayNavLinkChapter({ chapter, label, container, width, justify, isDecor }) {
+function OverlayNavLinkChapter({ chapter, label, width, justify, isDecor }) {
 	const [isHover, setIsHover] = useState(false);
+	const isMobile = usePlatformStore(state => state.isMobile);
 	const ctnRef = useRef(null);
 
 	useGSAP(
@@ -1477,15 +1548,22 @@ function OverlayNavLinkChapter({ chapter, label, container, width, justify, isDe
 		{ dependencies: [isHover], scope: ctnRef },
 	);
 
+	function handleClick(e: MouseEvent<HTMLAnchorElement>): void {
+		e.preventDefault();
+		const { lenis } = useNavStore.getState().lenisRef.current;
+		useNavStore.setState({ isOpen: false });
+		lenis.scrollTo(`#${label}`);
+	}
+
 	return (
 		<>
 			<div
-				className={`bg-primary border border-primary flex-[1] flex items-center px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)] ${width} ${justify}`}
+				className={`bg-primary border border-primary flex-[1] flex items-center px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)] w-full justify-end ${width} ${justify}`}
 				data-row={label}
 				ref={ctnRef}>
-				{isDecor && <OverlayNavContactDecor />}
+				{isDecor && !isMobile && <OverlayNavDecor />}
 				<span
-					className='aspect-square w-[4rem]'
+					className='aspect-square md:w-[4rem] w-[8rem]'
 					data-chapter-arrow-container>
 					<svg
 						className={`w-full h-full`}
@@ -1503,23 +1581,24 @@ function OverlayNavLinkChapter({ chapter, label, container, width, justify, isDe
 				</span>
 
 				<a
-					href=''
+					href={`#${label}`}
 					className='relative flex items-baseline self-stretch overflow-hidden'
 					onPointerEnter={() => setIsHover(true)}
-					onPointerLeave={() => setIsHover(false)}>
+					onPointerLeave={() => setIsHover(false)}
+					onClick={handleClick}>
 					<span
 						data-chapter-label
-						className='text-[6rem] leading-none mr-8 h-full flex items-center'>
+						className='text-[max(12.5rem,36px)] md:text-[max(6rem,36px)] leading-none mr-8 h-full flex items-center'>
 						{label}
 					</span>
 					<span
 						data-chapter-sequence
-						className='text-4xl leading-none h-full'>
-						{chapter}
+						className='text-[max(2.25rem,14px)] leading-none h-full'>
+						{`[${chapter}.]`}
 					</span>
 					<span
 						data-chapter-label-clone
-						className='text-[6rem] leading-none absolute top-0 left-0 w-full h-full flex items-center pointer-events-none underline'>
+						className='text-[max(12.5rem,36px)] md:text-[max(6rem,36px)] leading-none absolute top-0 left-0 w-full h-full flex items-center pointer-events-none underline'>
 						{label}
 					</span>
 				</a>
@@ -1528,29 +1607,29 @@ function OverlayNavLinkChapter({ chapter, label, container, width, justify, isDe
 	);
 }
 
-function OverlayNavContactDecor() {
+function OverlayNavDecor({}) {
 	return (
-		<div className='flex gap-8 flex-wrap max-w-[34rem] mr-auto'>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
-			<div className='w-6 aspect-square rounded-full bg-[#00000050]'></div>
+		<div className={`gap-8 flex-wrap md:mr-auto flex max-w-[24rem] md:max-w-[34rem]`}>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
+			<div className='md:w-6 w-12 aspect-square  bg-[#00000050]'></div>
 		</div>
 	);
 }
@@ -1590,7 +1669,7 @@ function NavLinkBtn({ label }) {
 	return (
 		<a
 			href=''
-			className='relative leading-none overflow-hidden'
+			className='relative leading-none overflow-hidden min-w-max'
 			onPointerEnter={() => setIsHover(true)}
 			onPointerLeave={() => setIsHover(false)}
 			ref={ctnRef}>
@@ -1608,30 +1687,30 @@ function NavLinkBtn({ label }) {
 	);
 }
 
-function NavOpenBtn({ setIsOpen }) {
+function NavOpenBtn() {
 	const [isHover, setIsHover] = useState(false);
 	const ctnRef = useRef(null);
 	useGSAP(
 		() => {
 			if (isHover) {
 				gsap.to('[data-open-1st-bar]', {
-					width: '1rem',
+					scaleX: 0.75,
 					duration: 0.2,
 					ease: 'sine.in',
 				});
 				gsap.to('[data-open-3st-bar]', {
-					width: '0.5rem',
+					scaleX: 0.5,
 					duration: 0.2,
 					ease: 'sine.in',
 				});
 			} else {
 				gsap.to('[data-open-1st-bar]', {
-					width: '1.25rem',
+					scaleX: 1,
 					duration: 0.2,
 					ease: 'sine.in',
 				});
 				gsap.to('[data-open-3st-bar]', {
-					width: '1.25rem',
+					scaleX: 1,
 					duration: 0.2,
 					ease: 'sine.in',
 				});
@@ -1642,19 +1721,19 @@ function NavOpenBtn({ setIsOpen }) {
 	return (
 		<button
 			ref={ctnRef}
-			className='rounded-full aspect-square border border-neutral flex flex-col gap-1 justify-center p-3'
-			onClick={() => setIsOpen(true)}
+			className='rounded-full aspect-square border border-neutral flex flex-col justify-center items-center p-[max(0.75rem,12px)] gap-[max(0.25rem,4px)]'
+			onClick={() => useNavStore.setState({ isOpen: true })}
 			onPointerEnter={() => setIsHover(true)}
 			onPointerLeave={() => setIsHover(false)}>
 			<div
 				data-open-1st-bar
-				className='bg-neutral w-5 h-0.5'></div>
+				className='bg-neutral min-w-[20px] min-h-[2px] w-5 h-0.5 origin-left'></div>
 			<div
 				data-open-2st-bar
-				className='bg-neutral w-5 h-0.5'></div>
+				className='bg-neutral min-w-[20px] min-h-[2px] w-5 h-0.5'></div>
 			<div
 				data-open-3st-bar
-				className='bg-neutral w-5 h-0.5'></div>
+				className='bg-neutral min-w-[20px] min-h-[2px] w-5 h-0.5 origin-left'></div>
 		</button>
 	);
 }
