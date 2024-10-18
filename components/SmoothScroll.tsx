@@ -32,6 +32,7 @@ function SmoothScrolling({ children }: SmoothScrollingProps) {
 	const lenisOptions = {
 		lerp: 0.08,
 		duration: 3,
+		syncTouch: true,
 	};
 
 	return (
