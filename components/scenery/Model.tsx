@@ -55,7 +55,7 @@ import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { useControls } from 'leva';
 import { lerp } from 'three/src/math/MathUtils.js';
 
-import { useDomStore } from '@/store';
+import { useDomStore, usePlatformStore } from '@/store';
 
 // gsap
 import gsap from 'gsap';
@@ -179,6 +179,15 @@ export default memo(function Model() {
 		}
 
 		ballCloneRef.current?.rotation.copy(ballRef.current.rotation);
+
+		const isMobile = usePlatformStore.getState().isMobile;
+
+		ballMaskRef.current?.scale.set(...(isMobile ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]));
+		ballClonedMaskRef.current?.scale.set(...(isMobile ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]));
+
+		// ballMaskRef.current.scale()
+		// ballCloneRef.current?.position.copy(ballRef.current.position);
+		// ballClonedMaskRef.current?.position.copy(ballRef.current.position);
 
 		ballMaterialUpdate(elapsedTime);
 	});
