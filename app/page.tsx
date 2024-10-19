@@ -10,13 +10,12 @@ import { usePlatformStore } from '@/store';
 export default function Home() {
 	const wrapperRef = useRef(null);
 
-	usePlatformMonitor();
-
 	useEffect(() => window.scrollTo(0, 0), []);
 
 	return (
 		<>
 			<Loader />
+			<PlatformMonitor />
 			<main ref={wrapperRef}>
 				<Hero />
 				<Scene wrapperRef={wrapperRef} />
@@ -25,15 +24,20 @@ export default function Home() {
 	);
 }
 
-function usePlatformMonitor() {
-	function updateIsMobile() {
+function PlatformMonitor() {
+	function updatePlatform() {
 		const isMobile = window.innerWidth < 768;
+
 		usePlatformStore.setState({ isMobile });
+
+		// usePlatformStore.setState({ isMobile });
 	}
 
 	useEffect(() => {
-		updateIsMobile();
-		window.addEventListener('resize', updateIsMobile);
-		return () => window.removeEventListener('resize', updateIsMobile);
+		updatePlatform();
+		window.addEventListener('resize', updatePlatform);
+		return () => window.removeEventListener('resize', updatePlatform);
 	}, []);
+
+	return null;
 }
