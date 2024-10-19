@@ -48,7 +48,7 @@ import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
-import { useDomStore, usePortFboStore, useWebGlStore } from '@/store';
+import { useDomStore, usePlatformStore, usePortFboStore, useWebGlStore } from '@/store';
 import { useShallow } from 'zustand/react/shallow';
 
 import vertexShaderRoundedRec from '@/shaders/rounded-rectangle/vertex';
@@ -248,6 +248,8 @@ const Banner = memo(function Banner() {
 					const { fontFamily, scaleY, fontHighlight } = el.dataset;
 					const { factor } = viewport;
 
+					// console.log(width, w, height, h);
+
 					const parsedFontSize = parseFloat(fontSize);
 					const parsedLineHeight = parseFloat(lineHeight);
 					const ratio = textMeshRatio;
@@ -275,7 +277,7 @@ const Banner = memo(function Banner() {
 							position={[pX, pY, pZ]}
 							material={material}
 							lineHeight={parsedLineHeight / parsedFontSize}
-							maxWidth={(width / factor) * ratio + 0.0025}
+							maxWidth={(width / factor) * ratio * 1.025}
 							scale={[sX, sY, sZ]}
 							textAlign={textAlign}
 							fontSize={(parsedFontSize / factor) * ratio}
@@ -300,7 +302,7 @@ const Banner = memo(function Banner() {
 					const { scrollY } = window;
 					const { left, top, width, height } = el.getBoundingClientRect();
 					const { parallax, anchor, anchorMirror } = el.dataset;
-					const { factor } = viewport;
+					const { factor, dpr } = viewport;
 					const ratio = containerMeshRatio;
 					const baseX = (-viewport.width / 2) * ratio;
 					const baseY = (viewport.height / 2) * ratio;
@@ -320,6 +322,8 @@ const Banner = memo(function Banner() {
 
 					containerMaterialParallaxRefs.current[parallax] = material;
 
+					const dynamicDpr = usePlatformStore.getState().isMobile ? dpr : 1;
+
 					material.uniforms.uTexture.value = previewMap[parallax] || null;
 					material.uniforms.uResolution.value.set(width, height);
 					material.uniforms.uRadii.value.set(...radius);
@@ -327,7 +331,7 @@ const Banner = memo(function Banner() {
 					material.uniforms.uAnchor.value = +!!anchor;
 					material.uniforms.uHeatMap.value = 0;
 					material.uniforms.uMaskTexture.value = null;
-					material.uniforms.uMaskResolution.value.set(size.width, size.height);
+					material.uniforms.uMaskResolution.value.set(size.width * dynamicDpr, size.height * dynamicDpr);
 					material.uniforms.uTranslucentMaskTexture.value =
 						useWebGlStore.getState().shareTranslucentBuffer?.texture || null;
 
