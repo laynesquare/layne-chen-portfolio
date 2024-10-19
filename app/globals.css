@@ -131,7 +131,7 @@ html.lenis body {
 /* Hide Scrollbar */
 body::-webkit-scrollbar,
 ::-webkit-scrollbar {
-	/* display: none; */
+	display: none;
 }
 
 /* Custom Utilities */
@@ -158,5 +158,7 @@ body::-webkit-scrollbar,
 		-webkit-mask-position: center center;
 		mask-position: center center;
 		mask-size: 0rem;
+		touch-action: none;
+		pointer-events: none;
 	}
 }
