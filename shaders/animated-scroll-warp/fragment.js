@@ -111,26 +111,26 @@ void main() {
   vec2 texCoords = bulge(vUv, center);
 
   // aspect ratio needed to create a real circle when quadSize is not 1:1 ratio
-  float aspectRatio = uQuadSize.y / uQuadSize.x;
+  // float aspectRatio = uQuadSize.y / uQuadSize.x;
 
   // create a circle following the mouse with size 15
-  float circle = 1.0 - distance(
-    vec2(uMouseOverPos.x, (1.0 - uMouseOverPos.y) * aspectRatio),
-    vec2(vUv.x, vUv.y * aspectRatio)
-  ) * 15.0;
+  // float circle = 1.0 - distance(
+  //   vec2(uMouseOverPos.x, (1.0 - uMouseOverPos.y) * aspectRatio),
+  //   vec2(vUv.x, vUv.y * aspectRatio)
+  // ) * 15.0;
 
   // create noise
-  float noise = snoise(gl_FragCoord.xy);
+  // float noise = snoise(gl_FragCoord.xy);
 
   // modify texture coordinates
-  texCoords.x += mix(0.0, noise * 0.00, uScrollVelocity * 0.01);
-  texCoords.y += mix(0.0, noise * 0.00, uScrollVelocity * 0.01);
+  texCoords.x += mix(0.0, 0.0, uScrollVelocity * 0.01);
+  texCoords.y += mix(0.0, 0.0, uScrollVelocity * 0.01);
 
   // --- DISPLACEMENT SECTION ---
   vec4 displacement = texture(uDisplacement, texCoords); // Sample displacement texture
   float theta = displacement.r * 2.0 * PI; // Rotation based on displacement
   vec2 dir = vec2(sin(theta), cos(theta)); // Direction
-  texCoords += dir * displacement.r * 0.1; // Apply displacement to texture coordinates
+  texCoords += dir * displacement.r * 0.07; // Apply displacement to texture coordinates
   // --- END OF DISPLACEMENT SECTION ---
 
   // Apply chromatic aberration where displacement occurs

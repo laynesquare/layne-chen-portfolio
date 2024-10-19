@@ -56,33 +56,31 @@ float curvedLines(vec2 uv, float offset, float curveAmount) {
 }
 
 void main() {
-    // precision lowp float;
-
     // Create vertical gradient
     float gradient = smoothstep(0.1, 8.0, abs(vUv.x - 0.5) * 80.0); // Adjust gradient smoothness
-    
+
     // Generate low-frequency noise for pattern (scale down for larger shapes)
     float noise = snoise(vUv * 8.0 + uTime * 0.05) * 0.5; // Lower the frequency of noise
-    
+
     // Combine gradient and noise for base pattern
     float pattern = mix(gradient, noise, 0.7); // Use more of the noise in blending
 
     vec2 baseUV = vPosition.xy;
     float basePattern = curvedLines(baseUV, 0.1, 1.0);
     float baseSecondPattern = curvedLines(baseUV, noise, 1.0);
-    
+
     // Define colors
     vec3 darkColor = vec3(0.227, 0.227, 0.227);
     vec3 brightColor = vec3(0.243, 0.639, 0.482);
-    
+
     // Mix colors based on the pattern
     vec3 finalColor = mix(uBrightColor, uDarkColor, baseSecondPattern);
     // vec3 finalColor = mix(brightColor, darkColor, baseSecondPattern);
-    
+
     // Add grainy texture on top
     float grain = grainNoise(vUv);
     finalColor += grain;  // Adjust the strength of the grain effect here
-    
+
     gl_FragColor = vec4(finalColor, 1.0);
 }
 `;
