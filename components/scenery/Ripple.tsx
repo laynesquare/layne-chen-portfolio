@@ -17,7 +17,6 @@ import {
 	NearestFilter,
 	RGBFormat,
 	UnsignedByteType,
-	LinearEncoding,
 	HalfFloatType,
 	PlaneGeometry,
 } from 'three';
@@ -30,7 +29,7 @@ import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 
 import { lerp } from 'three/src/math/MathUtils.js';
 
-import { useDomStore, useWebGlStore } from '@/store';
+import { useDomStore, useNavStore, usePlatformStore, useWebGlStore } from '@/store';
 
 // gsap
 import gsap from 'gsap';
@@ -51,23 +50,25 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 	// const resolutionScale = devicePixelRatio > 1.5 || memory <= 4 ? 0.5 : 0.75;
 
 	const portBuffer = useFBO(0, 0, {
+		samples: 0,
 		minFilter: LinearFilter,
 		magFilter: LinearFilter,
-		samples: 0,
-		stencilBuffer: false,
+		format: RGBAFormat,
 		type: UnsignedByteType,
-		generateMipmaps: false,
+		stencilBuffer: false,
+		// depthBuffer: false,
+		// depth: false,
 		anisotropy: 0,
 		colorSpace: '',
-		format: RGBFormat,
+		generateMipmaps: false,
 	});
 
 	const rippleBuffer = useFBO(32, 32, {
 		samples: 0,
-		minFilter: NearestFilter,
+		minFilter: LinearFilter,
 		magFilter: LinearFilter,
 		format: RGBAFormat,
-		type: HalfFloatType,
+		type: UnsignedByteType,
 		stencilBuffer: false,
 		depthBuffer: false,
 		depth: false,
@@ -175,20 +176,23 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 
 	useEffect(() => {
 		window.addEventListener('mousemove', handleMouseMove);
-
-		return () => {
-			window.removeEventListener('mousemove', handleMouseMove);
-		};
+		return () => window.removeEventListener('mousemove', handleMouseMove);
 	}, [handleMouseMove]);
 
 	const maskBufferType = ['ABOUT', 'SKILL', 'EXPERIENCE'];
 
 	useFrame(({ clock, gl, camera, scene, size, viewport }, delta) => {
 		const elapsedTime = clock.getElapsedTime();
-		portBuffer.setSize(size.width, size.height);
-		translucentBuffer.current.setSize(size.width / 2, size.height / 2);
-		maskBufferMap['ABOUT'].buffer.setSize(size.width / 2, size.height / 2);
-		maskBufferMap['EXPERIENCE'].buffer.setSize(size.width / 2, size.height / 2);
+		const isNavOpen = useNavStore.getState().isOpen;
+		const isMobile = usePlatformStore.getState().isMobile;
+		const regression = isNavOpen ? 1 : 1;
+		const dynamicDpr = isMobile ? viewport.dpr : 1;
+		const baseResW = size.width * dynamicDpr * regression;
+		const baseResH = size.height * dynamicDpr * regression;
+		portBuffer.setSize(baseResW, baseResH);
+		translucentBuffer.current.setSize(baseResW / 3, baseResH / 3);
+		maskBufferMap['ABOUT'].buffer.setSize(baseResW / 2, baseResH / 2);
+		maskBufferMap['EXPERIENCE'].buffer.setSize(512, 512);
 
 		portRef.current.scale.set(viewport.width, viewport.height, 1);
 
@@ -225,7 +229,7 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 
 			const containerMaskedMeshes = useWebGlStore.getState().containerMaskedMeshes;
 
-			if (containerMaskedMeshes?.size) {
+			if (containerMaskedMeshes?.size && !isNavOpen) {
 				const meshes = [...containerMaskedMeshes];
 				meshes.forEach(mesh => {
 					const inView = ScrollTrigger.isInViewport(mesh.userData.el);
@@ -248,13 +252,16 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 			psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 0;
 			psychedelicBallMesh.material.uniforms.uColor.value.set('#002BF9');
 			psychedelicBallMesh.material.sheenColor.set('#fd267a');
-			psychedelicBallMesh.scale.set(1, 1, 1);
 			psychedelicBallMesh.material.displacementScale = 0.3;
 			psychedelicBallMesh.material.sheen = 1;
 			psychedelicBallMesh.material.roughness = ogRoughness;
 			psychedelicBallMesh.material.metalness = ogMetalness;
 			psychedelicBallMesh.material.iridescence = 1;
 			psychedelicBallMesh.material.clearcoat = ogClearcoat;
+
+			const isMobile = usePlatformStore.getState().isMobile;
+			psychedelicBallMesh.scale.set(...(isMobile ? [0.6, 0.6, 0.6] : [1, 1, 1]));
+			psychedelicBallClonedMesh.scale.set(...(isMobile ? [0.6, 0.6, 0.6] : [1, 1, 1]));
 
 			gl.setRenderTarget(translucentBuffer.current);
 			gl.clear();
@@ -295,14 +302,28 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 		minFilter: NearestFilter,
 		magFilter: NearestFilter,
 		format: RGBAFormat,
-		type: HalfFloatType,
+		type: UnsignedByteType,
 		anisotropy: 0,
 		colorSpace: '',
 		generateMipmaps: false,
 		stencilBuffer: false,
 	};
 
-	const translucentBuffer = useRef(useFBO(0, 0, maskBufferConfig));
+	const translucentBuffer = useRef(
+		useFBO(0, 0, {
+			samples: 0,
+			minFilter: NearestFilter,
+			magFilter: NearestFilter,
+			format: RGBAFormat,
+			type: UnsignedByteType,
+			anisotropy: 0,
+			colorSpace: '',
+			generateMipmaps: false,
+			stencilBuffer: false,
+			depthBuffer: false,
+			depth: false,
+		}),
+	);
 
 	useEffect(() => {
 		useWebGlStore.setState({
@@ -325,7 +346,7 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 			},
 		},
 		SKILL: {
-			buffer: useFBO(128, 128, maskBufferConfig),
+			buffer: useFBO(64, 64, maskBufferConfig),
 			mutateScene: (ballMesh, containerMesh, torsoMesh) => {
 				torsoMesh.material.uniforms.uBrightColor.value.set('#FF0000');
 				torsoMesh.material.uniforms.uDarkColor.value.set('#0500FF');
