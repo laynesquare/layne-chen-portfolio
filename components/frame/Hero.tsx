@@ -29,7 +29,7 @@ export default function Hero({}) {
 			<Menu />
 
 			<article
-				className={`w-full font-boxing`}
+				className={`w-full relative z-10 font-boxing opacity-0 pointer-events-none`}
 				ref={torsoElStoreRegister}>
 				{/* -------------------------------------------------------------------------- */
 				/*                                first page                                 */
@@ -54,7 +54,7 @@ export default function Hero({}) {
 						</h2>
 					</div>
 					<header>
-						<h1 className='text-center scale-y-[2] origin-bottom text-[13.5rem] leading-none translate-y-11'>
+						<h1 className='text-center scale-y-[2] origin-bottom text-[13.4rem] leading-none translate-y-11'>
 							<span
 								data-font-family='boxing'
 								data-scale-y='2'
@@ -745,7 +745,7 @@ export default function Hero({}) {
 							className='flex flex-[2]'
 							ref={containerElStoreRegister}>
 							<div className='border border-neutral min-h-72 flex p-20 gap-14 flex-col md:flex-row'>
-								<h3 className='m-auto text-center text-4xl leading-[1.5]'>
+								<h3 className='m-auto text-center text-4xl leading-[1.25]'>
 									<span
 										data-font-family='boxing'
 										ref={textElStoreRegister}>
@@ -917,7 +917,7 @@ export default function Hero({}) {
 							className='flex flex-[2]'
 							ref={containerElStoreRegister}>
 							<div className='border border-neutral min-h-72 flex p-20 gap-14 flex-col md:flex-row'>
-								<h3 className='m-auto text-center text-4xl leading-[1.5]'>
+								<h3 className='m-auto text-center text-4xl leading-[1.25]'>
 									<span
 										data-font-family='boxing'
 										ref={textElStoreRegister}>
@@ -943,7 +943,10 @@ export default function Hero({}) {
 						<div
 							className='border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_0rem_0rem] leading-[1] gap-40 md:gap-12'
 							ref={containerElStoreRegister}>
-							<a href=''>
+							<a
+								className='pointer-events-auto'
+								href='https://laynesquare.github.io/share_your_memories'
+								target='_blank'>
 								<span
 									data-font-highlight='button'
 									data-font-family='boxing'
@@ -1065,7 +1068,7 @@ export default function Hero({}) {
 						<div
 							className='border border-neutral min-h-72 px-12 gap-14 p-20 flex flex-[2] flex-col rounded-[0rem_0rem_0rem_0rem] md:flex-row md:rounded-[0rem_0rem_0rem_9rem]'
 							ref={containerElStoreRegister}>
-							<h3 className='m-auto text-center text-4xl leading-[1.5]'>
+							<h3 className='m-auto text-center text-4xl leading-[1.25]'>
 								<span
 									data-font-family='boxing'
 									ref={textElStoreRegister}>
@@ -1119,7 +1122,7 @@ export default function Hero({}) {
 								data-font-family='boxing'
 								ref={textElStoreRegister}>{`Let's connect.`}</span>
 						</h3>
-						<h4 className='whitespace-pre-line text-3xl leading-[1.5]'>
+						<h4 className='whitespace-pre-line text-3xl leading-[1.25]'>
 							<span
 								data-font-family='boxing'
 								ref={textElStoreRegister}>{`Open for new challenges\nand collaborations.`}</span>
@@ -1201,7 +1204,7 @@ function Menu() {
 	return (
 		<>
 			<nav
-				className='flex py-2 rounded-full items-center fixed text-lg z-20 min-w-max m-auto leading-none font-boxing backdrop-blur-lg backdrop-saturate-[250%] backdrop-hue-rotate-[9deg] border border-[#ffffff15] left-1/2 -translate-x-1/2 gap-[12px] top-[12px] pl-[16px] md:gap-6 md:top-6 md:pr-2 md:pl-12 min-h-16'
+				className='flex py-2 rounded-full items-center fixed text-lg z-30 min-w-max m-auto leading-none font-boxing backdrop-blur-lg backdrop-saturate-[250%] backdrop-hue-rotate-[9deg] border border-[#ffffff15] left-1/2 -translate-x-1/2 gap-[12px] top-[12px] pl-[16px] md:gap-6 md:top-6 md:pr-2 md:pl-12 min-h-16'
 				style={{ textShadow: `0 0 0px black` }}>
 				<a
 					href=''
@@ -1312,7 +1315,10 @@ function OverlayNav() {
 				data-row={`action`}>
 				<button
 					className='px-[max(1.5rem,24px)] border border-neutralContrast h-full flex flex-col justify-center items-center origin-center aspect-[4.5] w-full md:aspect-square md:rounded-full md:w-auto'
-					onClick={() => useNavStore.setState({ isOpen: false })}
+					onClick={() => {
+						useNavStore.getState().lenisRef.current.lenis.start();
+						useNavStore.setState({ isOpen: false });
+					}}
 					onPointerEnter={() => setIsOverlayCloseHover(true)}
 					onPointerLeave={() => setIsOverlayCloseHover(false)}>
 					<div
@@ -1386,7 +1392,6 @@ function OverlayNav() {
 				<OverlayNavDecor />
 				<OverlayNavDecor />
 				<OverlayNavDecor />
-				{/* <OverlayNavDecor /> */}
 			</div>
 		</nav>
 	);
@@ -1551,6 +1556,7 @@ function OverlayNavLinkChapter({ chapter, label, width, justify, isDecor }) {
 	function handleClick(e: MouseEvent<HTMLAnchorElement>): void {
 		e.preventDefault();
 		const { lenis } = useNavStore.getState().lenisRef.current;
+		lenis.start();
 		useNavStore.setState({ isOpen: false });
 		lenis.scrollTo(`#${label}`);
 	}
@@ -1722,7 +1728,10 @@ function NavOpenBtn() {
 		<button
 			ref={ctnRef}
 			className='rounded-full aspect-square border border-neutral flex flex-col justify-center items-center p-[max(0.75rem,12px)] gap-[max(0.25rem,4px)]'
-			onClick={() => useNavStore.setState({ isOpen: true })}
+			onClick={() => {
+				useNavStore.getState().lenisRef?.current?.lenis?.stop();
+				useNavStore.setState({ isOpen: true });
+			}}
 			onPointerEnter={() => setIsHover(true)}
 			onPointerLeave={() => setIsHover(false)}>
 			<div
