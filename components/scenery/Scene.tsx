@@ -76,7 +76,7 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 					width: '100lvw',
 					height: '100lvh',
 				}}
-				dpr={[1, 1]}
+				dpr={[1, 1.5]}
 				camera={{ position: [0, 0, 8], fov: 30 }}
 				// resize={{ debounce: 5 }}
 				flat={true}
