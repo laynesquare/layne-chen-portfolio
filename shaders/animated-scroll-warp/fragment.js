@@ -130,7 +130,7 @@ void main() {
   vec4 displacement = texture(uDisplacement, texCoords); // Sample displacement texture
   float theta = displacement.r * 2.0 * PI; // Rotation based on displacement
   vec2 dir = vec2(sin(theta), cos(theta)); // Direction
-  texCoords += dir * displacement.r * 0.07; // Apply displacement to texture coordinates
+  texCoords += dir * displacement.r * 0.08; // Apply displacement to texture coordinates
   // --- END OF DISPLACEMENT SECTION ---
 
   // Apply chromatic aberration where displacement occurs
