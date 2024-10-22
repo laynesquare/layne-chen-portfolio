@@ -3,6 +3,7 @@ precision lowp float;
 precision lowp int;
 
 varying vec2 vUv;
+varying float vIsInView;
 uniform vec2 uResolution;
 uniform vec4 uRadii;
 
@@ -20,23 +21,23 @@ float roundedBoxSDF(vec2 centerPosition, vec2 size, vec4 radius) {
 void main() {
     // precision lowp float;
 
-    vec2 mouseNormalized = (uMouse + 1.0) / 2.0;
-
     // - Parallax mapping parameters
     float parallaxScale = 2.0; // Controls the strength of the parallax effect
-    float numLayers = 5.0;
+    float numLayers = 10.0;
     float layerDepth = 1.0 / numLayers;
     float currentLayerDepth = 0.0;
     vec2 deltaTexCoords = uMouse * parallaxScale / numLayers;
     vec2 currentTexCoords = vUv;
 
     // - Perform parallax occlusion mapping
-    for (int i = 0; i < 5; i++) {
-        currentTexCoords -= deltaTexCoords;
-        currentLayerDepth += layerDepth;
-        float depthFromTexture = 1.0 - texture2D(uTexture, currentTexCoords).r;
-        if (currentLayerDepth > depthFromTexture) {
-            break;
+    if (vIsInView == 1.0) {
+        for (int i = 0; i < 10; i++) {
+            currentTexCoords -= deltaTexCoords;
+            currentLayerDepth += layerDepth;
+            float depthFromTexture = 1.0 - texture2D(uTexture, currentTexCoords).r;
+            if (currentLayerDepth > depthFromTexture) {
+                break;
+            }
         }
     }
 
@@ -58,7 +59,7 @@ void main() {
     vec3 fillColor = textureColorWithParallax.rgb;
 
     // - Determine the alpha for fill and border
-    float fillAlpha = 0.95;        // Make the fill opaque
+    float fillAlpha = 0.9;        // Make the fill opaque
     float borderAlpha = 0.2;      // Keep the border fully opaque
 
     // - Mix the fill and border colors based on the distance
