@@ -263,9 +263,11 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 			psychedelicBallMesh.scale.set(...(isMobile ? [0.6, 0.6, 0.6] : [1, 1, 1]));
 			psychedelicBallClonedMesh.scale.set(...(isMobile ? [0.6, 0.6, 0.6] : [1, 1, 1]));
 
-			gl.setRenderTarget(translucentBuffer.current);
-			gl.clear();
-			gl.render(portScene, camera);
+			if (!isNavOpen) {
+				gl.setRenderTarget(translucentBuffer.current);
+				gl.clear();
+				gl.render(portScene, camera);
+			}
 
 			containerMeshGroup.visible = true;
 			textMeshGroup.visible = true;
@@ -289,10 +291,6 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 
 		gl.setRenderTarget(null);
 		gl.clear();
-	});
-
-	const currBallMaterialPropRef = useRef({
-		displacementScale: 0,
 	});
 
 	console.log('ripple re rerenders');
