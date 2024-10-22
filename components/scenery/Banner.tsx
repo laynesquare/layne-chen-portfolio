@@ -1,55 +1,10 @@
-// cSpell: ignore Raycaster, GLTF, metalness, clearcoat, matcap, drei, RGBE, GSAP, Satoshi
-
 import { extend, useFrame, useLoader, useThree } from '@react-three/fiber';
 import React, { useRef, useEffect, useMemo, useState, useCallback, memo } from 'react';
-import {
-	Color,
-	MeshBasicMaterial,
-	MeshStandardMaterial,
-	MeshPhysicalMaterial,
-	ShaderMaterial,
-	TextureLoader,
-	Vector2,
-	CustomBlending,
-	AddEquation,
-	SubtractEquation,
-	SrcAlphaFactor,
-	OneFactor,
-	DstColorFactor,
-	OneMinusDstColorFactor,
-	OneMinusSrcColorFactor,
-	OneMinusSrcAlphaFactor,
-	OneMinusDstAlphaFactor,
-	SrcColorFactor,
-	SrcAlphaSaturateFactor,
-	ZeroFactor,
-	AdditiveBlending,
-	SubtractiveBlending,
-	MultiplyBlending,
-	NormalBlending,
-	LinearFilter,
-	RGBAFormat,
-	UnsignedShort4444Type,
-	FrontSide,
-	ACESFilmicToneMapping,
-	MultiplyOperation,
-	PerspectiveCamera,
-	Vector4,
-	AddOperation,
-	Scene,
-	MeshNormalMaterial,
-	UnsignedByteType,
-	NearestFilter,
-	HalfFloatType,
-	NoBlending,
-} from 'three';
+import { Color, MeshBasicMaterial, ShaderMaterial, TextureLoader, Vector2, Vector4 } from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line, useGLTF } from '@react-three/drei';
-import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
-import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
-import { useDomStore, usePlatformStore, usePortFboStore, useWebGlStore } from '@/store';
-import { useShallow } from 'zustand/react/shallow';
+import { useDomStore, usePlatformStore, useWebGlStore } from '@/store';
 
 import vertexShaderRoundedRec from '@/shaders/rounded-rectangle/vertex';
 import fragmentShaderRoundedRec from '@/shaders/rounded-rectangle/fragment';
@@ -66,10 +21,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const Banner = memo(function Banner() {
-	// const viewport = useThree(state => state.viewport);
-	// const size = useThree(state => state.size);
-	// const camera = useThree(state => state.camera);
-
 	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
 
 	const pointerRef = useRef(new Vector2(0, 0));
@@ -85,26 +36,29 @@ const Banner = memo(function Banner() {
 	const containerGroupRef = useRef(null);
 	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(2.9);
 	const containerMaterialParallaxRefs = useRef({
-		previewShareYourMemoriesTemp: null,
+		previewLayneChenPortfolio: null,
 		previewShareYourMemories: null,
 		previewLearnEnglishDictionary: null,
 	});
 	const containerMaskedMeshesRef = useRef(new Set());
 	const containerTranslucentMaskedMeshesRef = useRef(new Set());
 
-	const [previewShareYourMemories, previewLearnEnglishDictionary] = useLoader(TextureLoader, [
-		'/frame/project-preview-share-your-memories.webp',
-		'/frame/project-preview-learn-english-dictionary.webp',
-	]);
+	const [previewLayneChenPortfolio, previewShareYourMemories, previewLearnEnglishDictionary] = useLoader(
+		TextureLoader,
+		[
+			'/frame/project-preview-layne-chen-portfolio-2024.webp',
+			'/frame/project-preview-share-your-memories.webp',
+			'/frame/project-preview-learn-english-dictionary.webp',
+		],
+	);
 
 	const previewMap = {
-		previewShareYourMemoriesTemp: previewShareYourMemories,
+		previewLayneChenPortfolio: previewLayneChenPortfolio,
 		previewShareYourMemories: previewShareYourMemories,
 		previewLearnEnglishDictionary: previewLearnEnglishDictionary,
 	};
 
 	useEffect(() => {
-		// containerMaskedMeshesRegister(containerMaskedMeshesRef.current);
 		useWebGlStore.setState({
 			containerMaskedMeshes: containerMaskedMeshesRef.current,
 			containerTranslucentMaskedMeshes: containerTranslucentMaskedMeshesRef.current,
@@ -166,19 +120,14 @@ const Banner = memo(function Banner() {
 		pointerRef.current.copy(pointer);
 
 		containerMaterialParallaxRefsKeys.forEach(key => {
+			const material = containerMaterialParallaxRefs.current[key];
+			const inView = ScrollTrigger.isInViewport(material.userData.el);
+			containerMaterialParallaxRefs.current[key].uniforms.uIsInView.value = +!!inView;
 			containerMaterialParallaxRefs.current[key].uniforms.uMouse.value.lerp(target, 0.025);
 		});
-
-		textGroupRef.current.visible = false;
-		containerGroupRef.current.visible = false;
 	});
 
-	useLenis(
-		event => {
-			updatePosition(event.scroll);
-		},
-		[size],
-	);
+	useLenis(event => updatePosition(event.scroll), [size]);
 
 	function updatePosition(offset: number) {
 		if (textGroupRef.current && containerGroupRef.current) {
@@ -195,7 +144,7 @@ const Banner = memo(function Banner() {
 				uTexture: { value: null },
 				uResolution: { value: new Vector2(0, 0) },
 				uRadii: { value: new Vector4(0, 0, 0, 0) },
-				uMouse: { value: new Vector2(0.5, 0.5) },
+				uMouse: { value: new Vector2(0, 0) },
 				uAnchor: { value: 0 },
 				uHeatMap: { value: 0 },
 				uMaskTexture: { value: null },
@@ -217,19 +166,20 @@ const Banner = memo(function Banner() {
 				uTexture: { value: null },
 				uResolution: { value: new Vector2(0, 0) },
 				uRadii: { value: new Vector4(0, 0, 0, 0) },
-				uMouse: { value: new Vector2(0.5, 0.5) },
+				uMouse: { value: new Vector2(0, 0) },
 				uAnchor: { value: 0 },
 				uHeatMap: { value: 0 },
 				uMaskTexture: { value: null },
 				uMaskResolution: { value: new Vector2(0, 0) },
 				uTranslucentMaskTexture: { value: new Vector2(0, 0) },
+				uIsInView: { value: 0 },
 			},
 			vertexShader: vertexShaderParallaxDepth,
 			fragmentShader: fragmentShaderParallaxDepth,
 			transparent: true,
-			depthWrite: false,
-			depthTest: false,
-			stencilWrite: false,
+			// depthWrite: false,
+			// depthTest: false,
+			// stencilWrite: false,
 		}),
 	);
 
@@ -240,15 +190,12 @@ const Banner = memo(function Banner() {
 			<group
 				name='text-mesh-group'
 				ref={textGroupRef}>
-				{/* {[...domTexts].map((el, idx) => { */}
 				{[...useDomStore.getState().textEls].map((el, idx) => {
 					const { fontSize, lineHeight, textAlign } = window.getComputedStyle(el);
 					const { scrollY } = window;
 					const { left, top, height, width } = el.getBoundingClientRect();
 					const { fontFamily, scaleY, fontHighlight } = el.dataset;
 					const { factor } = viewport;
-
-					// console.log(width, w, height, h);
 
 					const parsedFontSize = parseFloat(fontSize);
 					const parsedLineHeight = parseFloat(lineHeight);
@@ -316,18 +263,22 @@ const Banner = memo(function Banner() {
 
 					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
-					const material = parallax
-						? containerMeshParallaxMaterial.current.clone()
-						: containerMeshMaterial.current.clone();
+					let material;
 
-					containerMaterialParallaxRefs.current[parallax] = material;
+					if (parallax) {
+						material = containerMeshParallaxMaterial.current.clone();
+						containerMaterialParallaxRefs.current[parallax] = material;
+						material.userData = { dataset: el.dataset, el };
+					} else {
+						material = containerMeshMaterial.current.clone();
+					}
 
 					const dynamicDpr = usePlatformStore.getState().isMobile ? dpr : 1;
 
 					material.uniforms.uTexture.value = previewMap[parallax] || null;
 					material.uniforms.uResolution.value.set(width, height);
 					material.uniforms.uRadii.value.set(...radius);
-					material.uniforms.uMouse.value.set(0.5, 0.5);
+					material.uniforms.uMouse.value.set(0, 0);
 					material.uniforms.uAnchor.value = +!!anchor;
 					material.uniforms.uHeatMap.value = 0;
 					material.uniforms.uMaskTexture.value = null;
@@ -399,87 +350,3 @@ function domTextShared(type: 'boxing' | 'satoshi') {
 		overflowWrap: 'break-word',
 	};
 }
-
-// const background = useLoader(TextureLoader, '/scenery/textures/background-noise-medium.webp');
-// const texture = useLoader(
-// 	RGBELoader,
-// 	'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr',
-// );
-
-// const background = useLoader(
-// 	THREE.TextureLoader,
-// 	'/scenery/textures/background-noise-medium.webp',
-// );
-// const texture = useLoader(
-// 	THREE.RGBELoader,
-// 	'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr',
-// );
-
-// const useCustomViewport = () => {
-// 	const { viewport, camera, pointer, size } = useThree();
-// 	const [custom, setCustom] = useState({ viewport, camera, pointer, size });
-
-// 	useEffect(() => {
-// 		const isMobile = () => {
-// 			const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-// 			// Mobile user agent detection
-// 			if (/android/i.test(userAgent)) {
-// 				return true;
-// 			}
-
-// 			if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-// 				return true;
-// 			}
-
-// 			// Tablets (Android, iOS)
-// 			if (/Tablet|PlayBook|Silk|Kindle|iPad/.test(userAgent)) {
-// 				return true;
-// 			}
-
-// 			// Windows phone
-// 			if (/Windows Phone|IEMobile|WPDesktop/.test(userAgent)) {
-// 				return true;
-// 			}
-
-// 			return false;
-// 		};
-
-// 		const handleSize = () => {
-// 			console.log('calling');
-// 			if (false) {
-// 				alert('resize from banner');
-// 				setCustom({ viewport, camera, pointer, size });
-// 			}
-// 		};
-
-// 		window.addEventListener('resize', handleSize);
-// 		return () => window.removeEventListener('resize', handleSize);
-// 	}, [viewport, camera, pointer, size]);
-
-// 	return { ...custom };
-// };
-
-const camAt35 = {
-	initialDpr: 1.5,
-	dpr: 1.5,
-	width: 11.041621754215447,
-	height: 5.371288915852722,
-	top: 0,
-	left: 0,
-	aspect: 2.0556745182012848,
-	distance: 3.5,
-	factor: 173.88749974766944,
-};
-
-const camAt2 = {
-	initialDpr: 1.5,
-	dpr: 1.5,
-	width: 6.3094981452659695,
-	height: 3.0693079519158415,
-	top: 0,
-	left: 0,
-	aspect: 2.0556745182012848,
-	distance: 2,
-	factor: 304.30312455842153,
-};
