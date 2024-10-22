@@ -58,4 +58,8 @@ const usePlatformStore = create(set => ({
 	isMobile: false,
 }));
 
-export { useDomStore, useWebGlStore, useNavStore, usePlatformStore };
+const useCursorStore = create(set => ({
+	isRippleZone: true,
+}));
+
+export { useDomStore, useWebGlStore, useNavStore, usePlatformStore, useCursorStore };

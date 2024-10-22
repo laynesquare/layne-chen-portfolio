@@ -29,7 +29,7 @@ import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 
 import { lerp } from 'three/src/math/MathUtils.js';
 
-import { useDomStore, useNavStore, usePlatformStore, useWebGlStore } from '@/store';
+import { useDomStore, useNavStore, usePlatformStore, useWebGlStore, useCursorStore } from '@/store';
 
 // gsap
 import gsap from 'gsap';
@@ -39,15 +39,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default memo(function Ripple({ children, damping = 0.15, ...props }) {
-	const portRef = useRef();
-
 	const getThree = useThree(state => state.get);
 
-	// const containerMaskedMeshes = useWebGlStore(state => state.containerMaskedMeshes);
-
-	// const devicePixelRatio = window.devicePixelRatio || 1;
-	// const memory = navigator.deviceMemory || 4;
-	// const resolutionScale = devicePixelRatio > 1.5 || memory <= 4 ? 0.5 : 0.75;
+	const portRef = useRef();
 
 	const portBuffer = useFBO(0, 0, {
 		samples: 0,
@@ -56,8 +50,6 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 		format: RGBAFormat,
 		type: UnsignedByteType,
 		stencilBuffer: false,
-		// depthBuffer: false,
-		// depth: false,
 		anisotropy: 0,
 		colorSpace: '',
 		generateMipmaps: false,
@@ -157,8 +149,9 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 			const offsetX = Math.abs(preMousePos.current.x - event.clientX);
 			const offsetY = Math.abs(preMousePos.current.y - event.clientY);
 
-			if (offsetX < 0.5 && offsetY < 0.5) {
-			} else {
+			const isRippleZone = useCursorStore.getState().isRippleZone;
+
+			if ((offsetX >= 0.45 || offsetY >= 0.45) && isRippleZone) {
 				rippleCurrIdx.current = (rippleCurrIdx.current + 1) % 25;
 				rippleRefs.current[rippleCurrIdx.current].material.visible = true;
 				rippleRefs.current[rippleCurrIdx.current].material.opacity = 1;
@@ -169,6 +162,7 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 					.copy(camera.position)
 					.add(vector.multiplyScalar(distance));
 			}
+
 			preMousePos.current = { x: event.clientX, y: event.clientY };
 		},
 		[getThree],
@@ -339,8 +333,6 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 				ballMesh.material.wireframe = true;
 				ballMesh.material.roughness = 0.5;
 				ballMesh.material.displacementScale = 1;
-				// ballMesh.material.displacementScale = lerp(currBallMaterialPropRef.current.displacementScale, 1, 0.1);
-				// currBallMaterialPropRef.current.displacementScale = ballMesh.material.displacementScale;
 			},
 		},
 		SKILL: {
@@ -355,8 +347,6 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 				ballMesh.material.metalness = 0.3;
 				ballMesh.material.iridescence = 0.5;
 				ballMesh.material.displacementScale = 0;
-				// ballMesh.material.displacementScale = lerp(currBallMaterialPropRef.current.displacementScale, 0, 0.1);
-				// currBallMaterialPropRef.current.displacementScale = ballMesh.material.displacementScale;
 				ballMesh.material.sheen = 1.0;
 				ballMesh.material.clearcoat = 0.0;
 				ballMesh.material.sheenColor.set('#fd267a');
@@ -393,48 +383,3 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 		</>
 	);
 });
-
-const useCustomViewport = () => {
-	const { viewport, camera, pointer, size } = useThree();
-	const [custom, setCustom] = useState({ viewport, camera, pointer, size });
-
-	useEffect(() => {
-		const isMobile = () => {
-			const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-			// Mobile user agent detection
-			if (/android/i.test(userAgent)) {
-				return true;
-			}
-
-			if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-				return true;
-			}
-
-			// Tablets (Android, iOS)
-			if (/Tablet|PlayBook|Silk|Kindle|iPad/.test(userAgent)) {
-				return true;
-			}
-
-			// Windows phone
-			if (/Windows Phone|IEMobile|WPDesktop/.test(userAgent)) {
-				return true;
-			}
-
-			return false;
-		};
-
-		const handleSize = () => {
-			console.log('calling');
-			if (false) {
-				alert('resize from banner');
-				setCustom({ viewport, camera, pointer, size });
-			}
-		};
-
-		window.addEventListener('resize', handleSize);
-		return () => window.removeEventListener('resize', handleSize);
-	}, [viewport, camera, pointer, size]);
-
-	return { ...custom };
-};

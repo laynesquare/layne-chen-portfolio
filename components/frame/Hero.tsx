@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, MouseEvent } from 'react';
 import Image from 'next/image';
 import { Html, useProgress } from '@react-three/drei';
 
-import { useDomStore, useNavStore, usePlatformStore } from '@/store';
+import { useDomStore, useNavStore, usePlatformStore, useCursorStore } from '@/store';
 import { useThree } from '@react-three/fiber';
 
 import previewShareYourMemories from '@/public/frame/project-preview-share-your-memories.webp';
@@ -24,6 +24,10 @@ export default function Hero({}) {
 	const containerElStoreRegister = useDomStore(state => state?.containerElRegister);
 	const anchorElStoreRegister = useDomStore(state => state?.anchorElRegister);
 
+	function toggleRipple(bool) {
+		useCursorStore.setState({ isRippleZone: bool });
+	}
+
 	return (
 		<>
 			{/* <div className='absolute left-1/4 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
@@ -32,7 +36,7 @@ export default function Hero({}) {
 			<Menu />
 
 			<article
-				className={`w-full relative z-10 font-boxing opacity-0 pointer-events-none`}
+				className={`w-full relative z-10 font-boxing pointer-events-none opacity-0`}
 				ref={torsoElStoreRegister}>
 				{/* -------------------------------------------------------------------------- */
 				/*                                first page                                 */
@@ -772,10 +776,11 @@ export default function Hero({}) {
 						<div className='block flex-[1_0_100%] md:hidden'></div>
 
 						<div
-							className='border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_0rem_0rem] leading-[1] gap-40 md:gap-12'
-							ref={containerElStoreRegister}>
+							className='pointer-events-auto border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_0rem_0rem] leading-[1] gap-40 md:gap-12'
+							ref={containerElStoreRegister}
+							onPointerEnter={e => toggleRipple(false)}
+							onPointerLeave={e => toggleRipple(true)}>
 							<a
-								className='pointer-events-auto'
 								href='https://github.com/laynesquare/layne-chen-portfolio'
 								target='_blank'
 								title='Go to Layne Chen Portfolio ‘24 demo page'>
@@ -787,7 +792,6 @@ export default function Hero({}) {
 								</span>
 							</a>
 							<a
-								className='pointer-events-auto'
 								href='https://github.com/laynesquare/layne-chen-portfolio'
 								target='_blank'
 								title='Go to Layne Chen Portfolio ‘24 source code page'>
@@ -952,10 +956,11 @@ export default function Hero({}) {
 						/*                                    2st row right                            */
 						/* -------------------------------------------------------------------------- */}
 						<div
-							className='border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_0rem_0rem] leading-[1] gap-40 md:gap-12'
-							ref={containerElStoreRegister}>
+							className='pointer-events-auto border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_0rem_0rem] leading-[1] gap-40 md:gap-12'
+							ref={containerElStoreRegister}
+							onPointerEnter={e => toggleRipple(false)}
+							onPointerLeave={e => toggleRipple(true)}>
 							<a
-								className='pointer-events-auto'
 								href='https://laynesquare.github.io/share_your_memories'
 								target='_blank'
 								title='Go to Share Your Memories demo page'>
@@ -965,7 +970,6 @@ export default function Hero({}) {
 									ref={textElStoreRegister}>{`[ demo ]`}</span>
 							</a>
 							<a
-								className='pointer-events-auto'
 								href='https://github.com/laynesquare/share_your_memories'
 								target='_blank'
 								title='Go to Share Your Memories source code page'>
@@ -1107,10 +1111,11 @@ export default function Hero({}) {
 						/*                                    2st row right                            */
 						/* -------------------------------------------------------------------------- */}
 						<div
-							className='border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_9rem_0rem] leading-[1] gap-40 md:gap-12'
-							ref={el => containerElStoreRegister(el)}>
+							className='pointer-events-auto border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_9rem_0rem] leading-[1] gap-40 md:gap-12'
+							ref={el => containerElStoreRegister(el)}
+							onPointerEnter={e => toggleRipple(false)}
+							onPointerLeave={e => toggleRipple(true)}>
 							<a
-								className='pointer-events-auto'
 								href='https://laynesquare.github.io/learn_english_with_dictionary'
 								target='_blank'
 								title='Go to Learn English with Dictionary demo page'>
@@ -1120,7 +1125,6 @@ export default function Hero({}) {
 									ref={textElStoreRegister}>{`[ demo ]`}</span>
 							</a>
 							<a
-								className='pointer-events-auto'
 								href='https://github.com/laynesquare/learn_english_with_dictionary'
 								target='_blank'
 								title='Go to Learn English with Dictionary source code page'>
@@ -1151,9 +1155,11 @@ export default function Hero({}) {
 						</h4>
 					</div>
 					<div className='text-xl flex flex-[1] -translate-y-36 leading-none text-highlight flex-col justify-end items-start px-12 pb-12 md:flex-row md:justify-between md:items-end md:pb-0'>
-						<nav className='flex flex-col gap-12 md:gap-6'>
+						<nav
+							className='flex flex-col gap-12 md:gap-6 pointer-events-auto'
+							onPointerEnter={e => toggleRipple(false)}
+							onPointerLeave={e => toggleRipple(true)}>
 							<a
-								className='pointer-events-auto'
 								href='https://github.com/laynesquare'
 								target='_blank'
 								title='Go to Github'>
@@ -1163,7 +1169,6 @@ export default function Hero({}) {
 									data-font-highlight='button'>{`[ github ]`}</span>
 							</a>
 							<a
-								className='pointer-events-auto'
 								href='https://www.linkedin.com/in/laynechensquare'
 								target='_blank'
 								title='Go to Linkedin'>
@@ -1173,7 +1178,6 @@ export default function Hero({}) {
 									data-font-highlight='button'>{`[ linkedin ]`}</span>
 							</a>
 							<a
-								className='pointer-events-auto'
 								href='/frame/layne_res_all.pdf'
 								target='_blank'
 								title='Go to resume'>
@@ -1185,7 +1189,6 @@ export default function Hero({}) {
 								</span>
 							</a>
 							<a
-								className='pointer-events-auto'
 								href='mailto:laynechensquare@gmail.com'
 								title='Mail to laynechensquare@gmail.com'>
 								<span
@@ -1199,9 +1202,12 @@ export default function Hero({}) {
 								</span>
 							</a>
 						</nav>
-						<nav>
+						<nav
+							className='pointer-events-auto'
+							onPointerEnter={e => toggleRipple(false)}
+							onPointerLeave={e => toggleRipple(true)}>
 							<button
-								className='text-right mt-12 pointer-events-auto'
+								className='text-right mt-12 md:mt-0'
 								title='Back to top'
 								onClick={() => useNavStore.getState().lenisRef.current.lenis.scrollTo('#home')}>
 								<span
