@@ -27,10 +27,7 @@ export default function Home() {
 function PlatformMonitor() {
 	function updatePlatform() {
 		const isMobile = window.innerWidth < 768;
-
 		usePlatformStore.setState({ isMobile });
-
-		// usePlatformStore.setState({ isMobile });
 	}
 
 	useEffect(() => {
