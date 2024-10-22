@@ -5,8 +5,11 @@ import { Html, useProgress } from '@react-three/drei';
 import { useDomStore, useNavStore, usePlatformStore } from '@/store';
 import { useThree } from '@react-three/fiber';
 
-import previewShareYourMemories from '@/public/frame/project-preview-share-your-memories.jpg';
-import previewLearnEnglishDictionary from '@/public/frame/project-preview-learn-english-dictionary.jpg';
+import previewShareYourMemories from '@/public/frame/project-preview-share-your-memories.webp';
+import previewLearnEnglishDictionary from '@/public/frame/project-preview-learn-english-dictionary.webp';
+import previewLayneChenPortfolio from '@/public/frame/project-preview-layne-chen-portfolio-2024.webp';
+
+// import resumePdf from '@/public/frame/layne_res_all.pdf';
 
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -204,7 +207,7 @@ export default function Hero({}) {
 											<li>
 												<span
 													data-font-family='satoshi'
-													ref={textElStoreRegister}>{`Typescript (Javascript)`}</span>
+													ref={textElStoreRegister}>{`TypeScript (JavaScript)`}</span>
 											</li>
 											<li>
 												<span
@@ -659,11 +662,11 @@ export default function Hero({}) {
 								containerElStoreRegister(el);
 								anchorElStoreRegister(el);
 							}}
-							data-parallax='previewShareYourMemoriesTemp'
+							data-parallax='previewLayneChenPortfolio'
 							data-anchor='PROJECT'>
 							<Image
-								src={previewShareYourMemories}
-								alt=''
+								src={previewLayneChenPortfolio}
+								alt="Portfolio website header of Layne Chen, featuring a dynamic gold abstract 3D object in the center. A wavy green background covers the page. The name 'LAYNE CHEN' is displayed in large, bold, cream-colored text at the bottom. Navigation links such as 'GitHub', 'LinkedIn', and 'Resume' are positioned at the top alongside a hamburger menu. The text 'Front-end Developer' appears on the left, while 'Based in Taipei, Taiwan' is on the right."
 								className='frame-left-item-icon h-full w-full object-cover'
 							/>
 						</figure>
@@ -699,7 +702,7 @@ export default function Hero({}) {
 										<li>
 											<span
 												data-font-family='satoshi'
-												ref={textElStoreRegister}>{`Typescript`}</span>
+												ref={textElStoreRegister}>{`TypeScript`}</span>
 										</li>
 										<li>
 											<span
@@ -757,7 +760,7 @@ export default function Hero({}) {
 									<span
 										data-font-family='satoshi'
 										ref={textElStoreRegister}>
-										{`Showcases my work and expertise as a front-end developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for lightning-fast load times while improving crawlability for better SEO.`}
+										{`Showcases my work and expertise as a front-end developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for fast load times while improving crawlability for better SEO.`}
 									</span>
 								</p>
 							</div>
@@ -771,7 +774,11 @@ export default function Hero({}) {
 						<div
 							className='border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_0rem_0rem] leading-[1] gap-40 md:gap-12'
 							ref={containerElStoreRegister}>
-							<a href=''>
+							<a
+								className='pointer-events-auto'
+								href='https://github.com/laynesquare/layne-chen-portfolio'
+								target='_blank'
+								title='Go to Layne Chen Portfolio ‘24 demo page'>
 								<span
 									data-font-family='boxing'
 									data-font-highlight='button'
@@ -779,7 +786,11 @@ export default function Hero({}) {
 									{`[ demo ]`}
 								</span>
 							</a>
-							<a href=''>
+							<a
+								className='pointer-events-auto'
+								href='https://github.com/laynesquare/layne-chen-portfolio'
+								target='_blank'
+								title='Go to Layne Chen Portfolio ‘24 source code page'>
 								<span
 									data-font-highlight='button'
 									data-font-family='boxing'
@@ -841,7 +852,7 @@ export default function Hero({}) {
 										<li>
 											<span
 												data-font-family='satoshi'
-												ref={textElStoreRegister}>{`Javascript`}</span>
+												ref={textElStoreRegister}>{`JavaScript`}</span>
 										</li>
 										<li>
 											<span
@@ -946,13 +957,18 @@ export default function Hero({}) {
 							<a
 								className='pointer-events-auto'
 								href='https://laynesquare.github.io/share_your_memories'
-								target='_blank'>
+								target='_blank'
+								title='Go to Share Your Memories demo page'>
 								<span
 									data-font-highlight='button'
 									data-font-family='boxing'
 									ref={textElStoreRegister}>{`[ demo ]`}</span>
 							</a>
-							<a href=''>
+							<a
+								className='pointer-events-auto'
+								href='https://github.com/laynesquare/share_your_memories'
+								target='_blank'
+								title='Go to Share Your Memories source code page'>
 								<span
 									data-font-highlight='button'
 									data-font-family='boxing'
@@ -1012,7 +1028,7 @@ export default function Hero({}) {
 										<li>
 											<span
 												data-font-family='satoshi'
-												ref={textElStoreRegister}>{`Javascript`}</span>
+												ref={textElStoreRegister}>{`JavaScript`}</span>
 										</li>
 										<li>
 											<span
@@ -1092,16 +1108,22 @@ export default function Hero({}) {
 						/* -------------------------------------------------------------------------- */}
 						<div
 							className='border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_9rem_0rem] leading-[1] gap-40 md:gap-12'
-							ref={el => {
-								containerElStoreRegister(el);
-							}}>
-							<a href=''>
+							ref={el => containerElStoreRegister(el)}>
+							<a
+								className='pointer-events-auto'
+								href='https://laynesquare.github.io/learn_english_with_dictionary'
+								target='_blank'
+								title='Go to Learn English with Dictionary demo page'>
 								<span
 									data-font-highlight
 									data-font-family='boxing'
 									ref={textElStoreRegister}>{`[ demo ]`}</span>
 							</a>
-							<a href=''>
+							<a
+								className='pointer-events-auto'
+								href='https://github.com/laynesquare/learn_english_with_dictionary'
+								target='_blank'
+								title='Go to Learn English with Dictionary source code page'>
 								<span
 									data-font-highlight
 									data-font-family='boxing'
@@ -1130,19 +1152,31 @@ export default function Hero({}) {
 					</div>
 					<div className='text-xl flex flex-[1] -translate-y-36 leading-none text-highlight flex-col justify-end items-start px-12 pb-12 md:flex-row md:justify-between md:items-end md:pb-0'>
 						<nav className='flex flex-col gap-12 md:gap-6'>
-							<a href=''>
+							<a
+								className='pointer-events-auto'
+								href='https://github.com/laynesquare'
+								target='_blank'
+								title='Go to Github'>
 								<span
 									ref={textElStoreRegister}
 									data-font-family='boxing'
 									data-font-highlight='button'>{`[ github ]`}</span>
 							</a>
-							<a href=''>
+							<a
+								className='pointer-events-auto'
+								href='https://www.linkedin.com/in/laynechensquare'
+								target='_blank'
+								title='Go to Linkedin'>
 								<span
 									ref={textElStoreRegister}
 									data-font-family='boxing'
 									data-font-highlight='button'>{`[ linkedin ]`}</span>
 							</a>
-							<a href=''>
+							<a
+								className='pointer-events-auto'
+								href='/frame/layne_res_all.pdf'
+								target='_blank'
+								title='Go to resume'>
 								<span
 									ref={textElStoreRegister}
 									data-font-family='boxing'
@@ -1150,7 +1184,10 @@ export default function Hero({}) {
 									{`[ resume ]`}
 								</span>
 							</a>
-							<a href=''>
+							<a
+								className='pointer-events-auto'
+								href='mailto:laynechensquare@gmail.com'
+								title='Mail to laynechensquare@gmail.com'>
 								<span
 									ref={textElStoreRegister}
 									data-font-family='boxing'
@@ -1164,7 +1201,8 @@ export default function Hero({}) {
 						</nav>
 						<nav>
 							<button
-								className='text-right mt-12'
+								className='text-right mt-12 pointer-events-auto'
+								title='Back to top'
 								onClick={() => useNavStore.getState().lenisRef.current.lenis.scrollTo('#home')}>
 								<span
 									ref={textElStoreRegister}
@@ -1206,11 +1244,12 @@ function Menu() {
 			<nav
 				className='flex py-2 rounded-full items-center fixed text-lg z-30 min-w-max m-auto leading-none font-boxing backdrop-blur-lg backdrop-saturate-[250%] backdrop-hue-rotate-[9deg] border border-[#ffffff15] left-1/2 -translate-x-1/2 gap-[12px] top-[12px] pl-[16px] md:gap-6 md:top-6 md:pr-2 md:pl-12 min-h-16'
 				style={{ textShadow: `0 0 0px black` }}>
-				<a
-					href=''
+				<button
+					title='Go to home section'
+					onClick={() => useNavStore.getState().lenisRef.current.lenis.scrollTo('#home')}
 					className='w-max'>
 					<span>{`layne chen`}</span>
-				</a>
+				</button>
 
 				<div className={`border-r border-neutral min-h-[14px] h-7 hidden md:block`}></div>
 
@@ -1226,10 +1265,22 @@ function Menu() {
 				<div className={`border-r border-neutral min-h-[14px] h-7 hidden md:block`}></div>
 
 				<div className={`gap-4 self-stretch hidden md:flex`}>
-					<NavLinkBtn label={`[ github ]`} />
-					<NavLinkBtn label={`[ linkedin ]`} />
-					<NavLinkBtn label={`[ resume ]`} />
-					<NavLinkBtn label={`[ mail ]`} />
+					<NavLinkBtn
+						label={`github`}
+						href={`https://github.com/laynesquare`}
+					/>
+					<NavLinkBtn
+						label={`linkedin`}
+						href={`https://www.linkedin.com/in/laynechensquare`}
+					/>
+					<NavLinkBtn
+						label={`resume`}
+						href={`/frame/layne_res_all.pdf`}
+					/>
+					<NavLinkBtn
+						label={`mail`}
+						href={`mailto:laynechensquare@gmail.com`}
+					/>
 				</div>
 
 				<NavOpenBtn />
@@ -1250,8 +1301,9 @@ function OverlayNav() {
 			const tl = gsap.timeline();
 
 			if (isOpen) {
-				gsap.to(overlayNavRef.current, { opacity: 1, pointerEvents: 'auto', duration: 0.2, ease: 'sine.in' });
-				tl.to('[data-row="action"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' })
+				tl.to(overlayNavRef.current, { display: 'flex', pointerEvents: 'auto', duration: 0, ease: 'none' })
+					.to(overlayNavRef.current, { opacity: 1, duration: 0.2, ease: 'sine.in' }, '>')
+					.to('[data-row="action"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<')
 					.to('[data-row="home"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
 					.to('[data-row="about"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
 					.to('[data-row="skill"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
@@ -1259,17 +1311,17 @@ function OverlayNav() {
 					.to('[data-row="project"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
 					.to('[data-row="contact"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%')
 					.to('[data-row="mobile-decor"]', { x: 0, duration: 1, ease: 'elastic.out(0.75, 0.5)' }, '<5%');
-			}
-			if (!isOpen) {
-				gsap.to(overlayNavRef.current, { opacity: 0, pointerEvents: 'none', duration: 0.2, ease: 'sine.in' });
-				tl.to('[data-row="action"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' })
+			} else {
+				tl.to(overlayNavRef.current, { opacity: 0, pointerEvents: 'none', duration: 0.2, ease: 'sine.in' })
+					.to('[data-row="action"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<')
 					.to('[data-row="home"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
 					.to('[data-row="about"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
 					.to('[data-row="skill"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
 					.to('[data-row="experience"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
 					.to('[data-row="project"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
 					.to('[data-row="contact"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
-					.to('[data-row="mobile-decor"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%');
+					.to('[data-row="mobile-decor"]', { x: '100%', duration: 1, ease: 'elastic.out(0.4, 0.5)' }, '<5%')
+					.to(overlayNavRef.current, { display: 'none', duration: 0, ease: 'none' }, '<');
 			}
 		},
 		{ dependencies: [isOpen], scope: overlayNavRef },
@@ -1315,6 +1367,7 @@ function OverlayNav() {
 				data-row={`action`}>
 				<button
 					className='px-[max(1.5rem,24px)] border border-neutralContrast h-full flex flex-col justify-center items-center origin-center aspect-[4.5] w-full md:aspect-square md:rounded-full md:w-auto'
+					title='Close menu'
 					onClick={() => {
 						useNavStore.getState().lenisRef.current.lenis.start();
 						useNavStore.setState({ isOpen: false });
@@ -1329,11 +1382,23 @@ function OverlayNav() {
 						data-close-btm-bar></div>
 				</button>
 				<div className='flex items-center flex-wrap w-full gap-y-4 gap-x-8 md:gap-8'>
-					<OverlayNavLinkBtn label={`github`} />
-					<OverlayNavLinkBtn label={`linkedin`} />
+					<OverlayNavLinkBtn
+						label={`github`}
+						href={`https://github.com/laynesquare`}
+					/>
+					<OverlayNavLinkBtn
+						label={`linkedin`}
+						href={`https://www.linkedin.com/in/laynechensquare`}
+					/>
 					<div className='flex-[1_0_100%] block md:hidden'></div>
-					<OverlayNavLinkBtn label={`resume`} />
-					<OverlayNavLinkBtn label={`mail`} />
+					<OverlayNavLinkBtn
+						label={`resume`}
+						href={`/frame/layne_res_all.pdf`}
+					/>
+					<OverlayNavLinkBtn
+						label={`mail`}
+						href={`mailto:laynechensquare@gmail.com`}
+					/>
 				</div>
 			</div>
 
@@ -1397,7 +1462,7 @@ function OverlayNav() {
 	);
 }
 
-function OverlayNavLinkBtn({ label }) {
+function OverlayNavLinkBtn({ label, href }) {
 	const [isHover, setIsHover] = useState(false);
 	const pointerRef = useRef({ xPercent: 0, yPercent: 0 });
 	const btnRef = useRef(null);
@@ -1464,6 +1529,9 @@ function OverlayNavLinkBtn({ label }) {
 		<>
 			<a
 				ref={btnRef}
+				href={href}
+				target='_blank'
+				title={`Go to ${label.charAt(0).toUpperCase() + label.slice(1)}`}
 				onPointerEnter={e => handlePointerEnter(e)}
 				onPointerLeave={() => setIsHover(false)}
 				className='px-[max(2.25rem,2.25rem)] py-[max(0.875rem,14px)] text-2xl border border-neutralContrast bg-neutral h-[min-content] relative overflow-hidden cursor-pointer min-w-[96px] text-center flex-[1] md:flex-auto md:rounded-full'>
@@ -1587,7 +1655,9 @@ function OverlayNavLinkChapter({ chapter, label, width, justify, isDecor }) {
 				</span>
 
 				<a
+					role='button'
 					href={`#${label}`}
+					title={`Go to ${label} section`}
 					className='relative flex items-baseline self-stretch overflow-hidden'
 					onPointerEnter={() => setIsHover(true)}
 					onPointerLeave={() => setIsHover(false)}
@@ -1640,7 +1710,7 @@ function OverlayNavDecor({}) {
 	);
 }
 
-function NavLinkBtn({ label }) {
+function NavLinkBtn({ label, href }) {
 	const ctnRef = useRef(null);
 	const [isHover, setIsHover] = useState(false);
 
@@ -1674,20 +1744,22 @@ function NavLinkBtn({ label }) {
 	);
 	return (
 		<a
-			href=''
 			className='relative leading-none overflow-hidden min-w-max'
+			href={href}
+			target='_blank'
+			title={`Go to ${label.charAt(0).toUpperCase() + label.slice(1)}`}
 			onPointerEnter={() => setIsHover(true)}
 			onPointerLeave={() => setIsHover(false)}
 			ref={ctnRef}>
 			<span
 				data-nav-action
 				className={`h-full flex items-center`}>
-				{label}
+				{`[ ${label} ]`}
 			</span>
 			<span
 				data-nav-action-clone
 				className='absolute top-0 left-0 h-full flex items-center'>
-				{label}
+				{`[ ${label} ]`}{' '}
 			</span>
 		</a>
 	);
@@ -1727,6 +1799,7 @@ function NavOpenBtn() {
 	return (
 		<button
 			ref={ctnRef}
+			title='Open menu'
 			className='rounded-full aspect-square border border-neutral flex flex-col justify-center items-center p-[max(0.75rem,12px)] gap-[max(0.25rem,4px)]'
 			onClick={() => {
 				useNavStore.getState().lenisRef?.current?.lenis?.stop();
