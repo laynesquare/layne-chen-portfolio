@@ -60,6 +60,7 @@ const usePlatformStore = create(set => ({
 
 const useCursorStore = create(set => ({
 	isRippleZone: true,
+	isCustomCursor: true,
 }));
 
 export { useDomStore, useWebGlStore, useNavStore, usePlatformStore, useCursorStore };
