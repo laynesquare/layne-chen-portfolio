@@ -44,7 +44,7 @@ import { SceneProps } from '@/types';
 
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useWebGlStore } from '@/store';
+import { usePlatformStore, useWebGlStore } from '@/store';
 
 import Port from './Port';
 
@@ -98,12 +98,14 @@ function Disclose({ canvasRef }: DiscloseProps) {
 		() => {
 			if (isEntryAnimationDone) {
 				const tl = gsap.timeline();
-				tl.to(canvasRef.current, {
+				const canvasEl = canvasRef.current;
+
+				tl.to(canvasEl, {
 					duration: 1.5,
-					maskSize: '500%',
+					maskSize: `600vw`,
 					ease: 'none',
 				}).to(
-					canvasRef.current,
+					canvasEl,
 					{
 						duration: 0,
 						webkitMaskImage: 'none',
