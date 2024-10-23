@@ -33,35 +33,35 @@ export default function Home() {
 
 function Cursor() {
 	const cursorRef = useRef(null);
-	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0, cursor: 'none' });
+	const [mouse, setMouse] = useState({ x: 0, y: 0, cursor: 'none' });
 	const isEntryAnimationDone = useWebGlStore(state => state.isEntryAnimationDone);
 	const isCustomCursor = useCursorStore(state => state.isCustomCursor);
 
-	function updateMousePosition(e) {
-		setMousePosition({ x: e.clientX, y: e.clientY, cursor: getComputedStyle(e.target).cursor });
+	function updateMouse(e) {
+		setMouse({ x: e.clientX, y: e.clientY, cursor: window.getComputedStyle(e.target).cursor });
 	}
 
 	useEffect(() => {
-		window.addEventListener('mousemove', updateMousePosition);
-		return () => window.removeEventListener('mousemove', updateMousePosition);
+		window.addEventListener('mousemove', updateMouse);
+		return () => window.removeEventListener('mousemove', updateMouse);
 	}, []);
 
 	useGSAP(
 		() => {
 			if (isCustomCursor) {
-				const isPointer = mousePosition.cursor === 'pointer';
+				const isPointer = mouse.cursor === 'pointer';
 				gsap.to(cursorRef.current, {
-					top: mousePosition.y,
-					left: mousePosition.x,
+					top: mouse.y,
+					left: mouse.x,
 					duration: 0.4,
 					opacity: isEntryAnimationDone ? 1 : 0,
-					width: isPointer ? '96px' : '16px',
+					width: isPointer ? 96 : 16,
 					backdropFilter: isPointer ? `blur(0px) contrast(150%)` : `blur(96px) contrast(100%)`,
 					ease: 'power1.out',
 				});
 			}
 		},
-		{ dependencies: [mousePosition.x, mousePosition.y, mousePosition.cursor, isCustomCursor], scope: cursorRef },
+		{ dependencies: [mouse.x, mouse.y, mouse.cursor, isCustomCursor], scope: cursorRef },
 	);
 
 	return (
