@@ -125,7 +125,7 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 					key={i}
 					ref={el => (rippleRefs.current[i] = el)}
 					material={rippleMaterialRef.current.clone()}
-					position={[0, 0, 1]}
+					position={[0, 0, 3]}
 					rotation={[0, 0, 2 * Math.PI * Math.random()]}
 					geometry={rippleGeoRef.current}></mesh>,
 			);
@@ -144,14 +144,14 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 			vector.set(ndcX, ndcY, 0.5);
 			vector.unproject(camera);
 			vector.sub(camera.position).normalize();
-			const distance = (1 - camera.position.z) / vector.z;
+			const distance = (3 - camera.position.z) / vector.z;
 
 			const offsetX = Math.abs(preMousePos.current.x - event.clientX);
 			const offsetY = Math.abs(preMousePos.current.y - event.clientY);
 
 			const isRippleZone = useCursorStore.getState().isRippleZone;
 
-			if ((offsetX >= 0.45 || offsetY >= 0.45) && isRippleZone) {
+			if ((offsetX >= 0.5 || offsetY >= 0.5) && isRippleZone) {
 				rippleCurrIdx.current = (rippleCurrIdx.current + 1) % 25;
 				rippleRefs.current[rippleCurrIdx.current].material.visible = true;
 				rippleRefs.current[rippleCurrIdx.current].material.opacity = 1;
@@ -188,7 +188,7 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 		maskBufferMap['ABOUT'].buffer.setSize(baseResW / 2, baseResH / 2);
 		maskBufferMap['EXPERIENCE'].buffer.setSize(512, 512);
 
-		portRef.current.scale.set(viewport.width, viewport.height, 1);
+		portRef.current.scale.set(viewport.width * 1.005, viewport.height * 1.005, 1);
 
 		if (portMaterialRef.current) {
 			portMaterialRef.current.uniforms.uTime.value = elapsedTime;
