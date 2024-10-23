@@ -99,10 +99,12 @@ function Disclose({ canvasRef }: DiscloseProps) {
 			if (isEntryAnimationDone) {
 				const tl = gsap.timeline();
 				const canvasEl = canvasRef.current;
+				const maskFactor = window.innerWidth >= 1920 ? 1920 : window.innerWidth;
+				const duration = (maskFactor / 1920) * 1.5 + 0.2;
 
 				tl.to(canvasEl, {
-					duration: 1.5,
-					maskSize: `600vw`,
+					duration,
+					maskSize: `500%`,
 					ease: 'none',
 				}).to(
 					canvasEl,
@@ -110,6 +112,7 @@ function Disclose({ canvasRef }: DiscloseProps) {
 						duration: 0,
 						webkitMaskImage: 'none',
 						maskImage: 'none',
+						ease: 'none',
 					},
 					'>',
 				);

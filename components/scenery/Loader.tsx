@@ -18,9 +18,10 @@ export default function Loader() {
 			if (isLoaded) {
 				const tl = gsap.timeline();
 				tl.to('[data-intro-container]', {
+					delay: 0.3,
 					rotate: 180,
 					scale: 20,
-					duration: 0.65,
+					duration: 0.7,
 					ease: 'none',
 				})
 					.to(
@@ -36,24 +37,23 @@ export default function Loader() {
 					.to(
 						loaderRef.current,
 						{
-							display: 'none',
 							duration: 0,
 							ease: 'none',
+							display: 'none',
 							onComplete: () => useWebGlStore.setState({ isEntryAnimationDone: true }),
 						},
 						'>',
 					);
 			}
 		},
-		{ dependencies: [isLoaded] },
+		{ dependencies: [isLoaded], scope: loaderRef },
 	);
 
 	return (
 		<>
 			<div
-				id='loader-ctn'
 				ref={loaderRef}
-				className={`z-40 fixed top-0 left-0 w-lvw h-lvh bg-primary text-neutral font-boxing leading-none`}>
+				className={`z-40 fixed top-0 left-0 w-lvw h-lvh bg-primary text-neutral font-boxing leading-none cursor-progress`}>
 				<div
 					data-intro-container
 					className='h-full w-full whitespace-pre-line relative'
