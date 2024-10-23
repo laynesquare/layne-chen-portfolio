@@ -91,6 +91,11 @@ body {
 	-ms-overflow-style: none;
 }
 
+/* safari fix */
+a {
+	cursor: pointer;
+}
+
 html.lenis,
 html.lenis body {
 	height: auto;
