@@ -100,7 +100,7 @@ vec3 deformationCurve(vec3 position, vec2 uv) {
     // position.y += sin(uv.x * PI) * abs(uScrollVelocity) * sign(uScrollVelocity) * 0.005;
     
     // - Add  wave to the y-axis based on uTime and position
-    position.z += sin(position.x * 10.0 + uTime * 3.0) * 0.01;
+    position.z += sin(position.x * 20.0 + uTime * 3.0) * 0.05;
     // position.z -= sin(uv.x * PI) * 0.5;
     // position.z += abs(uScrollVelocity) * 0.01;
 
