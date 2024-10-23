@@ -161,4 +161,8 @@ body::-webkit-scrollbar,
 		touch-action: none;
 		pointer-events: none;
 	}
+
+	#loader-ctn {
+		cursor: progress;
+	}
 }

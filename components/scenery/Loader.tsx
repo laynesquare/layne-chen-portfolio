@@ -2,15 +2,16 @@ import { Html, useProgress } from '@react-three/drei';
 import React, { LegacyRef, useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { lerp } from 'three/src/math/MathUtils.js';
 
 import { useWebGlStore } from '@/store';
 
 gsap.registerPlugin(useGSAP);
 
 export default function Loader() {
-	const [item, progress] = useProgress(state => [state.item, state.progress]);
 	const isLoaded = useWebGlStore(state => state.isLoaded);
 	const loaderRef = useRef(null);
+	const [item, progress] = useProgress(state => [state.item, state.progress]);
 
 	useGSAP(
 		() => {
@@ -50,8 +51,9 @@ export default function Loader() {
 	return (
 		<>
 			<div
+				id='loader-ctn'
 				ref={loaderRef}
-				className={`z-[100] fixed top-0 left-0 w-lvw h-lvh bg-primary text-neutral font-boxing leading-none`}>
+				className={`z-40 fixed top-0 left-0 w-lvw h-lvh bg-primary text-neutral font-boxing leading-none`}>
 				<div
 					data-intro-container
 					className='h-full w-full whitespace-pre-line relative'
