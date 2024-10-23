@@ -1,15 +1,11 @@
 import React, { useEffect, useRef, useState, MouseEvent } from 'react';
 import Image from 'next/image';
-import { Html, useProgress } from '@react-three/drei';
 
 import { useDomStore, useNavStore, usePlatformStore, useCursorStore } from '@/store';
-import { useThree } from '@react-three/fiber';
 
 import previewShareYourMemories from '@/public/frame/project-preview-share-your-memories.webp';
 import previewLearnEnglishDictionary from '@/public/frame/project-preview-learn-english-dictionary.webp';
 import previewLayneChenPortfolio from '@/public/frame/project-preview-layne-chen-portfolio-2024.webp';
-
-// import resumePdf from '@/public/frame/layne_res_all.pdf';
 
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -17,8 +13,6 @@ import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(useGSAP);
 
 export default function Hero({}) {
-	const [isVisible, setIsVisible] = useState(true);
-
 	const textElStoreRegister = useDomStore(state => state?.textElRegister);
 	const torsoElStoreRegister = useDomStore(state => state?.torsoElRegister);
 	const containerElStoreRegister = useDomStore(state => state?.containerElRegister);
@@ -30,11 +24,7 @@ export default function Hero({}) {
 
 	return (
 		<>
-			{/* <div className='absolute left-1/4 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
-			{/* <div className='absolute left-1/2 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
-			{/* <div className='absolute left-3/4 border-r border-stone-800 mix-blend-color-dodge h-full z-10'></div> */}
 			<Menu />
-
 			<article
 				className={`w-full relative z-10 font-boxing pointer-events-none opacity-0`}
 				ref={torsoElStoreRegister}>
@@ -1369,7 +1359,7 @@ function OverlayNav() {
 			data-lenis-prevent
 			ref={overlayNavRef}>
 			<div
-				className={`bg-primary border border-primary text-4xl flex-[2.5] flex px-12 pt-12 pb-32 items-center gap-12 w-full justify-between flex-col md:w-[max-content] md:flex-row md:py-6 md:gap-20`}
+				className={`bg-primary border border-primary text-4xl flex-[2.5] flex px-12 pt-12 pb-32 items-center gap-12 w-full justify-between flex-col md:w-[75rem] md:flex-row md:py-6 md:gap-20`}
 				data-row={`action`}>
 				<button
 					className='px-[max(1.5rem,24px)] border border-neutralContrast h-full flex flex-col justify-center items-center origin-center aspect-[4.5] w-full md:aspect-square md:rounded-full md:w-auto'
@@ -1540,7 +1530,7 @@ function OverlayNavLinkBtn({ label, href }) {
 				title={`Go to ${label.charAt(0).toUpperCase() + label.slice(1)}`}
 				onPointerEnter={e => handlePointerEnter(e)}
 				onPointerLeave={() => setIsHover(false)}
-				className='px-[max(2.25rem,2.25rem)] py-[max(0.875rem,14px)] text-2xl border border-neutralContrast bg-neutral h-[min-content] relative overflow-hidden cursor-pointer min-w-[96px] text-center flex-[1] md:flex-auto md:rounded-full'>
+				className='px-[max(2.25rem,2.25rem)] py-[max(0.875rem,14px)] text-2xl border border-neutralContrast bg-neutral h-[min-content] relative overflow-hidden cursor-pointer min-w-[96px] text-center flex-[1] md:flex-auto'>
 				<span
 					ref={flairRef}
 					className={`absolute top-0 left-0 bottom-0 right-0 pointer-events-none scale-0 origin-top-left 
