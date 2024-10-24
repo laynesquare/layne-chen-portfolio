@@ -1,31 +1,25 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { MeshTransmissionMaterial, shaderMaterial, useFBO, useScroll } from '@react-three/drei';
-import { createPortal, useFrame, useThree, extend, useLoader, ThreeElements } from '@react-three/fiber';
+import { useFBO } from '@react-three/drei';
+import { createPortal, useFrame, useThree, useLoader } from '@react-three/fiber';
 import {
 	GLSL3,
 	Scene,
 	ShaderMaterial,
 	TextureLoader,
 	Vector2,
-	ACESFilmicToneMapping,
-	Color,
 	MeshBasicMaterial,
 	Vector3,
 	LinearFilter,
 	RGBAFormat,
-	UnsignedShort4444Type,
 	NearestFilter,
-	RGBFormat,
 	UnsignedByteType,
-	HalfFloatType,
 	PlaneGeometry,
 } from 'three';
-import { easing } from 'maath';
 
 import vertexShader from '@/shaders/animated-scroll-warp/vertex';
 import fragmentShader from '@/shaders/animated-scroll-warp/fragment';
 
-import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
+import { useLenis } from '@studio-freight/react-lenis';
 
 import { lerp } from 'three/src/math/MathUtils.js';
 
@@ -94,7 +88,7 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 	const portMaterialRef = useRef(
 		new ShaderMaterial({
 			uniforms: {
-				uResolution: { value: new Vector2(0, 0) },
+				// uResolution: { value: new Vector2(0, 0) },
 				uTime: { value: 0 },
 				uCursor: { value: new Vector2(0.5, 0.5) },
 				uScrollVelocity: { value: 0 },
@@ -175,24 +169,23 @@ export default memo(function Ripple({ children, damping = 0.15, ...props }) {
 
 	const maskBufferType = ['ABOUT', 'SKILL', 'EXPERIENCE'];
 
-	useFrame(({ clock, gl, camera, scene, size, viewport }, delta) => {
-		const elapsedTime = clock.getElapsedTime();
+	useFrame(({ clock, gl, camera, scene, size, viewport, performance, setFrameloop }, delta) => {
 		const isNavOpen = useNavStore.getState().isOpen;
 		const isMobile = usePlatformStore.getState().isMobile;
 		const regression = isNavOpen ? 1 : 1;
-		const dynamicDpr = isMobile ? viewport.dpr : 1;
+		const dynamicDpr = isMobile ? Math.max(Math.min(window.devicePixelRatio, 2.5), 2) : 1.1;
+
 		const baseResW = size.width * dynamicDpr * regression;
 		const baseResH = size.height * dynamicDpr * regression;
 		portBuffer.setSize(baseResW, baseResH);
-		translucentBuffer.current.setSize(baseResW / 3, baseResH / 3);
+		translucentBuffer.current.setSize(baseResW / 2, baseResH / 2);
 		maskBufferMap['ABOUT'].buffer.setSize(baseResW / 2, baseResH / 2);
 		maskBufferMap['EXPERIENCE'].buffer.setSize(512, 512);
 
 		portRef.current.scale.set(viewport.width * 1.005, viewport.height * 1.005, 1);
 
 		if (portMaterialRef.current) {
-			portMaterialRef.current.uniforms.uTime.value = elapsedTime;
-			portMaterialRef.current.uniforms.uResolution.value.set(size.width, size.height);
+			portMaterialRef.current.uniforms.uTime.value = clock.elapsedTime;
 			const currentVelocity = portMaterialRef.current.uniforms.uScrollVelocity.value;
 			const targetVelocity = velocityRef.current;
 			const smoothingFactor = 0.025;
