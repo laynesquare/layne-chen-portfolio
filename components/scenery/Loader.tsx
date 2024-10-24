@@ -10,15 +10,15 @@ gsap.registerPlugin(useGSAP);
 
 export default function Loader() {
 	const isLoaded = useWebGlStore(state => state.isLoaded);
-	const loaderRef = useRef(null);
 	const [item, progress] = useProgress(state => [state.item, state.progress]);
+	const loaderRef = useRef(null);
 
 	useGSAP(
 		() => {
 			if (isLoaded) {
 				const tl = gsap.timeline();
 				tl.to('[data-intro-container]', {
-					delay: 0.3,
+					delay: 0.25,
 					rotate: 180,
 					scale: 20,
 					duration: 0.7,
@@ -56,8 +56,8 @@ export default function Loader() {
 				className={`z-40 fixed top-0 left-0 w-lvw h-lvh bg-primary text-neutral font-boxing leading-none cursor-progress`}>
 				<div
 					data-intro-container
-					className='h-full w-full whitespace-pre-line relative'
-					style={{ transform: `translate(-6rem, -6.5rem)` }}>
+					className='h-full w-full whitespace-pre-line relative will-change-transform'
+					style={{ transform: `translate3d(-6rem, -6.5rem, 0)` }}>
 					<p
 						data-intro-item
 						className='text-2xl text-right absolute justify-center items-center h-full w-full hidden md:flex'
