@@ -163,7 +163,7 @@ export default memo(function Model() {
 		uIsNormalColor: { value: 0 },
 	});
 
-	useFrame(({ clock, scene, gl, raycaster }) => {
+	useFrame(({ clock, scene, gl, raycaster }, delta) => {
 		const elapsedTime = clock.getElapsedTime();
 
 		const inViewEl = [...useDomStore.getState().anchorEls].findLast(el => ScrollTrigger.isInViewport(el, 0.3));
@@ -185,11 +185,7 @@ export default memo(function Model() {
 		ballMaskRef.current?.scale.set(...(isMobile ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]));
 		ballClonedMaskRef.current?.scale.set(...(isMobile ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]));
 
-		// ballMaskRef.current.scale()
-		// ballCloneRef.current?.position.copy(ballRef.current.position);
-		// ballClonedMaskRef.current?.position.copy(ballRef.current.position);
-
-		ballMaterialUpdate(elapsedTime);
+		ballMaterialUpdate(delta);
 	});
 
 	useLenis(event => {
@@ -244,8 +240,8 @@ export default memo(function Model() {
 		scene.add(ballCloneRef.current);
 	}, []);
 
-	function ballMaterialUpdate(elapsedTime: number) {
-		ballRef.current.material.uniforms.uTime.value = elapsedTime;
+	function ballMaterialUpdate(delta: number) {
+		ballRef.current.material.uniforms.uTime.value += delta;
 	}
 
 	function calcFactorCamZ(zPosition: number) {
