@@ -19,6 +19,7 @@ import {
 	Sparkles,
 	OrthographicCamera,
 	useGLTF,
+	PerformanceMonitor,
 } from '@react-three/drei';
 import {
 	EffectComposer,
@@ -59,13 +60,14 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 			<Canvas
 				ref={canvasRef}
 				gl={{
-					antialias: true,
+					antialias: false,
 					alpha: false,
 					stencil: false,
 					depth: false,
 					powerPreference: 'high-performance',
 					premultipliedAlpha: false,
 					preserveDrawingBuffer: false,
+					precision: 'lowp',
 				}}
 				linear
 				className='bg-neutral'
@@ -76,7 +78,7 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 					width: '100lvw',
 					height: '100lvh',
 				}}
-				dpr={[1, 1.5]}
+				dpr={[1, 1]}
 				camera={{ position: [0, 0, 8], fov: 30 }}
 				flat={true}
 				eventSource={wrapperRef?.current}>
