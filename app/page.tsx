@@ -23,7 +23,9 @@ export default function Home() {
 			<Cursor />
 			<Loader />
 			<PlatformMonitor />
-			<main ref={wrapperRef}>
+			<main
+				ref={wrapperRef}
+				className='isolate'>
 				<Hero />
 				<Scene wrapperRef={wrapperRef} />
 			</main>
@@ -51,12 +53,12 @@ function Cursor() {
 			if (isCustomCursor) {
 				const isPointer = mouse.cursor === 'pointer';
 				gsap.to(cursorRef.current, {
-					top: mouse.y,
-					left: mouse.x,
-					duration: 0.4,
+					translateY: mouse.y,
+					translateX: mouse.x,
+					duration: 0.45,
 					opacity: isEntryAnimationDone ? 1 : 0,
 					width: isPointer ? 96 : 16,
-					backdropFilter: isPointer ? `blur(0px) contrast(150%)` : `blur(96px) contrast(100%)`,
+					backdropFilter: isPointer ? `blur(0px) contrast(150%)` : `blur(36px) contrast(100%)`,
 					ease: 'power1.out',
 				});
 			}
