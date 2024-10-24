@@ -105,9 +105,9 @@ const Banner = memo(function Banner() {
 		}),
 	);
 
-	useFrame(({ scene, camera, gl, clock, pointer }) => {
+	useFrame(({ scene, camera, gl, clock, pointer }, delta) => {
 		if (materialAcidBg.current) {
-			materialAcidBg.current.uniforms.uTime.value = clock.elapsedTime;
+			materialAcidBg.current.uniforms.uTime.value += delta;
 		}
 
 		const containerMaterialParallaxRefsKeys = Object.keys(containerMaterialParallaxRefs.current);
@@ -123,7 +123,7 @@ const Banner = memo(function Banner() {
 			const material = containerMaterialParallaxRefs.current[key];
 			const inView = ScrollTrigger.isInViewport(material.userData.el);
 			containerMaterialParallaxRefs.current[key].uniforms.uIsInView.value = +!!inView;
-			containerMaterialParallaxRefs.current[key].uniforms.uMouse.value.lerp(target, 0.025);
+			containerMaterialParallaxRefs.current[key].uniforms.uMouse.value.lerp(target, delta);
 		});
 	});
 
@@ -273,7 +273,10 @@ const Banner = memo(function Banner() {
 						material = containerMeshMaterial.current.clone();
 					}
 
-					const dynamicDpr = usePlatformStore.getState().isMobile ? dpr : 1;
+					const dynamicDpr = usePlatformStore.getState().isMobile
+						? Math.max(Math.min(window.devicePixelRatio, 2.5), 2)
+						: 1.1;
+					// const dynamicDpr = useWebGlStore.getState().dynamicDpr;
 
 					material.uniforms.uTexture.value = previewMap[parallax] || null;
 					material.uniforms.uResolution.value.set(width, height);
