@@ -238,6 +238,11 @@ export default function Hero({}) {
 											<li>
 												<span
 													data-font-family='satoshi'
+													ref={textElStoreRegister}>{`Next.js`}</span>
+											</li>
+											<li>
+												<span
+													data-font-family='satoshi'
 													ref={textElStoreRegister}>{`React Router`}</span>
 											</li>
 											<li>
@@ -246,11 +251,6 @@ export default function Hero({}) {
 													ref={textElStoreRegister}>
 													{`React Redux`}
 												</span>
-											</li>
-											<li>
-												<span
-													data-font-family='satoshi'
-													ref={textElStoreRegister}>{`Next.js`}</span>
 											</li>
 											<li>
 												<span
@@ -1496,7 +1496,7 @@ function OverlayNavLinkBtn({ label, href }) {
 			};
 
 			const configScale = {
-				scale: isHover ? 1 : 0,
+				scale: isHover ? 1.1 : 0,
 				duration: 0.25,
 				ease,
 			};
@@ -1533,7 +1533,7 @@ function OverlayNavLinkBtn({ label, href }) {
 				className='px-[max(2.25rem,2.25rem)] py-[max(0.875rem,14px)] text-2xl border border-neutralContrast bg-neutral h-[min-content] relative overflow-hidden cursor-pointer min-w-[96px] text-center flex-[1] md:flex-auto'>
 				<span
 					ref={flairRef}
-					className={`absolute top-0 left-0 bottom-0 right-0 pointer-events-none scale-0 origin-top-left 
+					className={`absolute top-0 left-0 bottom-0 right-0 pointer-events-none scale-0 origin-top-left will-change-transform 
 					before:content-[''] before:absolute before:top-0 before:bottom-0 before:right-0 before:left-0 before:w-[200%] before:aspect-square 
 					before:bg-[#e8fe25] before:border-2 before:border-neutralContrast before:rounded-full 
 					before:-translate-x-1/2 before:-translate-y-1/2 before:pointer-events-none`}></span>
@@ -1628,12 +1628,12 @@ function OverlayNavLinkChapter({ chapter, label, width, justify, isDecor }) {
 	return (
 		<>
 			<div
-				className={`bg-primary border border-primary flex-[1] flex items-center px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)] w-full justify-end ${width} ${justify}`}
+				className={`bg-primary border border-primary flex-[1] flex items-center px-12 py-4 shadow-[0px_2px_0px_0px_var(--color-bg-primary)] w-full justify-end will-change-[width] ${width} ${justify}`}
 				data-row={label}
 				ref={ctnRef}>
 				{isDecor && !isMobile && <OverlayNavDecor />}
 				<span
-					className='aspect-square md:w-[4rem] w-[8rem]'
+					className='aspect-square md:w-[4rem] w-[8rem] will-change-[margin]'
 					data-chapter-arrow-container>
 					<svg
 						className={`w-full h-full`}
@@ -1660,7 +1660,7 @@ function OverlayNavLinkChapter({ chapter, label, width, justify, isDecor }) {
 					onClick={handleClick}>
 					<span
 						data-chapter-label
-						className='text-[max(12.5rem,36px)] md:text-[max(6rem,36px)] leading-none mr-8 h-full flex items-center'>
+						className='text-[max(12.5rem,36px)] md:text-[max(6rem,36px)] leading-none mr-8 h-full flex items-center will-change-transform'>
 						{label}
 					</span>
 					<span
@@ -1670,7 +1670,7 @@ function OverlayNavLinkChapter({ chapter, label, width, justify, isDecor }) {
 					</span>
 					<span
 						data-chapter-label-clone
-						className='text-[max(12.5rem,36px)] md:text-[max(6rem,36px)] leading-none absolute top-0 left-0 w-full h-full flex items-center pointer-events-none underline'>
+						className='text-[max(12.5rem,36px)] md:text-[max(6rem,36px)] leading-none absolute top-0 left-0 w-full h-full flex items-center pointer-events-none underline will-change-transform'>
 						{label}
 					</span>
 				</a>
