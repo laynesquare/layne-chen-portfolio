@@ -3,7 +3,7 @@ precision lowp float;
 precision lowp int;
 
 float PI = 3.141592653589793;
-uniform vec2 uResolution; // in pixel
+// uniform vec2 uResolution; // in pixel
 uniform float uTime; // in s
 uniform vec2 uCursor; // 0 (left) 0 (top) / 1 (right) 1 (bottom)
 uniform float uScrollVelocity; // - (scroll up) / + (scroll down)
