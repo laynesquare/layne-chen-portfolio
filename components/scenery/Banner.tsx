@@ -1,6 +1,16 @@
 import { extend, useFrame, useLoader, useThree } from '@react-three/fiber';
 import React, { useRef, useEffect, useMemo, useState, useCallback, memo } from 'react';
-import { Color, MeshBasicMaterial, ShaderMaterial, TextureLoader, Vector2, Vector4 } from 'three';
+import {
+	Color,
+	FrontSide,
+	MeshBasicMaterial,
+	NoBlending,
+	PlaneGeometry,
+	ShaderMaterial,
+	TextureLoader,
+	Vector2,
+	Vector4,
+} from 'three';
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line, useGLTF } from '@react-three/drei';
 
@@ -33,6 +43,7 @@ const Banner = memo(function Banner() {
 	const torsoGroupRef = useRef(null);
 	const torsoMeshRatio = 1 - viewport.factor / calcFactorCamZ(0);
 
+	const planeGeoRef = useRef(new PlaneGeometry(1, 1, 1, 1));
 	const containerGroupRef = useRef(null);
 	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(2.9);
 	const containerMaterialParallaxRefs = useRef({
@@ -76,18 +87,20 @@ const Banner = memo(function Banner() {
 	const materialDomText = useRef(
 		new MeshBasicMaterial({
 			color: new Color('#FFFFF0'),
-			dithering: true,
 			depthWrite: false,
 			depthTest: false,
+			side: FrontSide,
+			// blending: NoBlending,
 		}),
 	);
 
 	const materialDomTextHighlight = useRef(
 		new MeshBasicMaterial({
 			color: new Color('#FAFF00'),
-			dithering: true,
 			depthWrite: false,
 			depthTest: false,
+			side: FrontSide,
+			// blending: NoBlending,
 		}),
 	);
 
@@ -102,6 +115,8 @@ const Banner = memo(function Banner() {
 			fragmentShader: fragmentShaderAcidBg,
 			depthWrite: false,
 			depthTest: false,
+			side: FrontSide,
+			// blending: NoBlending,
 		}),
 	);
 
@@ -157,6 +172,8 @@ const Banner = memo(function Banner() {
 			depthWrite: false,
 			depthTest: false,
 			stencilWrite: false,
+			side: FrontSide,
+			// blending: NoBlending,
 		}),
 	);
 
@@ -177,9 +194,8 @@ const Banner = memo(function Banner() {
 			vertexShader: vertexShaderParallaxDepth,
 			fragmentShader: fragmentShaderParallaxDepth,
 			transparent: true,
-			// depthWrite: false,
-			// depthTest: false,
-			// stencilWrite: false,
+			side: FrontSide,
+			// blending: NoBlending,
 		}),
 	);
 
@@ -264,6 +280,7 @@ const Banner = memo(function Banner() {
 					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
 					let material;
+					let geo = planeGeoRef.current.clone();
 
 					if (parallax) {
 						material = containerMeshParallaxMaterial.current.clone();
@@ -275,7 +292,9 @@ const Banner = memo(function Banner() {
 
 					const dynamicDpr = usePlatformStore.getState().isMobile
 						? Math.max(Math.min(window.devicePixelRatio, 2.5), 2)
-						: 1.1;
+						: window.devicePixelRatio > 1
+						? 1
+						: 1.2;
 					// const dynamicDpr = useWebGlStore.getState().dynamicDpr;
 
 					material.uniforms.uTexture.value = previewMap[parallax] || null;
@@ -284,7 +303,8 @@ const Banner = memo(function Banner() {
 					material.uniforms.uMouse.value.set(0, 0);
 					material.uniforms.uAnchor.value = +!!anchor;
 					material.uniforms.uHeatMap.value = 0;
-					material.uniforms.uMaskTexture.value = null;
+					material.uniforms.uMaskTexture.value =
+						useWebGlStore.getState().maskBufferMap?.[anchor]?.buffer.texture || null;
 					material.uniforms.uMaskResolution.value.set(size.width * dynamicDpr, size.height * dynamicDpr);
 					material.uniforms.uTranslucentMaskTexture.value =
 						useWebGlStore.getState().shareTranslucentBuffer?.texture || null;
@@ -294,19 +314,18 @@ const Banner = memo(function Banner() {
 							key={idx}
 							name={anchor}
 							ref={el => {
-								if (el) {
-									if (!anchor && !parallax) {
-										containerTranslucentMaskedMeshesRef.current.add(el);
-									} else if (anchor) {
-										containerMaskedMeshesRef.current.add(el);
-									}
+								if (!el) return;
+								if (!anchor && !parallax) {
+									containerTranslucentMaskedMeshesRef.current.add(el);
+								} else if (anchor) {
+									containerMaskedMeshesRef.current.add(el);
 								}
 							}}
 							position={[x, y, z]}
 							userData={{ dataset: el.dataset, el }}
-							material={material}>
-							<planeGeometry args={[(width / factor) * ratio, (height / factor) * ratio, 1, 1]} />
-						</mesh>
+							material={material}
+							geometry={geo}
+							scale={[(width / factor) * ratio, (height / factor) * ratio, 1]}></mesh>
 					);
 				})}
 			</group>
@@ -326,9 +345,8 @@ const Banner = memo(function Banner() {
 							((useDomStore.getState().torsoEl.offsetHeight / viewport.factor) * torsoMeshRatio) / 2,
 						0,
 					]}
-					material={materialAcidBg.current}>
-					<planeGeometry args={[1, 1, 1, 1]} />
-				</mesh>
+					material={materialAcidBg.current}
+					geometry={planeGeoRef.current.clone()}></mesh>
 			</group>
 		</>
 	);
