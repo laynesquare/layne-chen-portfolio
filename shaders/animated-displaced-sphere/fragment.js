@@ -7,14 +7,20 @@ uniform vec3 uColor;
 uniform float uIsNormalColor;
 
 void main() {
-    vec3 color = uColor; // Default to uniform color
-
-    if (uIsNormalColor == 1.0) {
-        vec3 nv_color = normalize(vNormal) * 0.5 + 0.5; // Normal vector color
-        color = nv_color; // Use normal color when the condition is true
-    }
+    vec3 color = uColor;
+    float isNormalColorFactor = step(0.5, uIsNormalColor);
+    vec3 finalColor = mix(color, normalize(vNormal) * 0.5 + 0.5, isNormalColorFactor);
 
     color *= vPattern;
-    csm_DiffuseColor = vec4(color, 1.0);
+    csm_DiffuseColor = vec4(finalColor, 1.0);
 }
 `;
+
+// void main() {
+//     vec3 color = uColor;
+//     float isNormalColorFactor = step(0.5, uIsNormalColor);
+//     vec3 finalColor = mix(color, normalize(vNormal) * 0.5 + 0.5, isNormalColorFactor);
+
+//     color *= vPattern;
+//     csm_DiffuseColor = vec4(finalColor, 1.0);
+// }

@@ -22,22 +22,21 @@ vec3 getHeatMapColor(float value) {
     // Clamp the value between 0.0 and 1.0
     value = clamp(value, 0.0, 1.0);
 
-    // Define color stops
-    vec3 blue = vec3(0.0, 0.0, 1.0);
-    vec3 cyan = vec3(0.0, 1.0, 1.0);
-    vec3 green = vec3(0.0, 1.0, 0.0);
-    vec3 yellow = vec3(1.0, 1.0, 0.0);
-    vec3 red = vec3(1.0, 0.0, 0.0);
+    // Define color stops as an array of vec3
+    vec3 colors[5];
+    colors[0] = vec3(0.0, 0.0, 1.0);  // Blue
+    colors[1] = vec3(0.0, 1.0, 1.0);  // Cyan
+    colors[2] = vec3(0.0, 1.0, 0.0);  // Green
+    colors[3] = vec3(1.0, 1.0, 0.0);  // Yellow
+    colors[4] = vec3(1.0, 0.0, 0.0);  // Red
 
-    if (value < 0.25) {
-        return mix(blue, cyan, value / 0.25);
-    } else if (value < 0.5) {
-        return mix(cyan, green, (value - 0.25) / 0.25);
-    } else if (value < 0.75) {
-        return mix(green, yellow, (value - 0.5) / 0.25);
-    } else {
-        return mix(yellow, red, (value - 0.75) / 0.25);
-    }
+    // Compute the segment index and local interpolation value
+    float scaledValue = value * 4.0;  // Scale to [0, 4] range
+    float idx = floor(scaledValue);   // Determine the segment index
+    float t = fract(scaledValue);     // Get the local interpolation value
+
+    // Blend between the two nearest colors
+    return mix(colors[int(idx)], colors[int(idx) + 1], t);
 }
 
 void main() {
@@ -48,7 +47,7 @@ void main() {
 
     float distance = roundedBoxSDF(centerPosition, size, uRadii);
 
-    // Smooth alpha for the border and the fill
+    // - Smooth alpha for the border and the fill
     float smoothedAlpha = 1.0 - smoothstep(0.0, 1.0, distance);
 
     // - Colors
@@ -64,22 +63,22 @@ void main() {
     float borderAlpha = 0.5;
 
     // - finalize texture
-    if (uAnchor == 1.0) {
-        vec4 maskColor = texture2D(uMaskTexture, maskUv);
+    vec4 translucentMaskColor = texture2D(uTranslucentMaskTexture, maskUv);
 
-        if (uHeatMap == 1.0) {
-            float scalar = maskColor.b;
-            fillColor = getHeatMapColor(scalar);
-            fillAlpha = 1.0;
-        } else {
-            fillColor = maskColor.rgb;
-            fillAlpha = 1.0;
-        }
-    } else {
-        vec4 translucentMaskColor = texture2D(uTranslucentMaskTexture, maskUv);
-        fillColor = translucentMaskColor.rgb;
-        fillAlpha = 1.0;
-    }
+    // - Use step() to create a float value (1.0 or 0.0) based on uAnchor
+    float anchorFactor = step(0.5, uAnchor);
+
+    // - Blend between maskColor and translucentMaskColor based on anchorFactor
+    vec3 selectedColor = mix(translucentMaskColor.rgb, maskColor.rgb, anchorFactor);
+
+    // - Use step() to check if uHeatMap is enabled
+    float heatMapFactor = step(0.5, uHeatMap);
+
+    // - Get the heatmap color if heatMapFactor is 1.0, otherwise use the selected color
+    fillColor = mix(selectedColor, getHeatMapColor(maskColor.b), heatMapFactor);
+
+    // - Set the alpha to 1.0 for both cases
+    fillAlpha = 1.0;
 
     // - Mix the fill and border colors based on the distance
     vec3 color = mix(fillColor, borderColor, smoothstep(-borderWidth, 0.0, distance));

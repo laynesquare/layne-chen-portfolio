@@ -29,20 +29,33 @@ void main() {
     vec2 deltaTexCoords = uMouse * parallaxScale / numLayers;
     vec2 currentTexCoords = vUv;
 
-    // - Perform parallax occlusion mapping
-    if (vIsInView == 1.0) {
-        for (int i = 0; i < 10; i++) {
-            currentTexCoords -= deltaTexCoords;
-            currentLayerDepth += layerDepth;
-            float depthFromTexture = 1.0 - texture2D(uTexture, currentTexCoords).r;
-            if (currentLayerDepth > depthFromTexture) {
-                break;
-            }
-        }
+    // - Initialize variables for blending
+    vec2 finalTexCoords = currentTexCoords;
+    float minDepthDiff = 1.0;  // Large initial value to minimize in the loop
+
+    // - Perform parallax occlusion mapping without branching
+    float isInViewFactor = step(0.5, vIsInView); // Ensures the effect only applies when in view
+    int baseInViewFactor = int(isInViewFactor);
+
+    for (int i = 0; i < baseInViewFactor * 10; i++) {
+        currentTexCoords -= deltaTexCoords;
+        currentLayerDepth += layerDepth;
+
+        // Sample the depth from the texture
+        float depthFromTexture = 1.0 - texture2D(uTexture, finalTexCoords).r;
+
+        // Calculate the difference between current layer depth and texture depth
+        float depthDiff = abs(currentLayerDepth - depthFromTexture);
+
+        // Use mix to blend coordinates where depth difference is minimal
+        finalTexCoords = mix(finalTexCoords, currentTexCoords, step(depthDiff, minDepthDiff));
+
+        // Update the minimum depth difference
+        minDepthDiff = min(minDepthDiff, depthDiff);
     }
 
     // - Sample the texture with the adjusted UV coordinates
-    vec4 textureColorWithParallax = texture2D(uTexture, currentTexCoords);
+    vec4 textureColorWithParallax = texture2D(uTexture, finalTexCoords);
 
     // - border handling
     float borderWidth = 1.0;
