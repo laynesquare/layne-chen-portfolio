@@ -23,14 +23,13 @@ export default memo(function Port() {
 					<Banner />
 					<Model />
 					<Environment
-						// files='/scenery/textures/empty_warehouse.jpg'
-						resolution={64}
-						preset='warehouse'>
+						files='/scenery/textures/empty_warehouse.jpg'
+						resolution={128}>
 						<Lightformer
-							color='#FFFFF0'
+							color='#FAE9D5'
 							intensity={3}
-							position={[10, 5, 0]}
-							scale={[10, 50, 1]}
+							position={[5, 5, 10]}
+							scale={[15, 50, 1]}
 							target={lightDirRef.current}
 							form='rect'
 						/>
