@@ -6,6 +6,7 @@ import {
 	MeshBasicMaterial,
 	NoBlending,
 	PlaneGeometry,
+	RepeatWrapping,
 	ShaderMaterial,
 	TextureLoader,
 	Vector2,
@@ -46,11 +47,7 @@ const Banner = memo(function Banner() {
 	const planeGeoRef = useRef(new PlaneGeometry(1, 1, 1, 1));
 	const containerGroupRef = useRef(null);
 	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(2.9);
-	const containerMaterialParallaxRefs = useRef({
-		previewLayneChenPortfolio: null,
-		previewShareYourMemories: null,
-		previewLearnEnglishDictionary: null,
-	});
+	const containerParallaxMeshesRefs = useRef(new Set());
 	const containerMaskedMeshesRef = useRef(new Set());
 	const containerTranslucentMaskedMeshesRef = useRef(new Set());
 
@@ -69,13 +66,6 @@ const Banner = memo(function Banner() {
 		previewLearnEnglishDictionary: previewLearnEnglishDictionary,
 	};
 
-	useEffect(() => {
-		useWebGlStore.setState({
-			containerMaskedMeshes: containerMaskedMeshesRef.current,
-			containerTranslucentMaskedMeshes: containerTranslucentMaskedMeshesRef.current,
-		});
-	}, []);
-
 	function calcFactorCamZ(zPosition: number) {
 		const fov = (camera.fov * Math.PI) / 180;
 		const h = 2 * Math.tan(fov / 2) * zPosition;
@@ -90,7 +80,6 @@ const Banner = memo(function Banner() {
 			depthWrite: false,
 			depthTest: false,
 			side: FrontSide,
-			// blending: NoBlending,
 		}),
 	);
 
@@ -100,7 +89,6 @@ const Banner = memo(function Banner() {
 			depthWrite: false,
 			depthTest: false,
 			side: FrontSide,
-			// blending: NoBlending,
 		}),
 	);
 
@@ -116,16 +104,13 @@ const Banner = memo(function Banner() {
 			depthWrite: false,
 			depthTest: false,
 			side: FrontSide,
-			// blending: NoBlending,
 		}),
 	);
 
-	useFrame(({ scene, camera, gl, clock, pointer }, delta) => {
+	useFrame(({ scene, camera, gl, clock, pointer, viewport }, delta) => {
 		if (materialAcidBg.current) {
 			materialAcidBg.current.uniforms.uTime.value += delta;
 		}
-
-		const containerMaterialParallaxRefsKeys = Object.keys(containerMaterialParallaxRefs.current);
 
 		const target =
 			pointerRef.current.distanceTo(pointer) > 0
@@ -134,11 +119,10 @@ const Banner = memo(function Banner() {
 
 		pointerRef.current.copy(pointer);
 
-		containerMaterialParallaxRefsKeys.forEach(key => {
-			const material = containerMaterialParallaxRefs.current[key];
-			const inView = ScrollTrigger.isInViewport(material.userData.el);
-			containerMaterialParallaxRefs.current[key].uniforms.uIsInView.value = +!!inView;
-			containerMaterialParallaxRefs.current[key].uniforms.uMouse.value.lerp(target, delta);
+		containerParallaxMeshesRefs.current.forEach(mesh => {
+			const inView = ScrollTrigger.isInViewport(mesh.userData.el);
+			mesh.material.uniforms.uIsInView.value = +!!inView;
+			mesh.material.uniforms.uMouse.value.lerp(target, delta);
 		});
 	});
 
@@ -173,7 +157,6 @@ const Banner = memo(function Banner() {
 			depthTest: false,
 			stencilWrite: false,
 			side: FrontSide,
-			// blending: NoBlending,
 		}),
 	);
 
@@ -195,9 +178,15 @@ const Banner = memo(function Banner() {
 			fragmentShader: fragmentShaderParallaxDepth,
 			transparent: true,
 			side: FrontSide,
-			// blending: NoBlending,
 		}),
 	);
+
+	useEffect(() => {
+		useWebGlStore.setState({
+			containerMaskedMeshes: containerMaskedMeshesRef.current,
+			containerTranslucentMaskedMeshes: containerTranslucentMaskedMeshesRef.current,
+		});
+	}, []);
 
 	console.log('banner re rerenders');
 
@@ -280,12 +269,10 @@ const Banner = memo(function Banner() {
 					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
 					let material;
-					let geo = planeGeoRef.current.clone();
+					let geometry = planeGeoRef.current.clone();
 
 					if (parallax) {
 						material = containerMeshParallaxMaterial.current.clone();
-						containerMaterialParallaxRefs.current[parallax] = material;
-						material.userData = { dataset: el.dataset, el };
 					} else {
 						material = containerMeshMaterial.current.clone();
 					}
@@ -295,28 +282,29 @@ const Banner = memo(function Banner() {
 						: window.devicePixelRatio > 1
 						? 1
 						: 1.2;
-					// const dynamicDpr = useWebGlStore.getState().dynamicDpr;
 
 					material.uniforms.uTexture.value = previewMap[parallax] || null;
 					material.uniforms.uResolution.value.set(width, height);
 					material.uniforms.uRadii.value.set(...radius);
 					material.uniforms.uMouse.value.set(0, 0);
 					material.uniforms.uAnchor.value = +!!anchor;
-					material.uniforms.uHeatMap.value = 0;
-					material.uniforms.uMaskTexture.value =
-						useWebGlStore.getState().maskBufferMap?.[anchor]?.buffer.texture || null;
+					material.uniforms.uHeatMap.value = +!!anchorMirror;
 					material.uniforms.uMaskResolution.value.set(size.width * dynamicDpr, size.height * dynamicDpr);
 					material.uniforms.uTranslucentMaskTexture.value =
-						useWebGlStore.getState().shareTranslucentBuffer?.texture || null;
+						useWebGlStore.getState().shareTranslucentBuffer?.texture;
+					material.uniforms.uMaskTexture.value =
+						useWebGlStore.getState().maskBufferMap?.[anchor]?.buffer.texture;
 
 					return (
 						<mesh
 							key={idx}
-							name={anchor}
 							ref={el => {
 								if (!el) return;
+
 								if (!anchor && !parallax) {
 									containerTranslucentMaskedMeshesRef.current.add(el);
+								} else if (parallax) {
+									containerParallaxMeshesRefs.current.add(el);
 								} else if (anchor) {
 									containerMaskedMeshesRef.current.add(el);
 								}
@@ -324,7 +312,7 @@ const Banner = memo(function Banner() {
 							position={[x, y, z]}
 							userData={{ dataset: el.dataset, el }}
 							material={material}
-							geometry={geo}
+							geometry={geometry}
 							scale={[(width / factor) * ratio, (height / factor) * ratio, 1]}></mesh>
 					);
 				})}

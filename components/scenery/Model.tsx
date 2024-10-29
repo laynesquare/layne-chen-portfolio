@@ -85,10 +85,9 @@ export default memo(function Model() {
 
 	const ballMaskRef = useRef(null);
 	const ballClonedMaskRef = useRef(null);
+	const ballDisplacementTexture = useLoader(TextureLoader, '/scenery/textures/ball-displacement.webp');
 
 	const scrollOffsetRef = useRef(0);
-
-	const displacementTexture = useLoader(TextureLoader, '/scenery/textures/test2.jpg');
 
 	const uniformsRef = useRef({
 		uTime: { value: 0 },
@@ -100,7 +99,7 @@ export default memo(function Model() {
 		uIsNormalColor: { value: 0 },
 	});
 
-	useFrame(({ clock, scene, gl, raycaster, invalidate }, delta) => {
+	useFrame(({ clock }, delta) => {
 		const inViewEl = [...useDomStore.getState().anchorEls].findLast(el => ScrollTrigger.isInViewport(el, 0.3));
 
 		if (!inViewEl && ballCloneRef.current) {
@@ -184,7 +183,7 @@ export default memo(function Model() {
 	useEffect(() => {
 		const { scene } = getThree();
 		ballCloneRef.current = ballRef.current.clone();
-		ballCloneRef.current.name = 'psychedelic-ball-cloned-mesh';
+		ballCloneRef.current.name = 'cloned-ball-mesh';
 		ballCloneRef.current.visible = false;
 		scene.add(ballCloneRef.current);
 	}, []);
@@ -215,7 +214,7 @@ export default memo(function Model() {
 			iridescence: 0,
 			iridescenceIOR: 1.3,
 			uniforms: uniformsRef.current,
-			displacementMap: displacementTexture,
+			displacementMap: ballDisplacementTexture,
 			displacementScale: 0,
 			silent: true,
 			transparent: true,
@@ -229,7 +228,7 @@ export default memo(function Model() {
 	return (
 		<group>
 			<mesh
-				name='psychedelic-ball-mesh'
+				name='ball-mesh'
 				raycast={meshBounds}
 				ref={ballRef}
 				geometry={ballGeometry.current}

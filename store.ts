@@ -44,12 +44,11 @@ const useWebGlStore = create(set => ({
 	isBallPress: false,
 	isLoaded: false,
 	isEntryAnimationDone: false,
-	passivePortBuffer: null,
+
 	containerMaskedMeshes: null,
 	containerTranslucentMaskedMeshes: null,
 	shareTranslucentBuffer: null,
-	maskBufferMap: null,
-	dynamicDpr: 2,
+	// maskBufferMap: null,
 }));
 
 const useNavStore = create(set => ({

@@ -17,6 +17,7 @@ import {
 	FrontSide,
 	Plane,
 	NoBlending,
+	Color,
 } from 'three';
 
 import vertexShader from '@/shaders/animated-scroll-warp/vertex';
@@ -93,7 +94,6 @@ export default memo(function Ripple({ children }) {
 			depthWrite: false,
 			stencilWrite: false,
 			side: FrontSide,
-			// blending: NoBlending,
 		}),
 	);
 
@@ -120,9 +120,12 @@ export default memo(function Ripple({ children }) {
 		containerMeshGroup: null,
 		textMeshGroup: null,
 		torsoMesh: null,
-		psychedelicBallMesh: null,
-		psychedelicBallClonedMesh: null,
+		ballMesh: null,
+		clonedBallMesh: null,
 	});
+
+	const pingPongMutationRef = useRef(0);
+	const pingPongTranslucentRef = useRef(0);
 
 	useLenis(event => {
 		velocityRef.current = event.velocity;
@@ -183,23 +186,21 @@ export default memo(function Ripple({ children }) {
 		[getThree],
 	);
 
-	const maskBufferType = ['ABOUT', 'SKILL', 'EXPERIENCE'];
-
-	useFrame(({ clock, gl, camera, scene, size, viewport, performance, setFrameloop, invalidate }, delta) => {
+	useFrame(({ gl, camera, size }, delta) => {
 		const isNavOpen = useNavStore.getState().isOpen;
 		const isMobile = usePlatformStore.getState().isMobile;
-		const regression = isNavOpen ? 1 : 1;
+
 		const dynamicDpr = isMobile
 			? Math.max(Math.min(window.devicePixelRatio, 2.5), 2)
 			: window.devicePixelRatio > 1
 			? 1
 			: 1.2;
 
-		const baseResW = size.width * dynamicDpr * regression;
-		const baseResH = size.height * dynamicDpr * regression;
+		const baseResW = size.width * dynamicDpr;
+		const baseResH = size.height * dynamicDpr;
 		portBuffer.current.setSize(baseResW, baseResH);
-		translucentBuffer.current.setSize(baseResW / 2, baseResH / 2);
-		maskBufferMap.current['ABOUT'].buffer.setSize(baseResW / 2, baseResH / 2);
+		translucentBuffer.current.setSize(baseResW, baseResH);
+		maskBufferMap.current['ABOUT'].buffer.setSize(baseResW, baseResH);
 
 		if (portMaterialRef.current) {
 			portMaterialRef.current.uniforms.uTime.value += delta;
@@ -215,8 +216,8 @@ export default memo(function Ripple({ children }) {
 				containerMeshGroup: portScene.current.getObjectByName('container-mesh-group'),
 				textMeshGroup: portScene.current.getObjectByName('text-mesh-group'),
 				torsoMesh: portScene.current.getObjectByName('torso-mesh'),
-				psychedelicBallMesh: portScene.current.getObjectByName('psychedelic-ball-mesh'),
-				psychedelicBallClonedMesh: portScene.current.getObjectByName('psychedelic-ball-cloned-mesh'),
+				ballMesh: portScene.current.getObjectByName('ball-mesh'),
+				clonedBallMesh: portScene.current.getObjectByName('cloned-ball-mesh'),
 			};
 		} else {
 			const containerMaskedMeshes = useWebGlStore.getState().containerMaskedMeshes;
@@ -226,67 +227,81 @@ export default memo(function Ripple({ children }) {
 					containerMeshGroup,
 					textMeshGroup,
 					torsoMesh,
-					psychedelicBallMesh,
-					psychedelicBallClonedMesh,
+					ballMesh,
+					clonedBallMesh,
 				} = mutatedMeshes.current;
+
+				const ogRoughness = ballMesh.material.roughness;
+				const ogMetalness = ballMesh.material.metalness;
+				const ogIridescence = ballMesh.material.iridescence;
+				const ogClearcoat = ballMesh.material.clearcoat;
 
 				containerMeshGroup.visible = false;
 				textMeshGroup.visible = false;
 
-				const ogRoughness = psychedelicBallMesh.material.roughness;
-				const ogMetalness = psychedelicBallMesh.material.metalness;
-				const ogIridescence = psychedelicBallMesh.material.iridescence;
-				const ogClearcoat = psychedelicBallMesh.material.clearcoat;
-
 				if (!isNavOpen) {
-					containerMaskedMeshes.forEach(mesh => {
-						const inView = ScrollTrigger.isInViewport(mesh.userData.el);
-						if (inView && maskBufferType.includes(mesh.name)) {
-							maskBufferMap.current[mesh.name].mutateScene(
-								psychedelicBallMesh,
-								mesh,
-								torsoMesh,
-								psychedelicBallClonedMesh,
-							);
-							gl.setRenderTarget(maskBufferMap.current[mesh.name].buffer);
+					const detectInViewMeshes = [...containerMaskedMeshes].filter(mesh =>
+						ScrollTrigger.isInViewport(mesh.userData.el),
+					);
+
+					if (detectInViewMeshes.length) {
+						let registration = {};
+						const meshesToMutate = detectInViewMeshes.filter(mesh => {
+							const { anchor } = mesh.userData.dataset;
+							if (registration[anchor]) return false;
+							return (registration[anchor] = 1);
+						});
+
+						const renderIdx = pingPongMutationRef.current++ % meshesToMutate.length;
+						let mesh = meshesToMutate[renderIdx];
+
+						if (mesh) {
+							const { anchor } = mesh.userData.dataset;
+							maskBufferMap.current[anchor].mutateScene(ballMesh, torsoMesh, clonedBallMesh);
+							gl.setRenderTarget(maskBufferMap.current[anchor].buffer);
 							gl.render(portScene.current, camera);
 						}
-					});
+					}
 				}
 
-				portScene.current.environmentIntensity = 0.125;
+				portScene.current.environmentIntensity = 0.05;
 				torsoMesh.material.uniforms.uBrightColor.value.set('#69D2B7');
 				torsoMesh.material.uniforms.uDarkColor.value.set('#868686');
-				psychedelicBallMesh.material.wireframe = true;
-				psychedelicBallClonedMesh.material.wireframe = true;
-				psychedelicBallMesh.material.uniforms.uFractAmount.value = 0.8;
-				psychedelicBallMesh.material.uniforms.uIsNormalColor.value = 0;
-				psychedelicBallMesh.material.uniforms.uColor.value.set('#002BF9');
-				psychedelicBallMesh.material.sheenColor.set('#fd267a');
-				psychedelicBallMesh.material.displacementScale = 0.3;
-				psychedelicBallMesh.material.sheen = 1;
-				psychedelicBallMesh.material.iridescence = 1;
-				psychedelicBallMesh.material.roughness = ogRoughness;
-				psychedelicBallMesh.material.metalness = ogMetalness;
-				psychedelicBallMesh.material.clearcoat = ogClearcoat;
-				psychedelicBallMesh.scale.set(...(isMobile ? [0.6, 0.6, 0.6] : [1, 1, 1]));
-				psychedelicBallClonedMesh.scale.copy(psychedelicBallMesh.scale);
+				ballMesh.material.wireframe = true;
+				clonedBallMesh.material.wireframe = true;
+				ballMesh.material.uniforms.uFractAmount.value = 0.8;
+				ballMesh.material.uniforms.uIsNormalColor.value = 0;
+				ballMesh.material.uniforms.uColor.value.set('#002BF9');
+				ballMesh.material.sheenColor.set('#fd267a');
+				ballMesh.material.displacementScale = 0.3;
+				ballMesh.material.sheen = 1;
+				ballMesh.material.iridescence = 1;
+				ballMesh.material.roughness = ogRoughness;
+				ballMesh.material.metalness = ogMetalness;
+				ballMesh.material.clearcoat = ogClearcoat;
+				ballMesh.material.emissive.set('#FFC58D');
+				ballMesh.material.emissiveIntensity = 0.3;
+				ballMesh.scale.set(...(isMobile ? [0.6, 0.6, 0.6] : [1, 1, 1]));
+				clonedBallMesh.scale.copy(ballMesh.scale);
 
-				if (!isNavOpen) {
+				const shouldRender = pingPongTranslucentRef.current++ % 5;
+				if (!isNavOpen && shouldRender) {
 					gl.setRenderTarget(translucentBuffer.current);
 					gl.render(portScene.current, camera);
 				}
 
 				containerMeshGroup.visible = true;
 				textMeshGroup.visible = true;
-				portScene.current.environmentIntensity = 1.4;
-				psychedelicBallMesh.material.wireframe = false;
-				psychedelicBallClonedMesh.material.wireframe = false;
-				psychedelicBallMesh.material.wireframe = false;
-				psychedelicBallMesh.material.sheen = 0;
-				psychedelicBallMesh.material.displacementScale = 0;
-				psychedelicBallMesh.material.iridescence = ogIridescence;
-				psychedelicBallMesh.material.uniforms.uColor.value.set('#e6ff00');
+				portScene.current.environmentIntensity = 1.5;
+				ballMesh.material.emissiveIn;
+				ballMesh.material.wireframe = false;
+				ballMesh.material.wireframe = false;
+				clonedBallMesh.material.wireframe = false;
+				ballMesh.material.emissiveIntensity = 0;
+				ballMesh.material.sheen = 0;
+				ballMesh.material.displacementScale = 0;
+				ballMesh.material.iridescence = ogIridescence;
+				ballMesh.material.uniforms.uColor.value.set('#e6ff00');
 			}
 		}
 
@@ -325,7 +340,7 @@ export default memo(function Ripple({ children }) {
 	};
 
 	const translucentBuffer = useRef(
-		useFBO(0, 0, {
+		useFBO(1024, 1024, {
 			samples: 0,
 			minFilter: NearestFilter,
 			magFilter: NearestFilter,
@@ -342,8 +357,8 @@ export default memo(function Ripple({ children }) {
 
 	const maskBufferMap = useRef({
 		ABOUT: {
-			buffer: useFBO(0, 0, maskBufferConfig),
-			mutateScene: (ballMesh, containerMesh, torsoMesh) => {
+			buffer: useFBO(1024, 1024, maskBufferConfig),
+			mutateScene: (ballMesh, torsoMesh) => {
 				ballMesh.material.uniforms.uIsNormalColor.value = 1;
 				torsoMesh.material.uniforms.uBrightColor.value.set('#7B60FB');
 				torsoMesh.material.uniforms.uDarkColor.value.set('#FF00C7');
@@ -353,35 +368,36 @@ export default memo(function Ripple({ children }) {
 			},
 		},
 		SKILL: {
-			buffer: useFBO(64, 64, maskBufferConfig),
-			mutateScene: (ballMesh, containerMesh, torsoMesh, psychedelicBallClonedMesh) => {
+			buffer: useFBO(128, 128, maskBufferConfig),
+			mutateScene: (ballMesh, torsoMesh, clonedBallMesh) => {
 				torsoMesh.material.uniforms.uBrightColor.value.set('#FF0000');
 				torsoMesh.material.uniforms.uDarkColor.value.set('#0500FF');
 				ballMesh.material.uniforms.uColor.value.set('#FF0000');
 				ballMesh.material.uniforms.uIsNormalColor.value = 0;
 				ballMesh.material.wireframe = false;
-				ballMesh.material.roughness = 0.3;
+				ballMesh.material.roughness = 0.5;
 				ballMesh.material.metalness = 0.3;
 				ballMesh.material.iridescence = 0.5;
 				ballMesh.material.displacementScale = 0;
 				ballMesh.material.sheen = 1.0;
 				ballMesh.material.clearcoat = 0.0;
 				ballMesh.material.ior = 0.0;
-				ballMesh.material.sheenColor.set('#fd267a');
+				ballMesh.material.sheenColor.set('#ff69b4');
 			},
 		},
 		EXPERIENCE: {
-			buffer: useFBO(512, 512, maskBufferConfig),
-			mutateScene: (ballMesh, containerMesh, torsoMesh, psychedelicBallClonedMesh) => {
+			buffer: useFBO(1024, 1024, maskBufferConfig),
+			mutateScene: (ballMesh, torsoMesh, clonedBallMesh) => {
 				torsoMesh.material.uniforms.uBrightColor.value.set('#FF0000');
 				torsoMesh.material.uniforms.uDarkColor.value.set('#0500FF');
-				containerMesh.material.uniforms.uHeatMap.value = 1;
 				ballMesh.material.uniforms.uIsNormalColor.value = 1;
 				ballMesh.material.wireframe = true;
-				psychedelicBallClonedMesh.material.wireframe = true;
+				ballMesh.material.roughness = 0.1;
+				ballMesh.material.metalness = 1;
+				clonedBallMesh.material.wireframe = true;
 				ballMesh.material.uniforms.uFractAmount.value = 0.1;
 				ballMesh.scale.set(0.5, 0.5, 0.5);
-				psychedelicBallClonedMesh.scale.copy(ballMesh.scale);
+				clonedBallMesh.scale.copy(ballMesh.scale);
 			},
 		},
 	});
