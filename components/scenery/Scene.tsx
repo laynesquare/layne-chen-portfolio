@@ -68,8 +68,14 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 					premultipliedAlpha: false,
 					preserveDrawingBuffer: false,
 					precision: 'lowp',
+					// autoClear: false,
+					// autoClearDepth: false,
+					// autoClearStencil: false,
+					// autoClearColor: false,
 				}}
 				linear
+				onPointerMissed={() => useWebGlStore.setState({ isBallPress: false })}
+				performance={{ min: 0.1, max: 1 }}
 				className='bg-neutral'
 				style={{
 					position: 'fixed',
@@ -78,7 +84,7 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 					width: '100lvw',
 					height: '100lvh',
 				}}
-				dpr={[1, 1]}
+				dpr={[1, 1.25]}
 				camera={{ position: [0, 0, 8], fov: 30 }}
 				flat={true}
 				eventSource={wrapperRef?.current}>
