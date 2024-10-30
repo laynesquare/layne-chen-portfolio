@@ -45,6 +45,12 @@ export default memo(function Port() {
  * since even if progress is 100, the 3D components still take a little time to load.
  */
 function SuspenseMonitor() {
-	useEffect(() => () => useWebGlStore.setState({ isLoaded: true }), []);
+	useEffect(
+		() => () => {
+			window.scrollTo(0, 0);
+			useWebGlStore.setState({ isLoaded: true });
+		},
+		[],
+	);
 	return null;
 }
