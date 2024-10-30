@@ -33,6 +33,8 @@ function SmoothScrolling({ children }: SmoothScrollingProps) {
 		lerp: 0.08,
 		duration: 3,
 		syncTouch: true,
+		touchMultiplier: 0.6,
+		gestureOrientation: 'vertical',
 	};
 
 	return (
