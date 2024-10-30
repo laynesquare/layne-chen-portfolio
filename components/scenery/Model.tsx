@@ -100,6 +100,7 @@ export default memo(function Model() {
 	});
 
 	useFrame(({ clock }, delta) => {
+		if (!useWebGlStore.getState().isEntryAnimationDone) return;
 		const inViewEl = [...useDomStore.getState().anchorEls].findLast(el => ScrollTrigger.isInViewport(el, 0.3));
 
 		if (!inViewEl && ballCloneRef.current) {
@@ -167,16 +168,18 @@ export default memo(function Model() {
 		ballRef.current.position.lerp(targetBallPos, 0.035);
 		ballMaskRef.current.position.copy(ballRef.current.position);
 
+		// if (ballCloneRef.current.position)
+
 		if (anchorMirror) {
 			const inViewMirrorEl = els.find(el => el.dataset['anchor'] === anchor && el !== inViewEl);
 			const { x: mirrorX, y: mirrorY } = getElementPosition(inViewMirrorEl);
 			const targetBallClonePos = ballClonedDynamicPosRef.current.set(mirrorX, mirrorY, 1);
-			ballCloneRef.current.position.lerp(targetBallClonePos, 0.035);
-			ballClonedMaskRef.current.position.copy(ballCloneRef.current.position);
+			ballCloneRef.current?.position.lerp(targetBallClonePos, 0.035);
+			ballClonedMaskRef.current?.position.copy(ballCloneRef.current?.position);
 			ballCloneRef.current.visible = true;
 		} else {
-			ballCloneRef.current.position.lerp(targetBallPos, 0.035);
-			ballClonedMaskRef.current.position.copy(ballCloneRef.current.position);
+			ballCloneRef.current?.position.lerp(targetBallPos, 0.035);
+			ballClonedMaskRef.current?.position.copy(ballCloneRef.current?.position);
 		}
 	}
 
@@ -330,7 +333,7 @@ function MaskBall({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 				onPointerOut={e => {
 					e.stopPropagation();
 					useWebGlStore.setState({ isBallPress: false });
-					document.body.style.cursor = 'default';
+					document.body.style.cursor = 'auto';
 				}}
 				scale={1.2}
 				geometry={ballMaskGeo.current}></mesh>
@@ -354,7 +357,7 @@ function MaskBall({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 				onPointerOut={e => {
 					e.stopPropagation();
 					useWebGlStore.setState({ isBallPress: false });
-					document.body.style.cursor = 'default';
+					document.body.style.cursor = 'auto';
 				}}
 				scale={1.2}
 				geometry={ballMaskGeo.current}></mesh>
