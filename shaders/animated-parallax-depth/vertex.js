@@ -6,13 +6,13 @@ varying vec2 vUv;
 varying vec3 vPosition;
 
 
-uniform float uIsInView;
+uniform float uShouldSample;
 varying float vIsInView;
 
 void main() {
     vUv = uv;
     vPosition = position;
-    vIsInView = uIsInView;
+    vIsInView = uShouldSample;
 
     // csm_PositionRaw = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
