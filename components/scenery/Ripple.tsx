@@ -36,12 +36,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-const MOBILE_SCALE = [0.6, 0.6, 0.6];
-const DESKTOP_SCALE = [1, 1, 1];
-const SMOOTHING_FACTOR = 0.025;
-const BASE_ENVIRONMENT_INTENSITY = 0.125;
-const ENHANCED_ENVIRONMENT_INTENSITY = 1.5;
-
 export default memo(function Ripple({ children }) {
 	const getThree = useThree(state => state.get);
 
@@ -158,6 +152,11 @@ export default memo(function Ripple({ children }) {
 			const ndcX = (event.clientX / size.width) * 2 - 1;
 			const ndcY = -((event.clientY / size.height) * 2 - 1);
 
+			useCursorStore.setState({
+				curr: { x: event.clientX, y: event.clientY, cursor: window.getComputedStyle(event.target).cursor },
+				ndcPosition: useCursorStore.getState().ndcPosition.set(ndcX, ndcY),
+			});
+
 			const vector = rippleVec3.current;
 			vector.set(ndcX, ndcY, 0.5);
 			vector.unproject(camera);
@@ -187,6 +186,8 @@ export default memo(function Ripple({ children }) {
 	);
 
 	useFrame(({ gl, camera, size }, delta) => {
+		if (!useWebGlStore.getState().isEntryAnimationDone) return;
+
 		const isNavOpen = useNavStore.getState().isOpen;
 		const isMobile = usePlatformStore.getState().isMobile;
 
@@ -258,6 +259,7 @@ export default memo(function Ripple({ children }) {
 						if (mesh) {
 							const { anchor } = mesh.userData.dataset;
 							maskBufferMap.current[anchor].mutateScene(ballMesh, torsoMesh, clonedBallMesh);
+
 							gl.setRenderTarget(maskBufferMap.current[anchor].buffer);
 							gl.render(portScene.current, camera);
 						}

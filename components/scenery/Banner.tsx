@@ -15,7 +15,7 @@ import {
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line, useGLTF } from '@react-three/drei';
 
-import { useDomStore, usePlatformStore, useWebGlStore } from '@/store';
+import { useCursorStore, useDomStore, useNavStore, usePlatformStore, useWebGlStore } from '@/store';
 
 import vertexShaderRoundedRec from '@/shaders/rounded-rectangle/vertex';
 import fragmentShaderRoundedRec from '@/shaders/rounded-rectangle/fragment';
@@ -108,21 +108,26 @@ const Banner = memo(function Banner() {
 	);
 
 	useFrame(({ scene, camera, gl, clock, pointer, viewport }, delta) => {
+		if (!useWebGlStore.getState().isEntryAnimationDone) return;
+
 		if (materialAcidBg.current) {
 			materialAcidBg.current.uniforms.uTime.value += delta;
 		}
 
+		const ndcPosition = useCursorStore.getState().ndcPosition;
+		const isNavOpen = useNavStore.getState().isOpen;
+
 		const target =
-			pointerRef.current.distanceTo(pointer) > 0
-				? pointerRef.current.clone().sub(pointer).negate()
+			pointerRef.current.distanceTo(ndcPosition) > 0
+				? pointerRef.current.clone().sub(ndcPosition).negate()
 				: pointerCenterRef.current;
 
-		pointerRef.current.copy(pointer);
+		pointerRef.current.copy(ndcPosition);
 
 		containerParallaxMeshesRefs.current.forEach(mesh => {
 			const inView = ScrollTrigger.isInViewport(mesh.userData.el);
-			mesh.material.uniforms.uIsInView.value = +!!inView;
-			mesh.material.uniforms.uMouse.value.lerp(target, delta);
+			mesh.material.uniforms.uShouldSample.value = +!!(inView && !isNavOpen);
+			mesh.material.uniforms.uMouse.value.lerp(target, delta * 2);
 		});
 	});
 
@@ -172,7 +177,7 @@ const Banner = memo(function Banner() {
 				uMaskTexture: { value: null },
 				uMaskResolution: { value: new Vector2(0, 0) },
 				uTranslucentMaskTexture: { value: new Vector2(0, 0) },
-				uIsInView: { value: 0 },
+				uShouldSample: { value: 0 },
 			},
 			vertexShader: vertexShaderParallaxDepth,
 			fragmentShader: fragmentShaderParallaxDepth,

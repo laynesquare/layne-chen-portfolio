@@ -16,7 +16,7 @@ gsap.registerPlugin(useGSAP);
 export default function Home() {
 	const wrapperRef = useRef(null);
 
-	useEffect(() => window.scrollTo(0, 0), []);
+	// useEffect(() => window.scrollTo(0, 0), []);
 
 	return (
 		<>
@@ -35,44 +35,44 @@ export default function Home() {
 
 function Cursor() {
 	const cursorRef = useRef(null);
-	const [mouse, setMouse] = useState({ x: 0, y: 0, cursor: 'none' });
-	const isEntryAnimationDone = useWebGlStore(state => state.isEntryAnimationDone);
 	const isCustomCursor = useCursorStore(state => state.isCustomCursor);
 
-	function updateMouse(e) {
-		setMouse({ x: e.clientX, y: e.clientY, cursor: window.getComputedStyle(e.target).cursor });
-	}
+	return (
+		<>
+			<CursorAnim cursorRef={cursorRef} />
+			<div
+				ref={cursorRef}
+				className={`z-50 fixed bg-neutral rounded-full opacity-0 pointer-events-none -translate-x-1/2 -translate-y-1/2 w-[16px] aspect-square mix-blend-difference ${
+					isCustomCursor ? '' : 'hidden'
+				}`}></div>
+		</>
+	);
+}
 
-	useEffect(() => {
-		window.addEventListener('mousemove', updateMouse);
-		return () => window.removeEventListener('mousemove', updateMouse);
-	}, []);
+function CursorAnim({ cursorRef }) {
+	const curr = useCursorStore(state => state.curr);
+	const isEntryAnimationDone = useWebGlStore(state => state.isEntryAnimationDone);
+	const isCustomCursor = useCursorStore(state => state.isCustomCursor);
 
 	useGSAP(
 		() => {
 			if (isCustomCursor) {
-				const isPointer = mouse.cursor === 'pointer';
+				const isMorph = curr.cursor === 'pointer';
 				gsap.to(cursorRef.current, {
-					translateY: mouse.y,
-					translateX: mouse.x,
+					translateY: curr.y,
+					translateX: curr.x,
 					duration: 0.45,
 					opacity: isEntryAnimationDone ? 1 : 0,
-					width: isPointer ? 96 : 16,
-					backdropFilter: isPointer ? `blur(0px) contrast(150%)` : `blur(36px) contrast(100%)`,
+					width: isMorph ? 96 : 16,
+					backdropFilter: isMorph ? `blur(0px) contrast(150%)` : `blur(36px) contrast(100%)`,
 					ease: 'power1.out',
 				});
 			}
 		},
-		{ dependencies: [mouse.x, mouse.y, mouse.cursor, isCustomCursor], scope: cursorRef },
+		{ dependencies: [curr.x, curr.y, curr.cursor, isCustomCursor], scope: cursorRef },
 	);
 
-	return (
-		<div
-			ref={cursorRef}
-			className={`z-50 fixed bg-neutral rounded-full opacity-0 pointer-events-none -translate-x-1/2 -translate-y-1/2 w-[16px] aspect-square mix-blend-difference ${
-				isCustomCursor ? '' : 'hidden'
-			}`}></div>
-	);
+	return null;
 }
 
 function PlatformMonitor() {
