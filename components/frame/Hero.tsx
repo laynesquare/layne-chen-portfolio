@@ -26,13 +26,13 @@ export default function Hero({}) {
 		<>
 			<Menu />
 			<article
-				className={`w-full relative z-10 font-boxing pointer-events-none opacity-0`}
+				className={`w-full h-full relative z-10 font-boxing pointer-events-none`}
 				ref={torsoElStoreRegister}>
 				{/* -------------------------------------------------------------------------- */
 				/*                                first page                                 */
 				/* -------------------------------------------------------------------------- */}
 				<section
-					className='h-lvh w-full relative flex flex-col overflow-hidden'
+					className='h-dvh w-full relative flex flex-col overflow-hidden'
 					id='home'>
 					<div className='flex flex-[1] justify-between items-center px-12 gap-60'>
 						<h2 className='text-xl leading-[1.25]'>
@@ -1130,21 +1130,21 @@ export default function Hero({}) {
 				</div>
 
 				<footer
-					className='h-lvh w-full relative flex flex-col overflow-hidden'
+					className='h-dvh w-full relative flex flex-col overflow-hidden'
 					id='contact'>
 					<div className='flex flex-col px-12 pt-6'>
-						<h3 className='whitespace-pre-line text-7xl mb-6'>
+						<h3 className='whitespace-pre-line text-7xl mb-6 w-max'>
 							<span
 								data-font-family='boxing'
 								ref={textElStoreRegister}>{`Let's connect.`}</span>
 						</h3>
-						<h4 className='whitespace-pre-line text-3xl leading-[1.25]'>
+						<h4 className='whitespace-pre-line text-3xl leading-[1.25] w-max'>
 							<span
 								data-font-family='boxing'
 								ref={textElStoreRegister}>{`Open for new challenges\nand collaborations.`}</span>
 						</h4>
 					</div>
-					<div className='text-xl flex flex-[1] -translate-y-36 leading-none text-highlight flex-col justify-end items-start px-12 pb-12 md:flex-row md:justify-between md:items-end md:pb-0'>
+					<div className='text-xl flex flex-[1] -translate-y-36 leading-none text-highlight flex-col justify-end items-start px-12 pb-12 md:flex-row md:justify-between md:items-end md:pb-0 z-20'>
 						<nav
 							className='flex flex-col gap-12 md:gap-6 pointer-events-auto'
 							onPointerEnter={e => toggleRipple(false)}
@@ -1193,7 +1193,7 @@ export default function Hero({}) {
 							</a>
 						</nav>
 						<nav
-							className='pointer-events-auto'
+							className='pointer-events-auto z-20'
 							onPointerEnter={e => toggleRipple(false)}
 							onPointerLeave={e => toggleRipple(true)}>
 							<button
@@ -1249,7 +1249,7 @@ function Menu() {
 
 				<div className={`border-r border-neutral min-h-[14px] h-7 hidden md:block`}></div>
 
-				<p className='flex-[1] text-center'>
+				<p className='flex-[1] text-center cursor-text'>
 					<span>
 						<DynamicText
 							large={`portfolio#2024`}
@@ -1355,7 +1355,7 @@ function OverlayNav() {
 
 	return (
 		<nav
-			className={`fixed z-30 top-0 left-0 h-lvh w-full font-boxing text-neutralContrast opacity-0 flex flex-col backdrop-blur-md backdrop-saturate-200 backdrop-hue-rotate-15 overflow-y-auto overflow-x-hidden`}
+			className={`fixed z-30 top-0 left-0 h-dvh w-full font-boxing text-neutralContrast opacity-0 flex flex-col backdrop-blur-md backdrop-saturate-200 backdrop-hue-rotate-15 overflow-y-auto overflow-x-hidden`}
 			data-lenis-prevent
 			ref={overlayNavRef}>
 			<div
