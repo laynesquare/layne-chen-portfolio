@@ -1,3 +1,5 @@
+import { NearestFilter, RGBAFormat, UnsignedByteType } from 'three/src/constants.js';
+
 export const MESH_DISTANCE = {
 	TEXT: 3,
 	TORSO: 0,
@@ -6,9 +8,21 @@ export const MESH_DISTANCE = {
 };
 
 export const MESH_NAME = {
-	TEXT_GROUP: 'TEXT_MESH_GROUP',
-	CONTAINER_GROUP: 'CONTAINER_MESH_GROUP',
-	TORSO: 'TORSO_MESH',
-	BALL: 'BALL_MESH',
-	CLONED_BALL: 'CLONE_BALL_MESH',
+	TEXT_GROUP: 'TEXT_GROUP',
+	CONTAINER_GROUP: 'CONTAINER_GROUP',
+	TORSO: 'TORSO',
+	BALL: 'BALL',
+	CLONED_BALL: 'CLONE_BALL',
+};
+
+export const FBO_CONFIG = {
+	samples: 0,
+	minFilter: NearestFilter,
+	magFilter: NearestFilter,
+	format: RGBAFormat,
+	type: UnsignedByteType,
+	anisotropy: 0,
+	colorSpace: '',
+	generateMipmaps: false,
+	stencilBuffer: false,
 };

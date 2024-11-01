@@ -1,10 +1,11 @@
 'use client';
 
-import { useRef } from 'react';
+import { Suspense, useMemo, useRef } from 'react';
 
 // three
 import { Canvas } from '@react-three/fiber';
-import { Preload } from '@react-three/drei';
+import { Preload, Environment, Lightformer } from '@react-three/drei';
+import { Vector3 } from 'three';
 
 // store
 import { useWebGlStore } from '@/store';
@@ -13,15 +14,11 @@ import { useWebGlStore } from '@/store';
 import { SceneProps } from '@/types';
 
 // component
-import { Port } from '@/components';
-
-// gsap
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-gsap.registerPlugin(useGSAP);
+import { Disclose, SuspenseMonitor, Ripple, Billboard, Torso, Texts, Containers, Ball } from '@/components';
 
 export default function Scene({ wrapperRef }: SceneProps) {
 	const canvasRef = useRef(null);
+	const lightDir = useMemo(() => new Vector3(0, 0, 0), []);
 
 	return (
 		<>
@@ -54,48 +51,32 @@ export default function Scene({ wrapperRef }: SceneProps) {
 				camera={{ position: [0, 0, 8], fov: 30 }}
 				flat={true}
 				eventSource={wrapperRef.current || undefined}>
-				<Port />
+				{/* <OrbitControls /> */}
+				<Suspense fallback={<SuspenseMonitor />}>
+					{/* ripple scene: off-screen */}
+					<Ripple />
+					<Billboard>
+						{/* billboard scene: off-screen */}
+						<Torso />
+						<Containers />
+						<Texts />
+						<Ball />
+						<Environment
+							files='/scene/textures/empty_warehouse.hdr'
+							resolution={16}>
+							<Lightformer
+								color='#FAE9D5'
+								intensity={3}
+								position={[8, 8, 8]}
+								scale={[10, 50, 1]}
+								target={lightDir}
+								form='rect'
+							/>
+						</Environment>
+					</Billboard>
+				</Suspense>
 				<Preload all={true} />
 			</Canvas>
 		</>
 	);
-}
-
-interface DiscloseProps {
-	canvasRef: React.RefObject<HTMLCanvasElement>;
-}
-
-function Disclose({ canvasRef }: DiscloseProps) {
-	const isEntryAnimationDone = useWebGlStore(state => state.isEntryAnimationDone);
-
-	useGSAP(
-		() => {
-			if (isEntryAnimationDone) {
-				const tl = gsap.timeline({ delay: 0.25, smoothChildTiming: true });
-				const canvasEl = canvasRef.current;
-				const width = window.innerWidth;
-				const maskFactor = width >= 1920 ? 1920 : width;
-				const duration = (maskFactor / 1920) * 1.5 + 0.4;
-
-				tl.to(canvasEl, {
-					duration,
-					maskSize: `500%`,
-					ease: 'none',
-				}).to(
-					canvasEl,
-					{
-						delay: 1,
-						duration: 0,
-						webkitMaskImage: 'none',
-						maskImage: 'none',
-						ease: 'none',
-					},
-					'>',
-				);
-			}
-		},
-		{ dependencies: [isEntryAnimationDone], scope: canvasRef },
-	);
-
-	return null;
 }

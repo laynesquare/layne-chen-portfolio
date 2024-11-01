@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 // three
 import { useFrame, useThree } from '@react-three/fiber';
@@ -18,14 +18,14 @@ import fragmentShaderAcidBg from '@/shaders/animated-underlay-acid-fluid/fragmen
 import { getScaleMultiplier } from '@/utils';
 
 // constant
-import { MESH_DISTANCE } from '@/config/constants';
+import { MESH_DISTANCE, MESH_NAME } from '@/config/constants';
 
 export default function Torso() {
 	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
 	const { factor, height } = viewport;
 	const { offsetWidth, offsetHeight } = useDomStore.getState().torsoEl;
 
-	const planeGeoRef = useRef(new PlaneGeometry(1, 1, 1, 1));
+	const planeGeo = useMemo(() => new PlaneGeometry(1, 1, 1, 1), []);
 	const torsoMeshRef = useRef(null);
 	const torsoGroupRef = useRef(null);
 	const torsoMeshRatio = getScaleMultiplier(MESH_DISTANCE.TORSO, viewport, camera, size);
@@ -37,28 +37,31 @@ export default function Torso() {
 		MESH_DISTANCE.TORSO,
 	];
 
-	const materialAcidBg = useRef(
-		new ShaderMaterial({
-			uniforms: {
-				uTime: { value: 0 },
-				uBrightColor: { value: new Color('#69D2B7') },
-				uDarkColor: { value: new Color('#868686') },
-			},
-			vertexShader: vertexShaderAcidBg,
-			fragmentShader: fragmentShaderAcidBg,
-			depthWrite: false,
-			depthTest: false,
-			side: FrontSide,
-		}),
+	const materialAcidBg = useMemo(
+		() =>
+			new ShaderMaterial({
+				uniforms: {
+					uTime: { value: 0 },
+					uBrightColor: { value: new Color('#69D2B7') },
+					uDarkColor: { value: new Color('#868686') },
+				},
+				vertexShader: vertexShaderAcidBg,
+				fragmentShader: fragmentShaderAcidBg,
+				depthWrite: false,
+				depthTest: false,
+				side: FrontSide,
+			}),
+		[],
 	);
 
-	function updatePosition(offset: number) {
-		if (!torsoGroupRef.current) return;
-		const base = offset / viewport.factor;
-		torsoGroupRef.current.position.y = base * torsoMeshRatio;
-	}
-
-	useLenis(event => updatePosition(event.scroll), [size]);
+	useLenis(
+		event => {
+			if (!torsoGroupRef.current) return;
+			const offset = (event.scroll / factor) * torsoMeshRatio;
+			torsoGroupRef.current.position.y = offset;
+		},
+		[size],
+	);
 
 	useFrame(({}, delta) => {
 		if (!useWebGlStore.getState().isEntryAnimationDone || !materialAcidBg.current) return;
@@ -68,12 +71,12 @@ export default function Torso() {
 	return (
 		<group ref={torsoGroupRef}>
 			<mesh
-				name='torso-mesh'
+				name={MESH_NAME.TORSO}
 				ref={torsoMeshRef}
 				scale={torsoScale}
 				position={torsoPos}
-				material={materialAcidBg.current}
-				geometry={planeGeoRef.current.clone()}></mesh>
+				material={materialAcidBg}
+				geometry={planeGeo.clone()}></mesh>
 		</group>
 	);
 }

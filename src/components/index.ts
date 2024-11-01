@@ -22,9 +22,11 @@ import PlatformMonitor from './dom/PlatformMonitor';
 import SmoothScrolling from './dom/SmoothScroll';
 import ResponsiveText from './dom/ResponsiveText';
 
+import Disclose from './scene/Disclose';
 import Scene from './scene/Scene';
-import Port from './scene/Port';
+import SuspenseMonitor from './scene/SuspenseMonitor';
 import Ripple from './scene/Ripple';
+import Billboard from './scene/Billboard';
 import Torso from './scene/Torso';
 import Containers from './scene/Containers';
 import Texts from './scene/Texts';
@@ -56,9 +58,11 @@ export {
 	SmoothScrolling,
 	ResponsiveText,
 	//
+	Disclose,
 	Scene,
-	Port,
+	SuspenseMonitor,
 	Ripple,
+	Billboard,
 	Torso,
 	Containers,
 	Texts,

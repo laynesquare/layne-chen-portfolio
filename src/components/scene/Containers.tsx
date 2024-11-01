@@ -1,14 +1,8 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 
 // three
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { FrontSide, PlaneGeometry, ShaderMaterial, TextureLoader, Vector2, Vector4 } from 'three';
-
-// lenis
-import { useLenis } from '@studio-freight/react-lenis';
-
-// store
-import { useCursorStore, useDomStore, useNavStore, usePlatformStore, useWebGlStore } from '@/store';
 
 // shader
 import vertexShaderRoundedRec from '@/shaders/rounded-rectangle/vertex';
@@ -16,23 +10,28 @@ import fragmentShaderRoundedRec from '@/shaders/rounded-rectangle/fragment';
 import fragmentShaderParallaxDepth from '@/shaders/animated-parallax-depth/fragment';
 import vertexShaderParallaxDepth from '@/shaders/animated-parallax-depth/vertex';
 
+// lenis
+import { useLenis } from '@studio-freight/react-lenis';
+
+// store
+import { useCursorStore, useDomStore, useNavStore, usePlatformStore, useWebGlStore } from '@/store';
+
 // util
 import { getScaleMultiplier } from '@/utils';
 
 // constant
-import { MESH_DISTANCE } from '@/config/constants';
+import { MESH_DISTANCE, MESH_NAME } from '@/config/constants';
 
 // gsap
 import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Containers() {
 	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
-	const pointerRef = useRef(new Vector2(0, 0));
-	const pointerCenterRef = useRef(new Vector2(0, 0));
-	const planeGeoRef = useRef(new PlaneGeometry(1, 1, 1, 1));
+	const pointer = useMemo(() => new Vector2(0, 0), []);
+	const pointerCenter = useMemo(() => new Vector2(0, 0), []);
+	const planeGeo = useMemo(() => new PlaneGeometry(1, 1, 1, 1), []);
 	const containerGroupRef = useRef(null);
 	const containerMeshRatio = getScaleMultiplier(MESH_DISTANCE.CONTAINER, viewport, camera, size);
 	const containerParallaxMeshesRefs = useRef(new Set());
@@ -54,57 +53,62 @@ export default function Containers() {
 		previewLearnEnglishDictionary: previewLearnEnglishDictionary,
 	};
 
-	const containerMeshMaterial = useRef(
-		new ShaderMaterial({
-			uniforms: {
-				uTexture: { value: null },
-				uResolution: { value: new Vector2(0, 0) },
-				uRadii: { value: new Vector4(0, 0, 0, 0) },
-				uMouse: { value: new Vector2(0, 0) },
-				uAnchor: { value: 0 },
-				uHeatMap: { value: 0 },
-				uMaskTexture: { value: null },
-				uMaskResolution: { value: new Vector2(0, 0) },
-				uTranslucentMaskTexture: { value: new Vector2(0, 0) },
-			},
-			vertexShader: vertexShaderRoundedRec,
-			fragmentShader: fragmentShaderRoundedRec,
-			transparent: true,
-			depthWrite: false,
-			depthTest: false,
-			stencilWrite: false,
-			side: FrontSide,
-		}),
+	const containerMeshMaterial = useMemo(
+		() =>
+			new ShaderMaterial({
+				uniforms: {
+					uTexture: { value: null },
+					uResolution: { value: new Vector2(0, 0) },
+					uRadii: { value: new Vector4(0, 0, 0, 0) },
+					uMouse: { value: new Vector2(0, 0) },
+					uAnchor: { value: 0 },
+					uHeatMap: { value: 0 },
+					uMaskTexture: { value: null },
+					uMaskResolution: { value: new Vector2(0, 0) },
+					uTranslucentMaskTexture: { value: new Vector2(0, 0) },
+				},
+				vertexShader: vertexShaderRoundedRec,
+				fragmentShader: fragmentShaderRoundedRec,
+				transparent: true,
+				depthWrite: false,
+				depthTest: false,
+				stencilWrite: false,
+				side: FrontSide,
+			}),
+		[],
 	);
 
-	const containerMeshParallaxMaterial = useRef(
-		new ShaderMaterial({
-			uniforms: {
-				uTexture: { value: null },
-				uResolution: { value: new Vector2(0, 0) },
-				uRadii: { value: new Vector4(0, 0, 0, 0) },
-				uMouse: { value: new Vector2(0, 0) },
-				uAnchor: { value: 0 },
-				uHeatMap: { value: 0 },
-				uMaskTexture: { value: null },
-				uMaskResolution: { value: new Vector2(0, 0) },
-				uTranslucentMaskTexture: { value: new Vector2(0, 0) },
-				uShouldSample: { value: 0 },
-			},
-			vertexShader: vertexShaderParallaxDepth,
-			fragmentShader: fragmentShaderParallaxDepth,
-			transparent: true,
-			side: FrontSide,
-		}),
+	const containerMeshParallaxMaterial = useMemo(
+		() =>
+			new ShaderMaterial({
+				uniforms: {
+					uTexture: { value: null },
+					uResolution: { value: new Vector2(0, 0) },
+					uRadii: { value: new Vector4(0, 0, 0, 0) },
+					uMouse: { value: new Vector2(0, 0) },
+					uAnchor: { value: 0 },
+					uHeatMap: { value: 0 },
+					uMaskTexture: { value: null },
+					uMaskResolution: { value: new Vector2(0, 0) },
+					uTranslucentMaskTexture: { value: new Vector2(0, 0) },
+					uShouldSample: { value: 0 },
+				},
+				vertexShader: vertexShaderParallaxDepth,
+				fragmentShader: fragmentShaderParallaxDepth,
+				transparent: true,
+				side: FrontSide,
+			}),
+		[],
 	);
 
-	function updatePosition(offset: number) {
-		if (!containerGroupRef.current) return;
-		const base = offset / viewport.factor;
-		containerGroupRef.current.position.y = base * containerMeshRatio;
-	}
-
-	useLenis(event => updatePosition(event.scroll), [size]);
+	useLenis(
+		event => {
+			if (!containerGroupRef.current) return;
+			const offset = (event.scroll / viewport.factor) * containerMeshRatio;
+			containerGroupRef.current.position.y = offset;
+		},
+		[size],
+	);
 
 	useEffect(() => {
 		useWebGlStore.setState({
@@ -119,12 +123,9 @@ export default function Containers() {
 		const ndcPosition = useCursorStore.getState().ndcPosition;
 		const isNavOpen = useNavStore.getState().isOpen;
 
-		const target =
-			pointerRef.current.distanceTo(ndcPosition) > 0
-				? pointerRef.current.clone().sub(ndcPosition).negate()
-				: pointerCenterRef.current;
+		const target = pointer.distanceTo(ndcPosition) > 0 ? pointer.clone().sub(ndcPosition).negate() : pointerCenter;
 
-		pointerRef.current.copy(ndcPosition);
+		pointer.copy(ndcPosition);
 
 		containerParallaxMeshesRefs.current.forEach(mesh => {
 			const inView = ScrollTrigger.isInViewport(mesh.userData.el);
@@ -135,7 +136,7 @@ export default function Containers() {
 
 	return (
 		<group
-			name='container-mesh-group'
+			name={MESH_NAME.CONTAINER_GROUP}
 			ref={containerGroupRef}>
 			{[...useDomStore.getState().containerEls].map((el, idx) => {
 				const {
@@ -162,12 +163,12 @@ export default function Containers() {
 				const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
 				let material;
-				let geometry = planeGeoRef.current.clone();
+				let geometry = planeGeo.clone();
 
 				if (parallax) {
-					material = containerMeshParallaxMaterial.current.clone();
+					material = containerMeshParallaxMaterial.clone();
 				} else {
-					material = containerMeshMaterial.current.clone();
+					material = containerMeshMaterial.clone();
 				}
 
 				const dynamicDpr = usePlatformStore.getState().isMobile

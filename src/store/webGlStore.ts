@@ -9,4 +9,5 @@ export const useWebGlStore = create(set => ({
 	containerMaskedMeshes: null,
 	containerTranslucentMaskedMeshes: null,
 	shareTranslucentBuffer: null,
+	rippleBuffer: null,
 }));

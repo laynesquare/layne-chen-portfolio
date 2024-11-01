@@ -2,7 +2,7 @@
 import { ResponsiveText } from '@/components';
 
 // store
-import { useDomStore } from '@/store';
+import { useDomStore, useCursorStore, useNavStore } from '@/store';
 
 export default function Contact() {
 	const textElStoreRegister = useDomStore(state => state?.textElRegister);

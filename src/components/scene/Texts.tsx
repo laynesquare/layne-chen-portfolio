@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 // three
 import { useThree } from '@react-three/fiber';
@@ -15,42 +15,47 @@ import { useDomStore } from '@/store';
 import { getScaleMultiplier } from '@/utils';
 
 // constant
-import { MESH_DISTANCE } from '@/config/constants';
+import { MESH_DISTANCE, MESH_NAME } from '@/config/constants';
 
 export default function Texts() {
 	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
 	const textGroupRef = useRef(null);
 	const textMeshRatio = getScaleMultiplier(MESH_DISTANCE.TEXT, viewport, camera, size);
 
-	const materialDomText = useRef(
-		new MeshBasicMaterial({
-			color: new Color('#FFFFF0'),
-			depthWrite: false,
-			depthTest: false,
-			side: FrontSide,
-		}),
+	const materialDomText = useMemo(
+		() =>
+			new MeshBasicMaterial({
+				color: new Color('#FFFFF0'),
+				depthWrite: false,
+				depthTest: false,
+				side: FrontSide,
+			}),
+		[],
 	);
 
-	const materialDomTextHighlight = useRef(
-		new MeshBasicMaterial({
-			color: new Color('#FAFF00'),
-			depthWrite: false,
-			depthTest: false,
-			side: FrontSide,
-		}),
+	const materialDomTextHighlight = useMemo(
+		() =>
+			new MeshBasicMaterial({
+				color: new Color('#FAFF00'),
+				depthWrite: false,
+				depthTest: false,
+				side: FrontSide,
+			}),
+		[],
 	);
 
-	function updatePosition(offset: number) {
-		if (!textGroupRef.current) return;
-		const base = offset / viewport.factor;
-		textGroupRef.current.position.y = base * textMeshRatio;
-	}
-
-	useLenis(event => updatePosition(event.scroll), [size]);
+	useLenis(
+		event => {
+			if (!textGroupRef.current) return;
+			const offset = (event.scroll / viewport.factor) * textMeshRatio;
+			textGroupRef.current.position.y = offset;
+		},
+		[size],
+	);
 
 	return (
 		<group
-			name='text-mesh-group'
+			name={MESH_NAME.TEXT_GROUP}
 			ref={textGroupRef}>
 			{[...useDomStore.getState().textEls].map((el, idx) => {
 				const { fontSize, lineHeight, textAlign } = window.getComputedStyle(el);
@@ -65,7 +70,7 @@ export default function Texts() {
 				const baseX = (-viewport.width / 2) * ratio;
 				const baseY = (viewport.height / 2) * ratio;
 				const scrollOffset = (scrollY / factor) * ratio;
-				const material = fontHighlight ? materialDomTextHighlight.current : materialDomText.current;
+				const material = fontHighlight ? materialDomTextHighlight : materialDomText;
 
 				let pX = baseX + (left / factor) * ratio;
 				let pY = baseY - (top / factor) * ratio - scrollOffset;

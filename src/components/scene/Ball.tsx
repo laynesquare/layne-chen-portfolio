@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 // three
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
@@ -25,6 +25,9 @@ import { useDomStore, usePlatformStore, useWebGlStore } from '@/store';
 // util
 import { getScaleMultiplier } from '@/utils';
 
+// constant
+import { MESH_DISTANCE, MESH_NAME } from '@/config/constants';
+
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -33,63 +36,63 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Ball() {
 	const getThree = useThree(state => state.get);
+	const ballMeshRatio = getScaleMultiplier(1, getThree().viewport, getThree().camera, getThree().size);
 
 	const ballRef = useRef();
 	const ballCloneRef = useRef();
-	const ballInitPosRef = useRef(new Vector3(5, 5, 1));
-	const ballCenterPosRef = useRef(new Vector3(0, 0, 1));
-	const ballDynamicPosRef = useRef(new Vector3());
-	const ballClonedDynamicPosRef = useRef(new Vector3());
-	const ballMeshRatio = getScaleMultiplier(1, getThree().viewport, getThree().camera, getThree().size);
-	const ballGeometry = useRef(
-		(() => {
-			const geometry = mergeVertices(new IcosahedronGeometry(0.5, 64));
-			geometry.computeTangents();
-			return geometry;
-		})(),
-	);
-
 	const ballMaskRef = useRef(null);
 	const ballClonedMaskRef = useRef(null);
+
+	const ballInitPos = useMemo(() => new Vector3(5, 5, MESH_DISTANCE.BALL), []);
+	const ballCenterPos = useMemo(() => new Vector3(0, 0, MESH_DISTANCE.BALL), []);
+	const ballDynamicPos = useMemo(() => new Vector3(), []);
+	const ballClonedDynamicPos = useMemo(() => new Vector3(), []);
 	const ballDisplacementTexture = useLoader(TextureLoader, '/scene/textures/ball-displacement.webp');
+
+	const ballGeometry = useMemo(() => {
+		const geometry = mergeVertices(new IcosahedronGeometry(0.5, 64));
+		geometry.computeTangents();
+		return geometry;
+	}, []);
 
 	const scrollOffsetRef = useRef(0);
 
-	const uniformsRef = useRef({
-		uTime: { value: 0 },
-		uColor: { value: new Color(0xe6ff00) },
-		uSpeed: { value: 4 },
-		uNoiseStrength: { value: 2.5 },
-		uDisplacementStrength: { value: 1 },
-		uFractAmount: { value: 0.8 },
-		uIsNormalColor: { value: 0 },
-	});
+	const uniforms = useMemo(
+		() => ({
+			uTime: { value: 0 },
+			uColor: { value: new Color(0xe6ff00) },
+			uSpeed: { value: 4 },
+			uNoiseStrength: { value: 2.5 },
+			uDisplacementStrength: { value: 1 },
+			uFractAmount: { value: 0.8 },
+			uIsNormalColor: { value: 0 },
+		}),
+		[],
+	);
 
-	useFrame(({ clock }, delta) => {
-		if (!useWebGlStore.getState().isEntryAnimationDone) return;
-		const inViewEl = [...useDomStore.getState().anchorEls].findLast(el => ScrollTrigger.isInViewport(el, 0.3));
-
-		if (!inViewEl && ballCloneRef.current) {
-			const epsilon = ballRef.current.position.distanceTo(ballCenterPosRef.current) > 0.005;
-			if (epsilon) {
-				ballRef.current.position.lerp(ballCenterPosRef.current, 0.035);
-				ballMaskRef.current.position.copy(ballRef.current.position);
-				ballCloneRef.current?.position.copy(ballRef.current.position);
-				ballClonedMaskRef.current?.position.copy(ballRef.current.position);
-				ballCloneRef.current.visible = false;
-			}
-		}
-
-		ballCloneRef.current?.rotation.copy(ballRef.current.rotation);
-
-		const isMobile = usePlatformStore.getState().isMobile;
-
-		ballMaskRef.current?.scale.set(...(isMobile ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]));
-		ballClonedMaskRef.current?.scale.copy(ballMaskRef.current?.scale);
-
-		ballMaterialUpdate(delta);
-		ballRotationUpdate(clock.elapsedTime);
-	});
+	const ballMaterial = useMemo(
+		() =>
+			new CustomShaderMaterial({
+				baseMaterial: new MeshPhysicalMaterial(),
+				vertexShader: vertexShader,
+				fragmentShader: fragmentShader,
+				roughness: 0.1,
+				metalness: 0.1,
+				reflectivity: 0.46,
+				clearcoat: 1.0,
+				ior: 0,
+				iridescence: 0,
+				iridescenceIOR: 1.3,
+				uniforms: uniforms,
+				displacementMap: ballDisplacementTexture,
+				displacementScale: 0,
+				silent: true,
+				transparent: true,
+				side: FrontSide,
+				blending: NoBlending,
+			}),
+		[ballDisplacementTexture, uniforms],
+	);
 
 	function ballRotationUpdate(elapsedTime) {
 		const isBallPress = useWebGlStore.getState().isBallPress;
@@ -125,16 +128,14 @@ export default function Ball() {
 		};
 
 		const { x: targetX, y: targetY } = getElementPosition(inViewEl);
-		const targetBallPos = ballDynamicPosRef.current.set(targetX, targetY, 1);
+		const targetBallPos = ballDynamicPos.set(targetX, targetY, 1);
 		ballRef.current.position.lerp(targetBallPos, 0.035);
 		ballMaskRef.current.position.copy(ballRef.current.position);
-
-		// if (ballCloneRef.current.position)
 
 		if (anchorMirror) {
 			const inViewMirrorEl = els.find(el => el.dataset['anchor'] === anchor && el !== inViewEl);
 			const { x: mirrorX, y: mirrorY } = getElementPosition(inViewMirrorEl);
-			const targetBallClonePos = ballClonedDynamicPosRef.current.set(mirrorX, mirrorY, 1);
+			const targetBallClonePos = ballClonedDynamicPos.set(mirrorX, mirrorY, 1);
 			ballCloneRef.current?.position.lerp(targetBallClonePos, 0.035);
 			ballClonedMaskRef.current?.position.copy(ballCloneRef.current?.position);
 			ballCloneRef.current.visible = true;
@@ -143,14 +144,6 @@ export default function Ball() {
 			ballClonedMaskRef.current?.position.copy(ballCloneRef.current?.position);
 		}
 	}
-
-	useEffect(() => {
-		const { scene } = getThree();
-		ballCloneRef.current = ballRef.current.clone();
-		ballCloneRef.current.name = 'cloned-ball-mesh';
-		ballCloneRef.current.visible = false;
-		scene.add(ballCloneRef.current);
-	}, []);
 
 	function ballMaterialUpdate(delta: number) {
 		ballRef.current.material.uniforms.uTime.value += delta;
@@ -165,44 +158,56 @@ export default function Ball() {
 		return factor;
 	}
 
-	const ballMaterialRef = useRef(
-		new CustomShaderMaterial({
-			baseMaterial: new MeshPhysicalMaterial(),
-			vertexShader: vertexShader,
-			fragmentShader: fragmentShader,
-			roughness: 0.1,
-			metalness: 0.1,
-			reflectivity: 0.46,
-			clearcoat: 1.0,
-			ior: 0,
-			iridescence: 0,
-			iridescenceIOR: 1.3,
-			uniforms: uniformsRef.current,
-			displacementMap: ballDisplacementTexture,
-			displacementScale: 0,
-			silent: true,
-			transparent: true,
-			side: FrontSide,
-			blending: NoBlending,
-		}),
-	);
-
 	useLenis(event => {
 		scrollOffsetRef.current = event.scroll;
 		updatePosByScroll();
 	});
 
-	console.log('model re rerenders');
+	useEffect(() => {
+		const { scene } = getThree();
+		ballCloneRef.current = ballRef.current.clone();
+		ballCloneRef.current.name = MESH_NAME.CLONED_BALL;
+		ballCloneRef.current.visible = false;
+		scene.add(ballCloneRef.current);
+	}, []);
+
+	useFrame(({ clock }, delta) => {
+		if (!useWebGlStore.getState().isEntryAnimationDone) return;
+		const inViewEl = [...useDomStore.getState().anchorEls].findLast(el => ScrollTrigger.isInViewport(el, 0.3));
+
+		if (!inViewEl && ballCloneRef.current) {
+			const epsilon = ballRef.current.position.distanceTo(ballCenterPos) > 0.005;
+			if (epsilon) {
+				ballRef.current.position.lerp(ballCenterPos, 0.035);
+				ballMaskRef.current.position.copy(ballRef.current.position);
+				ballCloneRef.current?.position.copy(ballRef.current.position);
+				ballClonedMaskRef.current?.position.copy(ballRef.current.position);
+				ballCloneRef.current.visible = false;
+			}
+		}
+
+		ballCloneRef.current?.rotation.copy(ballRef.current.rotation);
+
+		const isMobile = usePlatformStore.getState().isMobile;
+
+		ballMaskRef.current?.scale.set(...(isMobile ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]));
+		ballClonedMaskRef.current?.scale.copy(ballMaskRef.current?.scale);
+
+		ballMaterialUpdate(delta);
+		ballRotationUpdate(clock.elapsedTime);
+	});
+
+	console.log('ball rerenders');
 
 	return (
 		<group>
 			<mesh
-				name='ball-mesh'
+				name={MESH_NAME.BALL}
 				raycast={meshBounds}
 				ref={ballRef}
-				geometry={ballGeometry.current}
-				position={ballInitPosRef.current}
-				material={ballMaterialRef.current}
+				geometry={ballGeometry}
+				position={ballInitPos}
+				material={ballMaterial}
 				frustumCulled={false}></mesh>
 
 			<BallMask

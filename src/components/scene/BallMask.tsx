@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 // three
 import { meshBounds } from '@react-three/drei';
@@ -15,16 +15,18 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function BallMask({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 	const isBallPress = useWebGlStore(state => state.isBallPress);
-	const ballMaskGeo = useRef(new CircleGeometry(1, 8));
-	const ballMaskMaterialRef = useRef(
-		new MeshBasicMaterial({
-			visible: true,
-			depthTest: false,
-			depthWrite: false,
-			transparent: true,
-			opacity: 0,
-			side: FrontSide,
-		}),
+	const ballMaskGeo = useMemo(() => new CircleGeometry(1, 8), []);
+	const ballMaskMaterial = useMemo(
+		() =>
+			new MeshBasicMaterial({
+				visible: true,
+				depthTest: false,
+				depthWrite: false,
+				transparent: true,
+				opacity: 0,
+				side: FrontSide,
+			}),
+		[],
 	);
 
 	useGSAP(
@@ -82,7 +84,7 @@ export default function BallMask({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 				raycast={meshBounds}
 				ref={ballMaskRef}
 				position={[0, 0, -1]}
-				material={ballMaskMaterialRef.current}
+				material={ballMaskMaterial}
 				onPointerDown={e => {
 					e.stopPropagation();
 					useWebGlStore.setState({ isBallPress: true });
@@ -101,11 +103,11 @@ export default function BallMask({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 					document.body.style.cursor = 'auto';
 				}}
 				scale={1.2}
-				geometry={ballMaskGeo.current}></mesh>
+				geometry={ballMaskGeo}></mesh>
 			<mesh
 				raycast={meshBounds}
 				ref={ballClonedMaskRef}
-				material={ballMaskMaterialRef.current}
+				material={ballMaskMaterial}
 				position={[0, 0, -1]}
 				onPointerDown={e => {
 					e.stopPropagation();
@@ -125,7 +127,7 @@ export default function BallMask({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 					document.body.style.cursor = 'auto';
 				}}
 				scale={1.2}
-				geometry={ballMaskGeo.current}></mesh>
+				geometry={ballMaskGeo}></mesh>
 		</>
 	);
 }
