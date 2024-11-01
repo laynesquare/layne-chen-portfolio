@@ -148,6 +148,7 @@ export default memo(function Ripple({ children }) {
 
 	const handleMouseMove = useCallback(
 		(event: MouseEvent) => {
+			if (!useWebGlStore.getState().isEntryAnimationDone) return;
 			const { size, camera } = getThree();
 			const ndcX = (event.clientX / size.width) * 2 - 1;
 			const ndcY = -((event.clientY / size.height) * 2 - 1);
@@ -294,7 +295,7 @@ export default memo(function Ripple({ children }) {
 
 				containerMeshGroup.visible = true;
 				textMeshGroup.visible = true;
-				portScene.current.environmentIntensity = 1.5;
+				portScene.current.environmentIntensity = 1.25;
 				ballMesh.material.emissiveIn;
 				ballMesh.material.wireframe = false;
 				ballMesh.material.wireframe = false;
@@ -306,7 +307,9 @@ export default memo(function Ripple({ children }) {
 				ballMesh.material.uniforms.uColor.value.set('#e6ff00');
 			}
 		}
+	});
 
+	useFrame(({ gl, camera }) => {
 		updateRipples(rippleRefs);
 
 		gl.setRenderTarget(rippleBuffer.current);
