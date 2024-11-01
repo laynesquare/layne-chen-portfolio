@@ -1,19 +1,18 @@
-// react
-import { memo, Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { Environment, Lightformer } from '@react-three/drei';
 
 // three
 import { Vector3 } from 'three';
 
 // components
-import Ripple from '@/components/scenery/Ripple';
-import Banner from '@/components/scenery/Banner';
-import Model from '@/components/scenery/Model';
+import Ripple from '@/components/scene/Ripple';
+import Banner from '@/components/scene/Banner';
+import Model from '@/components/scene/Ball';
 
 // store
 import { useWebGlStore } from '@/store';
 
-export default memo(function Port() {
+export default function Port() {
 	const lightDirRef = useRef(new Vector3(0, 0, 0));
 	return (
 		<>
@@ -23,9 +22,7 @@ export default memo(function Port() {
 					<Banner />
 					<Model />
 					<Environment
-						// preset='warehouse'
-						// files='/scenery/textures/empty_warehouse.jpg'
-						files='/scenery/textures/empty_warehouse.hdr'
+						files='/scene/textures/empty_warehouse.hdr'
 						resolution={16}>
 						<Lightformer
 							color='#FAE9D5'
@@ -40,7 +37,7 @@ export default memo(function Port() {
 			</Suspense>
 		</>
 	);
-});
+}
 
 /**
  * use useEffect's clean-up callback to detect whether progress is 100 and 3D components are fully loaded,

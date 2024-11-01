@@ -2,9 +2,7 @@
 import { useEffect, useRef } from 'react';
 
 // component
-import Hero from '@/components/frame/Hero';
-import Scene from '@/components/scenery/Scene';
-import Loader from '@/components/scenery/Loader';
+import { Hero, Scene, Loader } from '@/components';
 
 // store
 import { useCursorStore, usePlatformStore, useWebGlStore } from '@/store';

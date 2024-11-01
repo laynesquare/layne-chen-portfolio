@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, ReactNode, RefObject, LegacyRef } from 'react';
 import { useNavStore } from '@/store';
-import { ReactLenis } from '@studio-freight/react-lenis';
+import { ReactLenis, LenisContext } from '@studio-freight/react-lenis';
 import Lenis from '@studio-freight/lenis';
 import gsap from 'gsap';
 
@@ -34,7 +34,6 @@ function SmoothScrolling({ children }: SmoothScrollingProps) {
 		duration: 3,
 		syncTouch: true,
 		touchMultiplier: 0.6,
-		gestureOrientation: 'vertical',
 	};
 
 	return (

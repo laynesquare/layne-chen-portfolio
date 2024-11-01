@@ -1,7 +1,6 @@
 import { create } from 'zustand';
-import { Vector2 } from 'three';
 
-const useDomStore = create(set => ({
+export const useDomStore = create(set => ({
 	textEls: new Set(),
 	torsoEl: null,
 	containerEls: new Set(),
@@ -40,32 +39,3 @@ const useDomStore = create(set => ({
 		});
 	},
 }));
-
-const useWebGlStore = create(set => ({
-	isBallPress: false,
-	isLoaded: false,
-	isEntryAnimationDone: false,
-	isStartFrame: false,
-
-	containerMaskedMeshes: null,
-	containerTranslucentMaskedMeshes: null,
-	shareTranslucentBuffer: null,
-}));
-
-const useNavStore = create(set => ({
-	isOpen: false,
-	lenisRef: null,
-}));
-
-const usePlatformStore = create(set => ({
-	isMobile: false,
-}));
-
-const useCursorStore = create(set => ({
-	isRippleZone: true,
-	isCustomCursor: true,
-	ndcPosition: new Vector2(0, 0),
-	curr: { x: 0, y: 0, cursor: 'auto' },
-}));
-
-export { useDomStore, useWebGlStore, useNavStore, usePlatformStore, useCursorStore };

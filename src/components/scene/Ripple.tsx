@@ -36,11 +36,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-export default memo(function Ripple({ children }) {
+export default function Ripple({ children }) {
 	const getThree = useThree(state => state.get);
 
 	const portBuffer = useRef(
-		useFBO(0, 0, {
+		useFBO(1024, 1024, {
 			samples: 0,
 			minFilter: LinearFilter,
 			magFilter: LinearFilter,
@@ -75,7 +75,7 @@ export default memo(function Ripple({ children }) {
 	const velocityRef = useRef(0);
 	const preMousePos = useRef({ x: 0, y: 0 });
 	const rippleVec3 = useRef(new Vector3());
-	const rippleTexture = useLoader(TextureLoader, '/scenery/textures/ripple.png');
+	const rippleTexture = useLoader(TextureLoader, '/scene/textures/ripple.png');
 	const rippleRefs = useRef([]);
 	const rippleCurrIdx = useRef(-1);
 	const rippleGeoRef = useRef(new PlaneGeometry(0.5, 0.5, 1, 1));
@@ -432,4 +432,4 @@ export default memo(function Ripple({ children }) {
 				geometry={portGeoRef.current}></mesh>
 		</>
 	);
-});
+}

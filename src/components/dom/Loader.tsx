@@ -1,11 +1,17 @@
-import { Html, useProgress } from '@react-three/drei';
-import React, { LegacyRef, useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-import { lerp } from 'three/src/math/MathUtils.js';
+import { useRef } from 'react';
 
+// three
+import { useProgress } from '@react-three/drei';
+
+// store
 import { useWebGlStore } from '@/store';
 
+// util
+import { getTruncateText } from '@/utils';
+
+// gsap
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(useGSAP);
 
 export default function Loader() {
@@ -68,7 +74,7 @@ export default function Loader() {
 						style={{
 							transform: `rotateX(-45deg) rotateY(-45deg) rotateZ(0deg) translate3d(9.375rem, -6.25rem, -8.125rem)`,
 						}}>
-						{truncate(item, 40)}
+						{getTruncateText(item, 40)}
 					</p>
 					<p
 						className='text-right text-[11.75rem] absolute flex justify-center items-center h-full w-full'
@@ -99,8 +105,4 @@ export default function Loader() {
 			</div>
 		</>
 	);
-}
-
-function truncate(str, maxLength) {
-	return str.length > maxLength ? `${str.substring(0, maxLength)}...` : str;
 }

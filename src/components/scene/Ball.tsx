@@ -17,30 +17,12 @@ import { BallCollider, Physics, RigidBody, CylinderCollider, RapierRigidBody } f
 import { MeshBVH, acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
 
 import {
-	Group,
-	Raycaster,
-	Vector2,
 	Vector3,
-	Quaternion,
-	Mesh,
 	TextureLoader,
 	Color,
-	LoopRepeat,
-	MeshMatcapMaterial,
 	MeshPhysicalMaterial,
-	MeshDepthMaterial,
-	MeshNormalMaterial,
-	RGBADepthPacking,
-	DoubleSide,
-	ShaderMaterial,
 	IcosahedronGeometry,
-	MathUtils,
-	SphereGeometry,
-	TorusGeometry,
 	FrontSide,
-	BackSide,
-	CubeRefractionMapping,
-	Euler,
 	MeshBasicMaterial,
 	CircleGeometry,
 	NoBlending,
@@ -65,7 +47,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-export default memo(function Model() {
+export default function Ball() {
 	const getThree = useThree(state => state.get);
 
 	const ballRef = useRef();
@@ -85,7 +67,7 @@ export default memo(function Model() {
 
 	const ballMaskRef = useRef(null);
 	const ballClonedMaskRef = useRef(null);
-	const ballDisplacementTexture = useLoader(TextureLoader, '/scenery/textures/ball-displacement.webp');
+	const ballDisplacementTexture = useLoader(TextureLoader, '/scene/textures/ball-displacement.webp');
 
 	const scrollOffsetRef = useRef(0);
 
@@ -246,7 +228,7 @@ export default memo(function Model() {
 			/>
 		</group>
 	);
-});
+}
 
 function MaskBall({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 	const isBallPress = useWebGlStore(state => state.isBallPress);

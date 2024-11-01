@@ -1,6 +1,8 @@
 'use client';
 
 import { memo, useRef } from 'react';
+
+// three
 import { Canvas } from '@react-three/fiber';
 import { Preload } from '@react-three/drei';
 
@@ -10,14 +12,15 @@ import { useWebGlStore } from '@/store';
 // type
 import { SceneProps } from '@/types';
 
+// component
+import { Port } from '@/components';
+
+// gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-
-import Port from './Port';
-
 gsap.registerPlugin(useGSAP);
 
-export default memo(function Scene({ wrapperRef }: SceneProps) {
+export default function Scene({ wrapperRef }: SceneProps) {
 	const canvasRef = useRef(null);
 
 	return (
@@ -56,7 +59,7 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 			</Canvas>
 		</>
 	);
-});
+}
 
 interface DiscloseProps {
 	canvasRef: React.RefObject<HTMLCanvasElement>;

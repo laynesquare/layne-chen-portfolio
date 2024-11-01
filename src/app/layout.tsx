@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import SmoothScrolling from '@/components/SmoothScroll';
+import SmoothScrolling from '@/components/dom/SmoothScroll';
 import localFont from 'next/font/local';
 
 import './globals.css';

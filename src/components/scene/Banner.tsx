@@ -36,16 +36,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 // util
 import { getScaleMultiplier } from '@/utils';
 
+// constant
+import { MESH_DISTANCE } from '@/config/constants';
+
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-const MESH_DISTANCE = {
-	TEXT: 3,
-	TORSO: 0,
-	CONTAINER: 2.9,
-	BALL: 0,
-};
-
-const Banner = memo(function Banner() {
+export default function Banner() {
 	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
 
 	const pointerRef = useRef(new Vector2(0, 0));
@@ -137,8 +133,6 @@ const Banner = memo(function Banner() {
 		});
 	});
 
-	useLenis(event => updatePosition(event.scroll), [size]);
-
 	function updatePosition(offset: number) {
 		if (textGroupRef.current && containerGroupRef.current) {
 			const base = offset / viewport.factor;
@@ -191,6 +185,8 @@ const Banner = memo(function Banner() {
 			side: FrontSide,
 		}),
 	);
+
+	useLenis(event => updatePosition(event.scroll), [size]);
 
 	useEffect(() => {
 		useWebGlStore.setState({
@@ -349,9 +345,9 @@ const Banner = memo(function Banner() {
 			</group>
 		</>
 	);
-});
+}
 
-export default Banner;
+// export default Banner;
 
 /* -------------------------------------------------------------------------- */
 /*                                  later use                                 */

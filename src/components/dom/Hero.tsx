@@ -1,15 +1,17 @@
-import React, { useEffect, useRef, useState, MouseEvent } from 'react';
+import React, { useRef, useState, MouseEvent } from 'react';
 import Image from 'next/image';
 
+// store
 import { useDomStore, useNavStore, usePlatformStore, useCursorStore } from '@/store';
 
-import previewShareYourMemories from '@/public/frame/project-preview-share-your-memories.webp';
-import previewLearnEnglishDictionary from '@/public/frame/project-preview-learn-english-dictionary.webp';
-import previewLayneChenPortfolio from '@/public/frame/project-preview-layne-chen-portfolio-2024.webp';
+// assets
+import previewShareYourMemories from '/public/frame/project-preview-share-your-memories.webp';
+import previewLearnEnglishDictionary from '/public/frame/project-preview-learn-english-dictionary.webp';
+import previewLayneChenPortfolio from '/public/frame/project-preview-layne-chen-portfolio-2024.webp';
 
+// gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-
 gsap.registerPlugin(useGSAP);
 
 export default function Hero({}) {
