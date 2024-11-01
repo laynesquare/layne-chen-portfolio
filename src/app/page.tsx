@@ -1,22 +1,22 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
+// component
 import Hero from '@/components/frame/Hero';
 import Scene from '@/components/scenery/Scene';
 import Loader from '@/components/scenery/Loader';
 
+// store
 import { useCursorStore, usePlatformStore, useWebGlStore } from '@/store';
-import { opacity } from 'html2canvas/dist/types/css/property-descriptors/opacity';
 
+// gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(useGSAP);
 
 export default function Home() {
-	const wrapperRef = useRef(null);
-
-	// useEffect(() => window.scrollTo(0, 0), []);
+	const wrapperRef = useRef<HTMLDivElement>(null);
 
 	return (
 		<>

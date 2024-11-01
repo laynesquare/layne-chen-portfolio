@@ -1,51 +1,17 @@
 'use client';
 
-import { memo, Suspense, use, useEffect, useRef } from 'react';
-import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import {
-	View,
-	useProgress,
-	Html,
-	ScrollControls,
-	useScroll,
-	OrbitControls,
-	Text,
-	Preload,
-	MeshTransmissionMaterial,
-	Text3D,
-	Environment,
-	Lightformer,
-	Scroll,
-	Sparkles,
-	OrthographicCamera,
-	useGLTF,
-	PerformanceMonitor,
-} from '@react-three/drei';
-import {
-	EffectComposer,
-	Bloom,
-	ChromaticAberration,
-	Noise,
-	ToneMapping,
-	Scanline,
-	GodRays,
-	LensFlare,
-	N8AO,
-	FXAA,
-} from '@react-three/postprocessing';
-import { KernelSize, Resolution, BlendFunction } from 'postprocessing';
-import { Vector2, BackSide, Vector3 } from 'three';
+import { memo, useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Preload } from '@react-three/drei';
 
-import Ripple from '@/components/scenery/Ripple';
-import Banner from '@/components/scenery/Banner';
-import Model from '@/components/scenery/Model';
+// store
+import { useWebGlStore } from '@/store';
 
-// Import types
+// type
 import { SceneProps } from '@/types';
 
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { usePlatformStore, useWebGlStore } from '@/store';
 
 import Port from './Port';
 
@@ -84,7 +50,7 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 				dpr={[1, 1.5]}
 				camera={{ position: [0, 0, 8], fov: 30 }}
 				flat={true}
-				eventSource={wrapperRef?.current}>
+				eventSource={wrapperRef.current || undefined}>
 				<Port />
 				<Preload all={true} />
 			</Canvas>

@@ -1,22 +1,26 @@
-import { extend, useFrame, useLoader, useThree } from '@react-three/fiber';
-import React, { useRef, useEffect, useMemo, useState, useCallback, memo } from 'react';
+import { useRef, useEffect, memo } from 'react';
+
+// three
+import { useFrame, useLoader, useThree } from '@react-three/fiber';
+import { Text } from '@react-three/drei';
 import {
 	Color,
 	FrontSide,
 	MeshBasicMaterial,
-	NoBlending,
 	PlaneGeometry,
-	RepeatWrapping,
 	ShaderMaterial,
 	TextureLoader,
 	Vector2,
 	Vector4,
 } from 'three';
-import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
-import { MeshTransmissionMaterial, RoundedBox, Text, PivotControls, useFBO, Line, useGLTF } from '@react-three/drei';
 
+// lenis
+import { useLenis } from '@studio-freight/react-lenis';
+
+// store
 import { useCursorStore, useDomStore, useNavStore, usePlatformStore, useWebGlStore } from '@/store';
 
+// shader
 import vertexShaderRoundedRec from '@/shaders/rounded-rectangle/vertex';
 import fragmentShaderRoundedRec from '@/shaders/rounded-rectangle/fragment';
 import vertexShaderAcidBg from '@/shaders/animated-underlay-acid-fluid/vertex';
@@ -29,7 +33,17 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+// util
+import { getScaleMultiplier } from '@/utils';
+
 gsap.registerPlugin(useGSAP, ScrollTrigger);
+
+const MESH_DISTANCE = {
+	TEXT: 3,
+	TORSO: 0,
+	CONTAINER: 2.9,
+	BALL: 0,
+};
 
 const Banner = memo(function Banner() {
 	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
@@ -38,15 +52,15 @@ const Banner = memo(function Banner() {
 	const pointerCenterRef = useRef(new Vector2(0, 0));
 
 	const textGroupRef = useRef(null);
-	const textMeshRatio = 1 - viewport.factor / calcFactorCamZ(3);
+	const textMeshRatio = getScaleMultiplier(MESH_DISTANCE.TEXT, viewport, camera, size);
 
 	const torsoMeshRef = useRef(null);
 	const torsoGroupRef = useRef(null);
-	const torsoMeshRatio = 1 - viewport.factor / calcFactorCamZ(0);
+	const torsoMeshRatio = getScaleMultiplier(MESH_DISTANCE.TORSO, viewport, camera, size);
 
 	const planeGeoRef = useRef(new PlaneGeometry(1, 1, 1, 1));
 	const containerGroupRef = useRef(null);
-	const containerMeshRatio = 1 - viewport.factor / calcFactorCamZ(2.9);
+	const containerMeshRatio = getScaleMultiplier(MESH_DISTANCE.CONTAINER, viewport, camera, size);
 	const containerParallaxMeshesRefs = useRef(new Set());
 	const containerMaskedMeshesRef = useRef(new Set());
 	const containerTranslucentMaskedMeshesRef = useRef(new Set());
@@ -65,14 +79,6 @@ const Banner = memo(function Banner() {
 		previewShareYourMemories: previewShareYourMemories,
 		previewLearnEnglishDictionary: previewLearnEnglishDictionary,
 	};
-
-	function calcFactorCamZ(zPosition: number) {
-		const fov = (camera.fov * Math.PI) / 180;
-		const h = 2 * Math.tan(fov / 2) * zPosition;
-		const w = h * (size.width / size.height);
-		const factor = size.width / w;
-		return factor;
-	}
 
 	const materialDomText = useRef(
 		new MeshBasicMaterial({
@@ -107,7 +113,7 @@ const Banner = memo(function Banner() {
 		}),
 	);
 
-	useFrame(({ scene, camera, gl, clock, pointer, viewport }, delta) => {
+	useFrame(({}, delta) => {
 		if (!useWebGlStore.getState().isEntryAnimationDone) return;
 
 		if (materialAcidBg.current) {
@@ -217,7 +223,7 @@ const Banner = memo(function Banner() {
 
 					let pX = baseX + (left / factor) * ratio;
 					let pY = baseY - (top / factor) * ratio - scrollOffset;
-					let pZ = 3;
+					let pZ = MESH_DISTANCE.TEXT;
 
 					let sX = 1;
 					let sY = 1;
@@ -269,7 +275,7 @@ const Banner = memo(function Banner() {
 
 					let x = baseX + ((left + shiftHalfW) / factor) * ratio;
 					let y = baseY - ((top + shiftHalfH) / factor) * ratio - scrollOffset;
-					let z = 2.9;
+					let z = MESH_DISTANCE.CONTAINER;
 
 					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
@@ -336,7 +342,7 @@ const Banner = memo(function Banner() {
 						0,
 						(viewport.height / 2) * torsoMeshRatio -
 							((useDomStore.getState().torsoEl.offsetHeight / viewport.factor) * torsoMeshRatio) / 2,
-						0,
+						MESH_DISTANCE.TORSO,
 					]}
 					material={materialAcidBg.current}
 					geometry={planeGeoRef.current.clone()}></mesh>

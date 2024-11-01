@@ -4,8 +4,8 @@ import localFont from 'next/font/local';
 
 import './globals.css';
 
-const boxing = localFont({ src: '../public/font/Boxing-Regular.woff', variable: '--font-boxing' });
-const satoshi = localFont({ src: '../public/font/Satoshi-Bold.woff', variable: '--font-satoshi' });
+const boxing = localFont({ src: '../../public/font/Boxing-Regular.woff', variable: '--font-boxing' });
+const satoshi = localFont({ src: '../../public/font/Satoshi-Bold.woff', variable: '--font-satoshi' });
 const fonts = `${boxing.variable} ${satoshi.variable}`;
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
