@@ -79,8 +79,8 @@ export default memo(function Scene({ wrapperRef }: SceneProps) {
 					left: 0,
 					width: '100dvw',
 					height: '100dvh',
+					transform: 'translate3d(0,0,0)',
 				}}
-				// frameloop='demand'
 				dpr={[1, 1.5]}
 				camera={{ position: [0, 0, 8], fov: 30 }}
 				flat={true}
@@ -102,10 +102,11 @@ function Disclose({ canvasRef }: DiscloseProps) {
 	useGSAP(
 		() => {
 			if (isEntryAnimationDone) {
-				const tl = gsap.timeline();
+				const tl = gsap.timeline({ delay: 0.25, smoothChildTiming: true });
 				const canvasEl = canvasRef.current;
-				const maskFactor = window.innerWidth >= 1920 ? 1920 : window.innerWidth;
-				const duration = (maskFactor / 1920) * 1.5 + 0.2;
+				const width = window.innerWidth;
+				const maskFactor = width >= 1920 ? 1920 : width;
+				const duration = (maskFactor / 1920) * 1.5 + 0.4;
 
 				tl.to(canvasEl, {
 					duration,
@@ -114,6 +115,7 @@ function Disclose({ canvasRef }: DiscloseProps) {
 				}).to(
 					canvasEl,
 					{
+						delay: 1,
 						duration: 0,
 						webkitMaskImage: 'none',
 						maskImage: 'none',

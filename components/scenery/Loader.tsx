@@ -16,12 +16,15 @@ export default function Loader() {
 	useGSAP(
 		() => {
 			if (isLoaded) {
-				const tl = gsap.timeline();
+				const tl = gsap.timeline({ delay: 0.3, smoothChildTiming: true });
+				const width = window.innerWidth;
+				const factor = 1920 / width;
+				const duration = 1920 / width - (1920 - width) / 1000;
+
 				tl.to('[data-intro-container]', {
-					delay: 0.5,
 					rotate: 180,
-					scale: 20,
-					duration: 1,
+					scale: 20 * factor,
+					duration: duration,
 					ease: 'none',
 				})
 					.to(
