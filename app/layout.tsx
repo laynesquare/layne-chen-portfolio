@@ -1,5 +1,4 @@
-import type { Metadata } from 'next';
-import Head from 'next/head';
+import type { Metadata, Viewport } from 'next';
 import SmoothScrolling from '@/components/SmoothScroll';
 import localFont from 'next/font/local';
 
@@ -9,7 +8,15 @@ const boxing = localFont({ src: '../public/font/Boxing-Regular.woff', variable: 
 const satoshi = localFont({ src: '../public/font/Satoshi-Bold.woff', variable: '--font-satoshi' });
 const fonts = `${boxing.variable} ${satoshi.variable}`;
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+
+export const viewport: Viewport = {
+	themeColor: '#1a1a1a',
+	colorScheme: 'dark',
+};
+
 export const metadata: Metadata = {
+	metadataBase: new URL(baseUrl),
 	title: 'Layne Chen | Front-end Developer',
 	creator: 'Layne Chen',
 	generator: 'Next.js',
@@ -46,6 +53,26 @@ export const metadata: Metadata = {
 		'Illustrator',
 		'Photoshop',
 	],
+	alternates: {
+		canonical: './',
+	},
+
+	openGraph: {
+		title: 'Layne Chen | Front-end Developer',
+		description:
+			'Proficient in TypeScript/JavaScript, React, Angular, Node.js, and MongoDB. Skilled in SSG/SSR, RESTful APIs, and UX design, with a focus on performance and aesthetics.',
+		url: new URL('/', baseUrl),
+		siteName: 'Layne Chen | Front-end Developer',
+		images: [
+			{
+				url: new URL(`${baseUrl}/meta/layne-chen-socials.png`),
+				width: 1200,
+				height: 630,
+			},
+		],
+		locale: 'en_US',
+		type: 'website',
+	},
 };
 
 export default function RootLayout({
@@ -57,6 +84,25 @@ export default function RootLayout({
 		<html
 			lang='en'
 			className={fonts}>
+			<head>
+				<link
+					fetchPriority='low'
+					rel='mask-icon'
+					href='/meta/safari-pinned-tab.svg'
+					color='#25fea8'
+				/>
+				<link
+					rel='shortcut icon'
+					href='/favicon.ico'></link>
+				<meta
+					name='msapplication-TileColor'
+					content='#1a1a1a'
+				/>
+				<meta
+					name='msapplication-config'
+					content={`${baseUrl}/meta/browserconfig.xml`}
+				/>
+			</head>
 			<body>
 				<SmoothScrolling>{children}</SmoothScrolling>
 			</body>

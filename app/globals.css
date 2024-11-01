@@ -40,6 +40,16 @@
 	box-sizing: border-box;
 }
 
+html {
+	/* zoom: ; */
+}
+
+html,
+body,
+main {
+	font-size: calc(var(--font-base));
+}
+
 html,
 body {
 	position: relative;
@@ -47,7 +57,6 @@ body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
-	font-size: calc(0.8333vw);
 	isolation: isolate;
 }
 
