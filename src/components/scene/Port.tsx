@@ -4,10 +4,7 @@ import { Environment, Lightformer } from '@react-three/drei';
 // three
 import { Vector3 } from 'three';
 
-// components
-import Ripple from '@/components/scene/Ripple';
-import Banner from '@/components/scene/Banner';
-import Model from '@/components/scene/Ball';
+import { Ripple, Torso, Texts, Containers, Ball } from '@/components';
 
 // store
 import { useWebGlStore } from '@/store';
@@ -19,8 +16,10 @@ export default function Port() {
 			{/* <OrbitControls /> */}
 			<Suspense fallback={<SuspenseMonitor />}>
 				<Ripple>
-					<Banner />
-					<Model />
+					<Torso />
+					<Containers />
+					<Texts />
+					<Ball />
 					<Environment
 						files='/scene/textures/empty_warehouse.hdr'
 						resolution={16}>

@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useRef } from 'react';
+import { useRef } from 'react';
 
 // three
 import { Canvas } from '@react-three/fiber';

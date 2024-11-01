@@ -1,3 +1,17 @@
 {
-	"cSpell.words": ["drei", "GLTF", "gsap", "LAYNE", "lerp", "Lightformer", "Photoshop", "satoshi", "webp", "zustand"]
+	"cSpell.words": [
+		"clearcoat",
+		"drei",
+		"GLTF",
+		"gsap",
+		"LAYNE",
+		"lerp",
+		"Lightformer",
+		"metalness",
+		"Photoshop",
+		"raycast",
+		"satoshi",
+		"webp",
+		"zustand"
+	]
 }

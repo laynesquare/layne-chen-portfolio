@@ -1,50 +1,34 @@
-/// cSpell: ignore Raycaster, GLTF, metalness, clearcoat, matcap, drei
+import { useEffect, useRef } from 'react';
 
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
-import {
-	MeshTransmissionMaterial,
-	useAnimations,
-	useGLTF,
-	Float,
-	Sparkles,
-	Billboard,
-	RoundedBox,
-	useScroll,
-	meshBounds,
-} from '@react-three/drei';
-import { Intersection, useFrame, useGraph, useLoader, useThree } from '@react-three/fiber';
-import { BallCollider, Physics, RigidBody, CylinderCollider, RapierRigidBody } from '@react-three/rapier';
-import { MeshBVH, acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from 'three-mesh-bvh';
-
-import {
-	Vector3,
-	TextureLoader,
-	Color,
-	MeshPhysicalMaterial,
-	IcosahedronGeometry,
-	FrontSide,
-	MeshBasicMaterial,
-	CircleGeometry,
-	NoBlending,
-} from 'three';
-
-import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
-
+// three
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
+import { useFrame, useLoader, useThree } from '@react-three/fiber';
+import { meshBounds } from '@react-three/drei';
+import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { lerp } from 'three/src/math/MathUtils.js';
+import { Vector3, TextureLoader, Color, MeshPhysicalMaterial, IcosahedronGeometry, FrontSide, NoBlending } from 'three';
+import { useControls } from 'leva';
+
+// component
+import { BallMask } from '@/components';
+
+// lenis
+import { useLenis } from '@studio-freight/react-lenis';
+
+// shader
 import vertexShader from '@/shaders/animated-displaced-sphere/vertex';
 import fragmentShader from '@/shaders/animated-displaced-sphere/fragment';
-import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
-import { useControls } from 'leva';
-import { lerp } from 'three/src/math/MathUtils.js';
-
+// store
 import { useDomStore, usePlatformStore, useWebGlStore } from '@/store';
+
+// util
+import { getScaleMultiplier } from '@/utils';
 
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Ball() {
@@ -56,7 +40,7 @@ export default function Ball() {
 	const ballCenterPosRef = useRef(new Vector3(0, 0, 1));
 	const ballDynamicPosRef = useRef(new Vector3());
 	const ballClonedDynamicPosRef = useRef(new Vector3());
-	const ballMeshRatio = 1 - getThree().viewport.factor / calcFactorCamZ(1);
+	const ballMeshRatio = getScaleMultiplier(1, getThree().viewport, getThree().camera, getThree().size);
 	const ballGeometry = useRef(
 		(() => {
 			const geometry = mergeVertices(new IcosahedronGeometry(0.5, 64));
@@ -118,11 +102,6 @@ export default function Ball() {
 		ballRef.current.rotation.y = lerp(ballRef.current.rotation.y, targetRotationY, 0.1);
 		ballRef.current.rotation.z = lerp(ballRef.current.rotation.z, targetRotationZ, 0.1);
 	}
-
-	useLenis(event => {
-		scrollOffsetRef.current = event.scroll;
-		updatePosByScroll();
-	});
 
 	function updatePosByScroll() {
 		const els = [...useDomStore.getState().anchorEls];
@@ -208,6 +187,11 @@ export default function Ball() {
 		}),
 	);
 
+	useLenis(event => {
+		scrollOffsetRef.current = event.scroll;
+		updatePosByScroll();
+	});
+
 	console.log('model re rerenders');
 
 	return (
@@ -221,128 +205,11 @@ export default function Ball() {
 				material={ballMaterialRef.current}
 				frustumCulled={false}></mesh>
 
-			<MaskBall
+			<BallMask
 				ballRef={ballRef}
 				ballMaskRef={ballMaskRef}
 				ballClonedMaskRef={ballClonedMaskRef}
 			/>
 		</group>
-	);
-}
-
-function MaskBall({ ballRef, ballMaskRef, ballClonedMaskRef }) {
-	const isBallPress = useWebGlStore(state => state.isBallPress);
-	const ballMaskGeo = useRef(new CircleGeometry(1, 8));
-	const ballMaskMaterialRef = useRef(
-		new MeshBasicMaterial({
-			visible: true,
-			depthTest: false,
-			depthWrite: false,
-			transparent: true,
-			opacity: 0,
-			side: FrontSide,
-		}),
-	);
-
-	useGSAP(
-		() => {
-			if (ballRef.current && ballRef.current.material) {
-				if (isBallPress) {
-					gsap.to(ballRef.current.material.uniforms.uDisplacementStrength, {
-						value: 1.5,
-						duration: 0.5,
-						ease: 'bounce.out',
-					});
-					gsap.to(ballRef.current.material.uniforms.uNoiseStrength, {
-						value: 1,
-						duration: 2,
-						ease: 'bounce.out',
-					});
-					gsap.to(ballRef.current.material, {
-						iridescence: 1,
-						metalness: 0.6,
-						ior: 0.4,
-						roughness: 1,
-						clearcoat: 0,
-						duration: 2,
-						ease: 'bounce.out',
-					});
-				} else {
-					gsap.to(ballRef.current.material.uniforms.uDisplacementStrength, {
-						value: 1,
-						duration: 0.5,
-						ease: 'bounce.in',
-					});
-					gsap.to(ballRef.current.material.uniforms.uNoiseStrength, {
-						value: 2.5,
-						duration: 2,
-						ease: 'bounce.in',
-					});
-					gsap.to(ballRef.current.material, {
-						iridescence: 0.1,
-						ior: 0,
-						metalness: 0.5,
-						roughness: 0.1,
-						clearcoat: 1.0,
-						duration: 2,
-						ease: 'bounce.in',
-					});
-				}
-			}
-		},
-		{ dependencies: [isBallPress], scope: ballRef },
-	);
-
-	return (
-		<>
-			<mesh
-				raycast={meshBounds}
-				ref={ballMaskRef}
-				position={[0, 0, -1]}
-				material={ballMaskMaterialRef.current}
-				onPointerDown={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: true });
-				}}
-				onPointerUp={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: false });
-				}}
-				onPointerOver={e => {
-					e.stopPropagation();
-					document.body.style.cursor = 'pointer';
-				}}
-				onPointerOut={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: false });
-					document.body.style.cursor = 'auto';
-				}}
-				scale={1.2}
-				geometry={ballMaskGeo.current}></mesh>
-			<mesh
-				raycast={meshBounds}
-				ref={ballClonedMaskRef}
-				material={ballMaskMaterialRef.current}
-				position={[0, 0, -1]}
-				onPointerDown={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: true });
-				}}
-				onPointerUp={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: false });
-				}}
-				onPointerOver={e => {
-					e.stopPropagation();
-					document.body.style.cursor = 'pointer';
-				}}
-				onPointerOut={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: false });
-					document.body.style.cursor = 'auto';
-				}}
-				scale={1.2}
-				geometry={ballMaskGeo.current}></mesh>
-		</>
 	);
 }
