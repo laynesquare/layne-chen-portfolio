@@ -56,7 +56,7 @@ function CursorAnim({ cursorRef }) {
 
 	useGSAP(
 		() => {
-			if (isCustomCursor) {
+			if (isCustomCursor && cursorRef.current) {
 				const isMorph = curr.cursor === 'pointer';
 				gsap.to(cursorRef.current, {
 					translateY: curr.y,
@@ -69,7 +69,7 @@ function CursorAnim({ cursorRef }) {
 				});
 			}
 		},
-		{ dependencies: [curr.x, curr.y, curr.cursor, isCustomCursor], scope: cursorRef },
+		{ dependencies: [curr.x, curr.y, curr.cursor, isCustomCursor] },
 	);
 
 	return null;
