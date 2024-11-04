@@ -2,46 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--background: #1d1d1d;
-		--color-primary: #f6ffc9;
-		--color-secondary: #7b60fb;
-		--color-abysmal: #1a1a1a;
-		--color-white: #fff;
-		--color-neon-green: #25fea8;
-		--color-neon-yellow: #e8fe25;
-		--color-transparent: rgba(0, 0, 0, 0);
+:root {
+	--background: #1d1d1d;
+	--color-primary: #f6ffc9;
+	--color-secondary: #7b60fb;
+	--color-abysmal: #1a1a1a;
+	--color-white: #fff;
+	--color-neon-green: #25fea8;
+	--color-neon-yellow: #e8fe25;
+	--color-transparent: rgba(0, 0, 0, 0);
 
-		--color--ivory: #fffff0;
-		--color-mayonnaise: #ffffde;
+	--color--ivory: #fffff0;
+	--color-mayonnaise: #ffffde;
 
-		--color-font-primary: var(--color-primary);
-		--color-font-secondary: var(--color-secondary);
+	--color-font-primary: var(--color-primary);
+	--color-font-secondary: var(--color-secondary);
 
-		--color-font-neutral: var(--color-mayonnaise);
-		--color-font-neutral-contrast: var(--color-abysmal);
-		--color-font-highlight: var(--color-neon-yellow);
+	--color-font-neutral: var(--color-mayonnaise);
+	--color-font-neutral-contrast: var(--color-abysmal);
+	--color-font-highlight: var(--color-neon-yellow);
 
-		--color-bg-primary: var(--color-neon-green);
-		--color-bg-neutral: var(--color-mayonnaise);
-		--color-bg-neutral-contrast: var(--color-abysmal);
+	--color-bg-primary: var(--color-neon-green);
+	--color-bg-neutral: var(--color-mayonnaise);
+	--color-bg-neutral-contrast: var(--color-abysmal);
 
-		--color-border-primary: var(--color-neon-green);
-		--color-border-neutral: var(--color-mayonnaise);
-		--color-border-neutral-contrast: var(--color-abysmal);
+	--color-border-primary: var(--color-neon-green);
+	--color-border-neutral: var(--color-mayonnaise);
+	--color-border-neutral-contrast: var(--color-abysmal);
 
-		--font-base: 0.8333vw;
-	}
+	--font-base: 0.8333vw;
 }
 
-/* Global Styles */
+@media (prefers-color-scheme: dark) {
+}
+
+@media (prefers-color-scheme: light) {
+}
+
 * {
 	box-sizing: border-box;
-}
-
-html {
-	/* zoom: ; */
 }
 
 html,
@@ -64,8 +63,17 @@ body {
 	color: var(--color-font-neutral);
 	background-color: var(--background);
 	scrollbar-width: 0px;
-	/* -ms-overflow-style: none; */
+	-ms-overflow-style: none;
 }
+
+body::-webkit-scrollbar,
+::-webkit-scrollbar {
+	display: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                               font adjustment                              */
+/* -------------------------------------------------------------------------- */
 
 span {
 	font-size: max(1em, 14px);
@@ -128,6 +136,10 @@ a {
 	cursor: pointer;
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                    lenis                                   */
+/* -------------------------------------------------------------------------- */
+
 html.lenis,
 html.lenis body {
 	height: 100%;
@@ -149,52 +161,19 @@ html.lenis body {
 	pointer-events: none;
 }
 
-.font-krona {
-	font-family: var(--font-krona-one);
-}
+/* -------------------------------------------------------------------------- */
+/*                                 fontFamily                                 */
+/* -------------------------------------------------------------------------- */
 
-.font-clash {
-	font-family: var(--font-clash-display);
-}
-
-.font-boxing {
-	font-family: var(--font-boxing);
-}
-
-.font-satoshi {
-	font-family: var(--font-satoshi);
-}
-
-/* Hide Scrollbar */
-body::-webkit-scrollbar,
-::-webkit-scrollbar {
-	display: none;
-}
-
-/* Custom Utilities */
 @layer utilities {
-	.text-balance {
-		text-wrap: balance;
+	.font-boxing {
+		font-family: var(--font-boxing);
 	}
-}
 
-/* Font Face */
-@font-face {
-	font-family: '851Gkktt';
-	src: url('/font/851Gkktt.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
+	.font-satoshi {
+		font-family: var(--font-satoshi);
+	}
 }
 
 @layer components {
-	main canvas {
-		-webkit-mask-image: url('/frame/star.c9387850.svg');
-		mask-image: url('/frame/star.c9387850.svg');
-		-webkit-mask-repeat: no-repeat;
-		mask-repeat: no-repeat;
-		-webkit-mask-position: center center;
-		mask-position: center center;
-		mask-size: 0rem;
-		pointer-events: none;
-	}
 }
