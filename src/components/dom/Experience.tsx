@@ -1,10 +1,13 @@
 // store
 import { useDomStore } from '@/store';
 
+// constant
+import { CHAP } from '@/config/constants';
+
 export default function Experience() {
-	const textElStoreRegister = useDomStore(state => state?.textElRegister);
-	const containerElStoreRegister = useDomStore(state => state?.containerElRegister);
-	const anchorElStoreRegister = useDomStore(state => state?.anchorElRegister);
+	const textElStoreRegister = useDomStore(state => state?.setText);
+	const containerElStoreRegister = useDomStore(state => state?.setContainer);
+	const anchorElStoreRegister = useDomStore(state => state?.setAnchor);
 	return (
 		<section
 			className='flex gap-x-12 gap-y-6 flex-wrap'
@@ -17,7 +20,7 @@ export default function Experience() {
 				ref={containerElStoreRegister}>
 				<h2 className='m-auto leading-none'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{'experience'}
 					</span>
@@ -35,7 +38,7 @@ export default function Experience() {
 				ref={containerElStoreRegister}>
 				<h2 className='m-auto text-6xl'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{'[04.]'}
 					</span>
@@ -46,7 +49,7 @@ export default function Experience() {
 				ref={containerElStoreRegister}>
 				<h3 className='m-auto leading-none text-center'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{'Frontend Developer'}
 					</span>
@@ -65,7 +68,7 @@ export default function Experience() {
 					containerElStoreRegister(el);
 					anchorElStoreRegister(el);
 				}}
-				data-anchor='EXPERIENCE'
+				data-anchor={CHAP.EXPERIENCE}
 				data-anchor-mirror></div>
 
 			<div className='block flex-[1_0_100%] md:hidden'></div>
@@ -85,21 +88,21 @@ export default function Experience() {
 						<ul className='font-satoshi text-3xl leading-[1.5]'>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>
 									{`KUNYOU Technology Co., LTD., Full-time`}
 								</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>
 									{`Jun 2023 - Present, 1yr 1mos`}
 								</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>
 									{`Taipei, Taipei City, Taiwan, On-site`}
 								</span>
@@ -117,7 +120,7 @@ export default function Experience() {
 					<div className='m-auto text-center'>
 						<p className='text-xl font-satoshi leading-[1.5]'>
 							<span
-								data-font-family='satoshi'
+								data-font-family='SATOSHI'
 								ref={textElStoreRegister}>
 								{`Facilitate the official website's SEO and achieve 100 in the Lighthouse index with Angular Universal's SSG tech`}
 							</span>
@@ -130,7 +133,7 @@ export default function Experience() {
 					<div className='m-auto text-center'>
 						<p className='text-xl font-satoshi leading-[1.5]'>
 							<span
-								data-font-family='satoshi'
+								data-font-family='SATOSHI'
 								ref={textElStoreRegister}>
 								{`Utilize UI framework PrimeNG and data-visualizing package ECharts to materialize UI/UX drafts and RWD`}
 							</span>
@@ -143,7 +146,7 @@ export default function Experience() {
 					<div className='m-auto text-center'>
 						<p className='text-xl font-satoshi leading-[1.5]'>
 							<span
-								data-font-family='satoshi'
+								data-font-family='SATOSHI'
 								ref={textElStoreRegister}>
 								{`Use RxJS to execute asynchronous requests and fulfill API integration`}
 							</span>
@@ -160,7 +163,7 @@ export default function Experience() {
 					<div className='m-auto text-center'>
 						<p className='text-xl font-satoshi leading-[1.5]'>
 							<span
-								data-font-family='satoshi'
+								data-font-family='SATOSHI'
 								ref={textElStoreRegister}>
 								{`Use Karma/Jasmine to implement Unit Test and achieve 98% code coverage`}
 							</span>
@@ -173,7 +176,7 @@ export default function Experience() {
 					<div className='m-auto text-center'>
 						<p className='text-xl font-satoshi leading-[1.5]'>
 							<span
-								data-font-family='satoshi'
+								data-font-family='SATOSHI'
 								ref={textElStoreRegister}>
 								{`Acquire AA level of web accessibility standard in developing public sectors projects`}
 							</span>
@@ -186,7 +189,7 @@ export default function Experience() {
 						containerElStoreRegister(el);
 						anchorElStoreRegister(el);
 					}}
-					data-anchor='EXPERIENCE'
+					data-anchor={CHAP.EXPERIENCE}
 					data-anchor-mirror>
 					<div className='m-auto text-center'></div>
 				</div>

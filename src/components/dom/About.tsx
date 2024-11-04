@@ -1,10 +1,13 @@
 // store
 import { useDomStore } from '@/store';
 
+// constant
+import { CHAP } from '@/config/constants';
+
 export default function About() {
-	const textElStoreRegister = useDomStore(state => state?.textElRegister);
-	const containerElStoreRegister = useDomStore(state => state?.containerElRegister);
-	const anchorElStoreRegister = useDomStore(state => state?.anchorElRegister);
+	const textElStoreRegister = useDomStore(state => state?.setText);
+	const containerElStoreRegister = useDomStore(state => state?.setContainer);
+	const anchorElStoreRegister = useDomStore(state => state?.setAnchor);
 	return (
 		<section
 			className='flex flex-wrap gap-x-12 gap-y-6'
@@ -17,7 +20,7 @@ export default function About() {
 				ref={containerElStoreRegister}>
 				<h2 className='m-auto text-6xl'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{'[02.]'}
 					</span>
@@ -28,7 +31,7 @@ export default function About() {
 				ref={containerElStoreRegister}>
 				<h2
 					className='m-auto leading-none'
-					data-font-family='boxing'
+					data-font-family='BOXING'
 					ref={textElStoreRegister}>
 					{'about'}
 				</h2>
@@ -45,7 +48,7 @@ export default function About() {
 				ref={containerElStoreRegister}>
 				<h3 className='m-auto text-4xl font-satoshi leading-[1.5] whitespace-pre-line'>
 					<span
-						data-font-family='satoshi'
+						data-font-family='SATOSHI'
 						ref={textElStoreRegister}>
 						{`Proficient in TypeScript/JavaScript, React, Angular, Node.js, and MongoDB. Skilled in SSG/SSR, RESTful APIs, and UX design, with a focus on performance and aesthetics.`}
 					</span>
@@ -60,7 +63,7 @@ export default function About() {
 					containerElStoreRegister(el);
 					anchorElStoreRegister(el);
 				}}
-				data-anchor='ABOUT'></div>
+				data-anchor={CHAP.ABOUT}></div>
 		</section>
 	);
 }

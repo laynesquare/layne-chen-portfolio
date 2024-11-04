@@ -5,7 +5,7 @@ import { ResponsiveText } from '@/components';
 import { useDomStore, useCursorStore, useNavStore } from '@/store';
 
 export default function Contact() {
-	const textElStoreRegister = useDomStore(state => state?.textElRegister);
+	const textElStoreRegister = useDomStore(state => state?.setText);
 
 	function toggleRipple(bool: boolean) {
 		useCursorStore.setState({ isRippleZone: bool });
@@ -18,12 +18,12 @@ export default function Contact() {
 			<div className='flex flex-col px-12 pt-6'>
 				<h3 className='whitespace-pre-line text-7xl mb-6 w-max'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>{`Let's connect.`}</span>
 				</h3>
 				<h4 className='whitespace-pre-line text-3xl leading-[1.25] w-max'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>{`Open for new challenges\nand collaborations.`}</span>
 				</h4>
 			</div>
@@ -38,7 +38,7 @@ export default function Contact() {
 						title='Go to Github'>
 						<span
 							ref={textElStoreRegister}
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							data-font-highlight='button'>{`[ github ]`}</span>
 					</a>
 					<a
@@ -47,7 +47,7 @@ export default function Contact() {
 						title='Go to Linkedin'>
 						<span
 							ref={textElStoreRegister}
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							data-font-highlight='button'>{`[ linkedin ]`}</span>
 					</a>
 					<a
@@ -56,7 +56,7 @@ export default function Contact() {
 						title='Go to resume'>
 						<span
 							ref={textElStoreRegister}
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							data-font-highlight='button'>
 							{`[ resume ]`}
 						</span>
@@ -66,7 +66,7 @@ export default function Contact() {
 						title='Mail to laynechensquare@gmail.com'>
 						<span
 							ref={textElStoreRegister}
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							data-font-highlight='button'>
 							<ResponsiveText
 								desktop={'[ laynechensquare@gmail.com ]'}
@@ -85,7 +85,7 @@ export default function Contact() {
 						onClick={() => useNavStore.getState().lenisRef.current.lenis.scrollTo('#home')}>
 						<span
 							ref={textElStoreRegister}
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							data-font-highlight='button'>
 							{'[ Back to top ]'}
 						</span>
@@ -95,7 +95,7 @@ export default function Contact() {
 			<header>
 				<h1 className='text-center scale-y-[2] origin-bottom translate-y-11 text-[12.625rem] leading-none'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						data-scale-y='2'
 						ref={textElStoreRegister}>
 						{'GET IN TOUCH'}

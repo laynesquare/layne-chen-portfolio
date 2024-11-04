@@ -8,10 +8,13 @@ import previewShareYourMemories from '/public/frame/project-preview-share-your-m
 import previewLearnEnglishDictionary from '/public/frame/project-preview-learn-english-dictionary.webp';
 import previewLayneChenPortfolio from '/public/frame/project-preview-layne-chen-portfolio-2024.webp';
 
+// constant
+import { CHAP } from '@/config/constants';
+
 export default function Project() {
-	const textElStoreRegister = useDomStore(state => state?.textElRegister);
-	const containerElStoreRegister = useDomStore(state => state?.containerElRegister);
-	const anchorElStoreRegister = useDomStore(state => state?.anchorElRegister);
+	const textElStoreRegister = useDomStore(state => state?.setText);
+	const containerElStoreRegister = useDomStore(state => state?.setContainer);
+	const anchorElStoreRegister = useDomStore(state => state?.setAnchor);
 
 	function toggleRipple(bool: boolean) {
 		useCursorStore.setState({ isRippleZone: bool });
@@ -29,7 +32,7 @@ export default function Project() {
 				ref={containerElStoreRegister}>
 				<h2
 					className='m-auto leading-none'
-					data-font-family='boxing'
+					data-font-family='BOXING'
 					ref={textElStoreRegister}>
 					{'project'}
 				</h2>
@@ -39,7 +42,7 @@ export default function Project() {
 				ref={containerElStoreRegister}>
 				<h2 className='m-auto text-6xl'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{'[05.]'}
 					</span>
@@ -59,7 +62,7 @@ export default function Project() {
 					anchorElStoreRegister(el);
 				}}
 				data-parallax='previewLayneChenPortfolio'
-				data-anchor='PROJECT'>
+				data-anchor={CHAP.PROJECT}>
 				<Image
 					src={previewLayneChenPortfolio}
 					alt="Portfolio website header of Layne Chen, featuring a dynamic gold abstract 3D object in the center. A wavy green background covers the page. The name 'LAYNE CHEN' is displayed in large, bold, cream-colored text at the bottom. Navigation links such as 'GitHub', 'LinkedIn', and 'Resume' are positioned at the top alongside a hamburger menu. The text 'Front-end Developer' appears on the left, while 'Based in Taipei, Taiwan' is on the right."
@@ -78,7 +81,7 @@ export default function Project() {
 					ref={containerElStoreRegister}>
 					<h3 className='m-auto text-center text-5xl'>
 						<span
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							ref={textElStoreRegister}>
 							{`Layne Chen Portfolio ‘24`}
 						</span>
@@ -91,45 +94,45 @@ export default function Project() {
 					<div className='m-auto text-center'>
 						<h3 className='text-4xl mb-6 leading-[1.5]'>
 							<span
-								data-font-family='boxing'
+								data-font-family='BOXING'
 								ref={textElStoreRegister}>{`# frontend`}</span>
 						</h3>
 						<ul className='font-satoshi text-xl leading-[1.5]'>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`TypeScript`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>
 									{`HTML`}
 								</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`CSS`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`Next.js`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`Tailwind CSS`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`Three.js`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`GSAP`}</span>
 							</li>
 						</ul>
@@ -146,7 +149,7 @@ export default function Project() {
 				<div className='border border-neutral min-h-72 flex p-20 gap-14 flex-col md:flex-row'>
 					<h3 className='m-auto text-center text-4xl leading-[1.25]'>
 						<span
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							ref={textElStoreRegister}>
 							{`overview`}
 						</span>
@@ -154,7 +157,7 @@ export default function Project() {
 
 					<p className='m-auto text-xl font-satoshi whitespace-pre-line leading-[1.5]'>
 						<span
-							data-font-family='satoshi'
+							data-font-family='SATOSHI'
 							ref={textElStoreRegister}>
 							{`Showcases my work and expertise as a front-end developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for fast load times while improving crawlability for better SEO.`}
 						</span>
@@ -177,7 +180,7 @@ export default function Project() {
 					target='_blank'
 					title='Go to Layne Chen Portfolio ‘24 demo page'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						data-font-highlight='button'
 						ref={textElStoreRegister}>
 						{`[ demo ]`}
@@ -189,7 +192,7 @@ export default function Project() {
 					title='Go to Layne Chen Portfolio ‘24 source code page'>
 					<span
 						data-font-highlight='button'
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{`[ code ]`}
 					</span>
@@ -209,7 +212,7 @@ export default function Project() {
 					anchorElStoreRegister(el);
 				}}
 				data-parallax='previewShareYourMemories'
-				data-anchor='PROJECT'>
+				data-anchor={CHAP.PROJECT}>
 				<Image
 					src={previewShareYourMemories}
 					alt=''
@@ -228,7 +231,7 @@ export default function Project() {
 					ref={containerElStoreRegister}>
 					<h3 className='m-auto text-center text-5xl'>
 						<span
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							ref={textElStoreRegister}>
 							{`Share Your Memories`}
 						</span>
@@ -241,75 +244,75 @@ export default function Project() {
 					<div className='m-auto text-center'>
 						<h3 className='text-4xl mb-6 leading-[1.5]'>
 							<span
-								data-font-family='boxing'
+								data-font-family='BOXING'
 								ref={textElStoreRegister}>{`# full stack`}</span>
 						</h3>
 						<ul className='font-satoshi text-xl leading-[1.5]'>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`JavaScript`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>
 									{`HTML`}
 								</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`CSS`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`React (hooks)`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`React Router`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`React Redux`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`Material UI`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`Node.js`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`Express`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`Mongoose`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`MongoDB`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`RESTful API`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`Axios`}</span>
 							</li>
 						</ul>
@@ -326,7 +329,7 @@ export default function Project() {
 				<div className='border border-neutral min-h-72 flex p-20 gap-14 flex-col md:flex-row'>
 					<h3 className='m-auto text-center text-4xl leading-[1.25]'>
 						<span
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							ref={textElStoreRegister}>
 							{`overview`}
 						</span>
@@ -334,7 +337,7 @@ export default function Project() {
 
 					<p className='m-auto text-xl font-satoshi whitespace-pre-line leading-[1.5]'>
 						<span
-							data-font-family='satoshi'
+							data-font-family='SATOSHI'
 							ref={textElStoreRegister}>
 							{`Create a platform where people could share treasured memories with anyone throughout the globe. Each user can register a whole new account to enable full functionality coming with the application, or just simply log in via Google Oauth 2.0 to enjoy the full access.\n\nYou can create, delete, edit your posts, and bookmark, comment on, or give a thumbs-up to other users' posts. Each post delivers Youtube video recommendations based on respective content. You can venture around further if any posts pique your interest.`}
 						</span>
@@ -358,7 +361,7 @@ export default function Project() {
 					title='Go to Share Your Memories demo page'>
 					<span
 						data-font-highlight='button'
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>{`[ demo ]`}</span>
 				</a>
 				<a
@@ -367,7 +370,7 @@ export default function Project() {
 					title='Go to Share Your Memories source code page'>
 					<span
 						data-font-highlight='button'
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>{`[ code ]`}</span>
 				</a>
 			</div>
@@ -385,7 +388,7 @@ export default function Project() {
 					anchorElStoreRegister(el);
 				}}
 				data-parallax='previewLearnEnglishDictionary'
-				data-anchor='PROJECT'>
+				data-anchor={CHAP.PROJECT}>
 				<Image
 					src={previewLearnEnglishDictionary}
 					alt=''
@@ -404,7 +407,7 @@ export default function Project() {
 					ref={containerElStoreRegister}>
 					<h3 className='m-auto text-center text-5xl'>
 						<span
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							ref={textElStoreRegister}>
 							{`Learn English with Dictionary`}
 						</span>
@@ -417,55 +420,55 @@ export default function Project() {
 					<div className='m-auto text-center'>
 						<h3 className='text-4xl mb-6 leading-[1.5]'>
 							<span
-								data-font-family='boxing'
+								data-font-family='BOXING'
 								ref={textElStoreRegister}>{`# frontend`}</span>
 						</h3>
 						<ul className='font-satoshi text-xl leading-[1.5]'>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`JavaScript`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>
 									{`HTML`}
 								</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`CSS`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`React (hooks)`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`React Redux`}</span>
 							</li>
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`Material UI`}</span>
 							</li>
 							{/* <li>
 											<span
-												data-font-family='satoshi'
+												data-font-family='SATOSHI'
 												ref={textElStoreRegister}>{`Node.js`}</span>
 										</li>
 										<li>
 											<span
-												data-font-family='satoshi'
+												data-font-family='SATOSHI'
 												ref={textElStoreRegister}>{`Express`}</span>
 										</li> */}
 							<li>
 								<span
-									data-font-family='satoshi'
+									data-font-family='SATOSHI'
 									ref={textElStoreRegister}>{`Axios`}</span>
 							</li>
 						</ul>
@@ -482,7 +485,7 @@ export default function Project() {
 				ref={containerElStoreRegister}>
 				<h3 className='m-auto text-center text-4xl leading-[1.25]'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{`overview`}
 					</span>
@@ -490,7 +493,7 @@ export default function Project() {
 
 				<p className='m-auto text-xl font-satoshi whitespace-pre-line leading-[1.5]'>
 					<span
-						data-font-family='satoshi'
+						data-font-family='SATOSHI'
 						ref={textElStoreRegister}>
 						{`Solve the inconvenience of encountering unknown words upon reading an English passage and having to look up elsewhere.\n\nRead multiple professional-written passages fetched via New York Times API with a juxtaposed dictionary to facilitate English learning.\n\nCo-located design of text and relevant keyword tags. You can explore more in a topic-oriented way.`}
 					</span>
@@ -513,7 +516,7 @@ export default function Project() {
 					title='Go to Learn English with Dictionary demo page'>
 					<span
 						data-font-highlight
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>{`[ demo ]`}</span>
 				</a>
 				<a
@@ -522,7 +525,7 @@ export default function Project() {
 					title='Go to Learn English with Dictionary source code page'>
 					<span
 						data-font-highlight
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{`[ code ]`}
 					</span>

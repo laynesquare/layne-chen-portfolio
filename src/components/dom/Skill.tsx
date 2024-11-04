@@ -1,10 +1,13 @@
 // store
 import { useDomStore } from '@/store';
 
+// constant
+import { CHAP } from '@/config/constants';
+
 export default function Skill() {
-	const textElStoreRegister = useDomStore(state => state?.textElRegister);
-	const containerElStoreRegister = useDomStore(state => state?.containerElRegister);
-	const anchorElStoreRegister = useDomStore(state => state?.anchorElRegister);
+	const textElStoreRegister = useDomStore(state => state?.setText);
+	const containerElStoreRegister = useDomStore(state => state?.setContainer);
+	const anchorElStoreRegister = useDomStore(state => state?.setAnchor);
 	return (
 		<>
 			<section
@@ -18,7 +21,7 @@ export default function Skill() {
 					ref={containerElStoreRegister}>
 					<h2
 						className='m-auto leading-none'
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{'skill'}
 					</h2>
@@ -29,7 +32,7 @@ export default function Skill() {
 					ref={containerElStoreRegister}>
 					<h2 className='m-auto text-6xl'>
 						<span
-							data-font-family='boxing'
+							data-font-family='BOXING'
 							ref={textElStoreRegister}>
 							{'[03.]'}
 						</span>
@@ -52,7 +55,7 @@ export default function Skill() {
 						containerElStoreRegister(el);
 						anchorElStoreRegister(el);
 					}}
-					data-anchor='SKILL'></div>
+					data-anchor={CHAP.SKILL}></div>
 
 				{/* -------------------------------------------------------------------------- */
 				/*                                  btm right                                  */
@@ -71,7 +74,7 @@ export default function Skill() {
 							<div className='m-auto text-center'>
 								<h3 className='text-4xl mb-6 leading-[1.5]'>
 									<span
-										data-font-family='boxing'
+										data-font-family='BOXING'
 										ref={textElStoreRegister}>
 										{`Languages`}
 									</span>
@@ -79,19 +82,19 @@ export default function Skill() {
 								<ul className='font-satoshi text-xl leading-[1.5]'>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`TypeScript (JavaScript)`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>
 											{`HTML`}
 										</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`CSS/Sass`}</span>
 									</li>
 								</ul>
@@ -108,7 +111,7 @@ export default function Skill() {
 							<div className='m-auto text-center'>
 								<h3 className='text-4xl mb-6 leading-[1.5]'>
 									<span
-										data-font-family='boxing'
+										data-font-family='BOXING'
 										ref={textElStoreRegister}>
 										{`Frontend`}
 									</span>
@@ -116,64 +119,64 @@ export default function Skill() {
 								<ul className='font-satoshi text-xl leading-[1.5]'>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Next.js`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`React Router`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>
 											{`React Redux`}
 										</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Angular`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Angular Universal`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`RxJS`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Karma/Jasmine`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Tailwind CSS`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Bootstrap`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`WebGL`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Three.js`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`GSAP`}</span>
 									</li>
 								</ul>
@@ -189,7 +192,7 @@ export default function Skill() {
 							<div className='m-auto text-center'>
 								<h3 className='text-4xl mb-6 leading-[1.5]'>
 									<span
-										data-font-family='boxing'
+										data-font-family='BOXING'
 										ref={textElStoreRegister}>
 										{`Backend`}
 									</span>
@@ -197,29 +200,29 @@ export default function Skill() {
 								<ul className='font-satoshi text-xl leading-[1.5]'>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Node.js`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>
 											{`Express`}
 										</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Mongoose`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`MongoDB`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`RESTful API`}</span>
 									</li>
 								</ul>
@@ -235,7 +238,7 @@ export default function Skill() {
 							<div className='m-auto text-center'>
 								<h3 className='text-4xl mb-6 leading-[1.5] whitespace-pre-line'>
 									<span
-										data-font-family='boxing'
+										data-font-family='BOXING'
 										ref={textElStoreRegister}>
 										{`Tools &\nPlatforms`}
 									</span>
@@ -243,19 +246,19 @@ export default function Skill() {
 								<ul className='font-satoshi text-xl leading-[1.5]'>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Git (Sourcetree)`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>
 											{`GitLab`}
 										</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Webpack`}</span>
 									</li>
 								</ul>
@@ -271,7 +274,7 @@ export default function Skill() {
 							<div className='m-auto text-center'>
 								<h3 className='text-4xl mb-6 leading-[1.5]'>
 									<span
-										data-font-family='boxing'
+										data-font-family='BOXING'
 										ref={textElStoreRegister}>
 										{`Design`}
 									</span>
@@ -279,19 +282,19 @@ export default function Skill() {
 								<ul className='font-satoshi text-xl leading-[1.5]'>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Figma`}</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>
 											{`Illustrator`}
 										</span>
 									</li>
 									<li>
 										<span
-											data-font-family='satoshi'
+											data-font-family='SATOSHI'
 											ref={textElStoreRegister}>{`Photoshop`}</span>
 									</li>
 								</ul>

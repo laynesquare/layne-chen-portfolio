@@ -2,7 +2,7 @@
 import { useDomStore } from '@/store';
 
 export default function Hero() {
-	const textElStoreRegister = useDomStore(state => state?.textElRegister);
+	const textElStoreRegister = useDomStore(state => state?.setText);
 
 	return (
 		<section
@@ -11,14 +11,14 @@ export default function Hero() {
 			<div className='flex flex-[1] justify-between items-center px-12 gap-60'>
 				<h2 className='text-xl leading-[1.25]'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{'Front-end Developer'}
 					</span>
 				</h2>
 				<h2 className='text-right whitespace-pre-line leading-[1.25]'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						ref={textElStoreRegister}>
 						{'Based in Taipei,\nTaiwan'}
 					</span>
@@ -27,7 +27,7 @@ export default function Hero() {
 			<header>
 				<h1 className='text-center scale-y-[2] origin-bottom text-[13.4rem] leading-none translate-y-11'>
 					<span
-						data-font-family='boxing'
+						data-font-family='BOXING'
 						data-scale-y='2'
 						ref={textElStoreRegister}>
 						{'LAYNE CHEN'}

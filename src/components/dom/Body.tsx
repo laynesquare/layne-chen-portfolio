@@ -10,7 +10,7 @@ import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(useGSAP);
 
 export default function Body() {
-	const torsoElStoreRegister = useDomStore(state => state?.torsoElRegister);
+	const torsoElStoreRegister = useDomStore(state => state?.setTorso);
 
 	return (
 		<article
