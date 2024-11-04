@@ -20,7 +20,7 @@ import { useCursorStore, useDomStore, useNavStore, usePlatformStore, useWebGlSto
 import { getScaleMultiplier } from '@/utils';
 
 // constant
-import { MESH_DISTANCE, MESH_NAME } from '@/config/constants';
+import { MESH_DISTANCE, MESH_NAME, CHAP } from '@/config/constants';
 
 // gsap
 import gsap from 'gsap';
@@ -51,6 +51,12 @@ export default function Containers() {
 		previewLayneChenPortfolio: previewLayneChenPortfolio,
 		previewShareYourMemories: previewShareYourMemories,
 		previewLearnEnglishDictionary: previewLearnEnglishDictionary,
+	};
+
+	const chapBufferNameMap = {
+		[CHAP.ABOUT]: 'aboutBuffer',
+		[CHAP.SKILL]: 'skillBuffer',
+		[CHAP.EXPERIENCE]: 'experienceBuffer',
 	};
 
 	const containerMeshMaterial = useMemo(
@@ -134,6 +140,8 @@ export default function Containers() {
 		});
 	});
 
+	console.log('ctn renders');
+
 	return (
 		<group
 			name={MESH_NAME.CONTAINER_GROUP}
@@ -184,9 +192,8 @@ export default function Containers() {
 				material.uniforms.uAnchor.value = +!!anchor;
 				material.uniforms.uHeatMap.value = +!!anchorMirror;
 				material.uniforms.uMaskResolution.value.set(size.width * dynamicDpr, size.height * dynamicDpr);
-				material.uniforms.uTranslucentMaskTexture.value =
-					useWebGlStore.getState().shareTranslucentBuffer?.texture;
-				material.uniforms.uMaskTexture.value = useWebGlStore.getState().maskBufferMap?.[anchor]?.buffer.texture;
+				material.uniforms.uTranslucentMaskTexture.value = useWebGlStore.getState().translucentBuffer?.texture;
+				material.uniforms.uMaskTexture.value = useWebGlStore.getState()[chapBufferNameMap[anchor]]?.texture;
 
 				return (
 					<mesh

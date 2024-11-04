@@ -7,6 +7,9 @@ import { FrontSide, MeshBasicMaterial, CircleGeometry } from 'three';
 // store
 import { useWebGlStore } from '@/store';
 
+// constant
+import { BALL_INIT_MATERIAL, BALL_INIT_UNIFORMS } from '@/config/constants';
+
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -54,21 +57,21 @@ export default function BallMask({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 					});
 				} else {
 					gsap.to(ballRef.current.material.uniforms.uDisplacementStrength, {
-						value: 1,
+						value: BALL_INIT_UNIFORMS.uDisplacementStrength.value,
 						duration: 0.5,
 						ease: 'bounce.in',
 					});
 					gsap.to(ballRef.current.material.uniforms.uNoiseStrength, {
-						value: 2.5,
+						value: BALL_INIT_UNIFORMS.uNoiseStrength.value,
 						duration: 2,
 						ease: 'bounce.in',
 					});
 					gsap.to(ballRef.current.material, {
-						iridescence: 0.1,
-						ior: 0,
-						metalness: 0.5,
-						roughness: 0.1,
-						clearcoat: 1.0,
+						iridescence: BALL_INIT_MATERIAL.iridescence,
+						metalness: BALL_INIT_MATERIAL.metalness,
+						roughness: BALL_INIT_MATERIAL.roughness,
+						clearcoat: BALL_INIT_MATERIAL.clearcoat,
+						ior: BALL_INIT_MATERIAL.ior,
 						duration: 2,
 						ease: 'bounce.in',
 					});
@@ -78,6 +81,29 @@ export default function BallMask({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 		{ dependencies: [isBallPress], scope: ballRef },
 	);
 
+	function handlePointerDown(e) {
+		e.stopPropagation();
+		useWebGlStore.setState({ isBallPress: true });
+	}
+
+	function handlePointerUp(e) {
+		e.stopPropagation();
+		useWebGlStore.setState({ isBallPress: false });
+	}
+
+	function handlePointerOver(e) {
+		e.stopPropagation();
+		document.body.style.cursor = 'pointer';
+	}
+
+	function handlePointerOut(e) {
+		e.stopPropagation();
+		useWebGlStore.setState({ isBallPress: false });
+		document.body.style.cursor = 'auto';
+	}
+
+	console.log('mask ball renders');
+
 	return (
 		<>
 			<mesh
@@ -85,23 +111,10 @@ export default function BallMask({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 				ref={ballMaskRef}
 				position={[0, 0, -1]}
 				material={ballMaskMaterial}
-				onPointerDown={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: true });
-				}}
-				onPointerUp={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: false });
-				}}
-				onPointerOver={e => {
-					e.stopPropagation();
-					document.body.style.cursor = 'pointer';
-				}}
-				onPointerOut={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: false });
-					document.body.style.cursor = 'auto';
-				}}
+				onPointerDown={e => handlePointerDown(e)}
+				onPointerUp={e => handlePointerUp(e)}
+				onPointerOver={e => handlePointerOver(e)}
+				onPointerOut={e => handlePointerOut(e)}
 				scale={1.2}
 				geometry={ballMaskGeo}></mesh>
 			<mesh
@@ -109,23 +122,10 @@ export default function BallMask({ ballRef, ballMaskRef, ballClonedMaskRef }) {
 				ref={ballClonedMaskRef}
 				material={ballMaskMaterial}
 				position={[0, 0, -1]}
-				onPointerDown={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: true });
-				}}
-				onPointerUp={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: false });
-				}}
-				onPointerOver={e => {
-					e.stopPropagation();
-					document.body.style.cursor = 'pointer';
-				}}
-				onPointerOut={e => {
-					e.stopPropagation();
-					useWebGlStore.setState({ isBallPress: false });
-					document.body.style.cursor = 'auto';
-				}}
+				onPointerDown={e => handlePointerDown(e)}
+				onPointerUp={e => handlePointerUp(e)}
+				onPointerOver={e => handlePointerOver(e)}
+				onPointerOut={e => handlePointerOut(e)}
 				scale={1.2}
 				geometry={ballMaskGeo}></mesh>
 		</>

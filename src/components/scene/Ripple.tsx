@@ -17,6 +17,8 @@ import {
 	FrontSide,
 } from 'three';
 
+import type { Mesh, Material } from 'three';
+
 // store
 import { useWebGlStore, useCursorStore } from '@/store';
 
@@ -30,7 +32,7 @@ export default function Ripple() {
 	const preMousePos = useRef({ x: 0, y: 0 });
 	const rippleVec3 = useMemo(() => new Vector3(), []);
 	const rippleTexture = useLoader(TextureLoader, '/scene/textures/ripple.png');
-	const rippleRefs = useRef([]);
+	const rippleRefs = useRef<(Mesh | null)[]>([]);
 	const rippleCurrIdx = useRef(-1);
 	const rippleGeo = useMemo(() => new PlaneGeometry(0.5, 0.5, 1, 1), []);
 	const rippleMaterial = useMemo(
@@ -44,7 +46,7 @@ export default function Ripple() {
 				stencilWrite: false,
 				side: FrontSide,
 			}),
-		[],
+		[rippleTexture],
 	);
 
 	const rippleBuffer = useFBO(32, 32, {
@@ -69,7 +71,9 @@ export default function Ripple() {
 			meshes.push(
 				<mesh
 					key={i}
-					ref={el => (rippleRefs.current[i] = el)}
+					ref={el => {
+						rippleRefs.current[i] = el;
+					}}
 					material={rippleMaterial.clone()}
 					position={[0, 0, 3]}
 					rotation={[0, 0, 2 * Math.PI * Math.random()]}
@@ -78,7 +82,7 @@ export default function Ripple() {
 		}
 
 		return meshes;
-	}, []);
+	}, [rippleGeo, rippleMaterial]);
 
 	const handleMouseMove = useCallback(
 		(event: MouseEvent) => {
@@ -132,10 +136,12 @@ export default function Ripple() {
 
 	useFrame(({ gl, camera }) => {
 		rippleRefs.current.forEach(mesh => {
-			mesh.rotation.z += 0.025;
-			mesh.material.opacity *= 0.95;
-			mesh.scale.x = 0.98 * mesh.scale.x + 0.155;
-			mesh.scale.y = mesh.scale.x;
+			if (mesh) {
+				mesh.rotation.z += 0.025;
+				(mesh.material as MeshBasicMaterial).opacity *= 0.95;
+				mesh.scale.x = 0.98 * mesh.scale.x + 0.155;
+				mesh.scale.y = mesh.scale.x;
+			}
 		});
 
 		gl.setRenderTarget(rippleBuffer);

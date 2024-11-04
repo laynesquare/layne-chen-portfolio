@@ -15,7 +15,7 @@ import { useDomStore } from '@/store';
 import { getScaleMultiplier } from '@/utils';
 
 // constant
-import { MESH_DISTANCE, MESH_NAME } from '@/config/constants';
+import { MESH_DISTANCE, MESH_NAME, TEXT_BOXING, TEXT_SATOSHI } from '@/config/constants';
 
 export default function Texts() {
 	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
@@ -44,6 +44,20 @@ export default function Texts() {
 		[],
 	);
 
+	function getTextProps(type) {
+		const fontFamily = {
+			[TEXT_BOXING]: '/font/Boxing-Regular.woff',
+			[TEXT_SATOSHI]: '/font/Satoshi-Bold.woff',
+		};
+
+		return {
+			font: fontFamily[type],
+			anchorX: 'left',
+			anchorY: 'top',
+			overflowWrap: 'break-word',
+		};
+	}
+
 	useLenis(
 		event => {
 			if (!textGroupRef.current) return;
@@ -52,6 +66,8 @@ export default function Texts() {
 		},
 		[size],
 	);
+
+	console.log('texts renders');
 
 	return (
 		<group
@@ -87,7 +103,7 @@ export default function Texts() {
 				return (
 					<Text
 						key={idx}
-						{...domTextShared(fontFamily)}
+						{...getTextProps(fontFamily)}
 						position={[pX, pY, pZ]}
 						material={material}
 						lineHeight={parsedLineHeight / parsedFontSize}
@@ -103,18 +119,4 @@ export default function Texts() {
 			})}
 		</group>
 	);
-}
-
-function domTextShared(type: 'boxing' | 'satoshi') {
-	const fontFamily = {
-		boxing: '/font/Boxing-Regular.woff',
-		satoshi: '/font/Satoshi-Bold.woff',
-	};
-
-	return {
-		font: fontFamily[type],
-		anchorX: 'left',
-		anchorY: 'top',
-		overflowWrap: 'break-word',
-	};
 }

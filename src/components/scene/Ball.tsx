@@ -26,7 +26,7 @@ import { useDomStore, usePlatformStore, useWebGlStore } from '@/store';
 import { getScaleMultiplier } from '@/utils';
 
 // constant
-import { MESH_DISTANCE, MESH_NAME } from '@/config/constants';
+import { MESH_DISTANCE, MESH_NAME, BALL_INIT_MATERIAL, BALL_INIT_UNIFORMS } from '@/config/constants';
 
 // gsap
 import gsap from 'gsap';
@@ -59,13 +59,13 @@ export default function Ball() {
 
 	const uniforms = useMemo(
 		() => ({
-			uTime: { value: 0 },
 			uColor: { value: new Color(0xe6ff00) },
-			uSpeed: { value: 4 },
-			uNoiseStrength: { value: 2.5 },
-			uDisplacementStrength: { value: 1 },
-			uFractAmount: { value: 0.8 },
-			uIsNormalColor: { value: 0 },
+			uTime: { value: BALL_INIT_UNIFORMS.uTime.value },
+			uSpeed: { value: BALL_INIT_UNIFORMS.uSpeed.value },
+			uNoiseStrength: { value: BALL_INIT_UNIFORMS.uNoiseStrength.value },
+			uDisplacementStrength: { value: BALL_INIT_UNIFORMS.uDisplacementStrength.value },
+			uFractAmount: { value: BALL_INIT_UNIFORMS.uFractAmount.value },
+			uIsNormalColor: { value: BALL_INIT_UNIFORMS.uIsNormalColor.value },
 		}),
 		[],
 	);
@@ -76,20 +76,10 @@ export default function Ball() {
 				baseMaterial: new MeshPhysicalMaterial(),
 				vertexShader: vertexShader,
 				fragmentShader: fragmentShader,
-				roughness: 0.1,
-				metalness: 0.1,
-				reflectivity: 0.46,
-				clearcoat: 1.0,
-				ior: 0,
-				iridescence: 0,
-				iridescenceIOR: 1.3,
 				uniforms: uniforms,
 				displacementMap: ballDisplacementTexture,
-				displacementScale: 0,
-				silent: true,
-				transparent: true,
-				side: FrontSide,
-				blending: NoBlending,
+				...BALL_INIT_MATERIAL,
+				iridescenceIOR: 1.3,
 			}),
 		[ballDisplacementTexture, uniforms],
 	);
@@ -118,7 +108,7 @@ export default function Ball() {
 		const baseX = (-viewport.width / 2) * ballMeshRatio;
 		const baseY = (viewport.height / 2) * ballMeshRatio;
 
-		const getElementPosition = el => {
+		const getElementCenter = el => {
 			const { left, top, width, height } = el.getBoundingClientRect();
 			const shiftHalfW = width / 2;
 			const shiftHalfH = height / 2;
@@ -127,14 +117,14 @@ export default function Ball() {
 			return { x, y };
 		};
 
-		const { x: targetX, y: targetY } = getElementPosition(inViewEl);
+		const { x: targetX, y: targetY } = getElementCenter(inViewEl);
 		const targetBallPos = ballDynamicPos.set(targetX, targetY, 1);
 		ballRef.current.position.lerp(targetBallPos, 0.035);
 		ballMaskRef.current.position.copy(ballRef.current.position);
 
 		if (anchorMirror) {
 			const inViewMirrorEl = els.find(el => el.dataset['anchor'] === anchor && el !== inViewEl);
-			const { x: mirrorX, y: mirrorY } = getElementPosition(inViewMirrorEl);
+			const { x: mirrorX, y: mirrorY } = getElementCenter(inViewMirrorEl);
 			const targetBallClonePos = ballClonedDynamicPos.set(mirrorX, mirrorY, 1);
 			ballCloneRef.current?.position.lerp(targetBallClonePos, 0.035);
 			ballClonedMaskRef.current?.position.copy(ballCloneRef.current?.position);
@@ -149,15 +139,6 @@ export default function Ball() {
 		ballRef.current.material.uniforms.uTime.value += delta;
 	}
 
-	function calcFactorCamZ(zPosition: number) {
-		const { camera, size } = getThree();
-		const fov = (camera.fov * Math.PI) / 180;
-		const h = 2 * Math.tan(fov / 2) * zPosition;
-		const w = h * (size.width / size.height);
-		const factor = size.width / w;
-		return factor;
-	}
-
 	useLenis(event => {
 		scrollOffsetRef.current = event.scroll;
 		updatePosByScroll();
@@ -169,7 +150,7 @@ export default function Ball() {
 		ballCloneRef.current.name = MESH_NAME.CLONED_BALL;
 		ballCloneRef.current.visible = false;
 		scene.add(ballCloneRef.current);
-	}, []);
+	}, [getThree]);
 
 	useFrame(({ clock }, delta) => {
 		if (!useWebGlStore.getState().isEntryAnimationDone) return;
@@ -197,7 +178,7 @@ export default function Ball() {
 		ballRotationUpdate(clock.elapsedTime);
 	});
 
-	console.log('ball rerenders');
+	console.log('ball renders');
 
 	return (
 		<group>
@@ -205,6 +186,7 @@ export default function Ball() {
 				name={MESH_NAME.BALL}
 				raycast={meshBounds}
 				ref={ballRef}
+				scale={1.1}
 				geometry={ballGeometry}
 				position={ballInitPos}
 				material={ballMaterial}

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react';
 
 // three
+import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 import { useFBO } from '@react-three/drei';
-import { createPortal, useFrame, useThree, useLoader } from '@react-three/fiber';
+import { createPortal, useFrame, useThree } from '@react-three/fiber';
 import { lerp } from 'three/src/math/MathUtils.js';
 import {
 	GLSL3,
@@ -10,13 +11,14 @@ import {
 	ShaderMaterial,
 	LinearFilter,
 	RGBAFormat,
-	NearestFilter,
 	UnsignedByteType,
 	PlaneGeometry,
 	FrontSide,
 	NoBlending,
-	Color,
 } from 'three';
+
+// type
+import type { Group, Mesh, Object3D, BufferGeometry, MeshPhysicalMaterial } from 'three';
 
 // shader
 import vertexShader from '@/shaders/animated-scroll-warp/vertex';
@@ -24,20 +26,55 @@ import fragmentShader from '@/shaders/animated-scroll-warp/fragment';
 
 // lenis
 import { useLenis } from '@studio-freight/react-lenis';
+import type Lenis from '@studio-freight/lenis';
 
 // store
-import { useNavStore, usePlatformStore, useWebGlStore, useCursorStore } from '@/store';
+import { useNavStore, usePlatformStore, useWebGlStore } from '@/store';
 
-// constant
-import { MESH_NAME, FBO_CONFIG } from '@/config/constants';
+// config
+import {
+	MESH_NAME,
+	FBO_CONFIG,
+	CHAP,
+	TRANSLUCENT,
+	BALL_INIT_UNIFORMS,
+	BALL_INIT_MATERIAL,
+	ORIGINAL,
+} from '@/config/constants';
 
 // gsap
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Billboard({ children }) {
+interface BillboardProps {
+	children: React.ReactNode;
+}
+
+type BallMesh = Mesh<BufferGeometry, CustomShaderMaterial & MeshPhysicalMaterial>;
+type TorsoMesh = Mesh<BufferGeometry, ShaderMaterial>;
+
+interface MutatedMeshesType {
+	containerGroup: Group;
+	textGroup: Group;
+	torso: TorsoMesh;
+	ball: BallMesh;
+	clonedBall: BallMesh;
+}
+
+interface MutatedObject3DMeshes {
+	containerGroup: Object3D | null | undefined;
+	textGroup: Object3D | null | undefined;
+	torso: Object3D | null | undefined;
+	ball: Object3D | null | undefined;
+	clonedBall: Object3D | null | undefined;
+}
+
+type CurrGsapMorph = { [key: string]: number };
+
+export default function Billboard({ children }: BillboardProps) {
 	const getThree = useThree(state => state.get);
+
 	const velocityRef = useRef(0);
 	const pingPongMutationRef = useRef(0);
 	const pingPongTranslucentRef = useRef(0);
@@ -73,10 +110,10 @@ export default function Billboard({ children }) {
 				side: FrontSide,
 				blending: NoBlending,
 			}),
-		[],
+		[billboardBuffer.texture],
 	);
 
-	const mutatedMeshes = useRef({
+	const mutatedMeshes = useRef<MutatedObject3DMeshes>({
 		containerGroup: null,
 		textGroup: null,
 		torso: null,
@@ -90,65 +127,30 @@ export default function Billboard({ children }) {
 		depth: false,
 	});
 
-	const maskBufferMap = {
-		ABOUT: {
-			buffer: useFBO(1024, 1024, FBO_CONFIG),
-			mutateScene: (ball, torso) => {
-				ball.material.uniforms.uIsNormalColor.value = 1;
-				torso.material.uniforms.uBrightColor.value.set('#7B60FB');
-				torso.material.uniforms.uDarkColor.value.set('#FF00C7');
-				ball.material.wireframe = true;
-				ball.material.roughness = 0.5;
-				ball.material.displacementScale = 1;
-			},
-		},
-		SKILL: {
-			buffer: useFBO(128, 128, FBO_CONFIG),
-			mutateScene: (ball, torso) => {
-				torso.material.uniforms.uBrightColor.value.set('#FF0000');
-				torso.material.uniforms.uDarkColor.value.set('#0500FF');
-				ball.material.uniforms.uColor.value.set('#FF0000');
-				ball.material.uniforms.uIsNormalColor.value = 0;
-				ball.material.wireframe = false;
-				ball.material.roughness = 0.5;
-				ball.material.metalness = 0.3;
-				ball.material.iridescence = 0.5;
-				ball.material.displacementScale = 0;
-				ball.material.sheen = 1.0;
-				ball.material.clearcoat = 0.0;
-				ball.material.ior = 0.0;
-				ball.material.sheenColor.set('#ff69b4');
-			},
-		},
-		EXPERIENCE: {
-			buffer: useFBO(1024, 1024, FBO_CONFIG),
-			mutateScene: (ball, torso, clonedBall) => {
-				torso.material.uniforms.uBrightColor.value.set('#FF0000');
-				torso.material.uniforms.uDarkColor.value.set('#0500FF');
-				ball.material.uniforms.uIsNormalColor.value = 1;
-				ball.material.wireframe = true;
-				ball.material.roughness = 0.1;
-				ball.material.metalness = 1;
-				clonedBall.material.wireframe = true;
-				ball.material.uniforms.uFractAmount.value = 0.1;
-				ball.scale.set(0.5, 0.5, 0.5);
-				clonedBall.scale.copy(ball.scale);
-			},
-		},
+	const aboutBuffer = useFBO(1024, 1024, FBO_CONFIG);
+	const skillBuffer = useFBO(128, 128, FBO_CONFIG);
+	const experienceBuffer = useFBO(1024, 1024, FBO_CONFIG);
+
+	const chapBufferMap = {
+		[CHAP.ABOUT]: aboutBuffer,
+		[CHAP.SKILL]: skillBuffer,
+		[CHAP.EXPERIENCE]: experienceBuffer,
 	};
 
-	useLenis(event => (velocityRef.current = event.velocity));
+	useLenis((event: Lenis) => (velocityRef.current = (event as Lenis & { velocity: number }).velocity));
 
 	useEffect(() => {
-		billboardMaterial.uniforms.uDisplacement.value = useWebGlStore.getState().rippleBuffer.texture;
-	}, []);
+		billboardMaterial.uniforms.uDisplacement.value = useWebGlStore.getState().rippleBuffer?.texture;
+	}, [billboardMaterial.uniforms.uDisplacement]);
 
 	useEffect(() => {
 		useWebGlStore.setState({
-			shareTranslucentBuffer: translucentBuffer,
-			maskBufferMap: maskBufferMap,
+			translucentBuffer,
+			aboutBuffer,
+			skillBuffer,
+			experienceBuffer,
 		});
-	}, []);
+	}, [translucentBuffer, aboutBuffer, skillBuffer, experienceBuffer]);
 
 	useFrame(({ gl, camera, size }, delta) => {
 		if (!useWebGlStore.getState().isEntryAnimationDone) return;
@@ -166,7 +168,7 @@ export default function Billboard({ children }) {
 		const baseResH = size.height * dynamicDpr;
 		billboardBuffer.setSize(baseResW, baseResH);
 		translucentBuffer.setSize(baseResW, baseResH);
-		maskBufferMap['ABOUT'].buffer.setSize(baseResW, baseResH);
+		chapBufferMap[CHAP.ABOUT].setSize(baseResW, baseResH);
 
 		if (billboardMaterial) {
 			billboardMaterial.uniforms.uTime.value += delta;
@@ -195,15 +197,25 @@ export default function Billboard({ children }) {
 					torso,
 					ball,
 					clonedBall,
-				} = mutatedMeshes.current;
+				} = mutatedMeshes.current as MutatedMeshesType;
 
-				const ogRoughness = ball.material.roughness;
-				const ogMetalness = ball.material.metalness;
-				const ogIridescence = ball.material.iridescence;
-				const ogClearcoat = ball.material.clearcoat;
+				const {
+					//
+					roughness,
+					metalness,
+					iridescence,
+					clearcoat,
+				} = ball.material;
+				const currGsapMorph: CurrGsapMorph = {
+					//
+					roughness,
+					metalness,
+					iridescence,
+					clearcoat,
+				};
 
-				containerGroup.visible = false;
 				textGroup.visible = false;
+				containerGroup.visible = false;
 
 				if (!isNavOpen) {
 					const detectInViewMeshes = [...containerMaskedMeshes].filter(mesh =>
@@ -211,11 +223,10 @@ export default function Billboard({ children }) {
 					);
 
 					if (detectInViewMeshes.length) {
-						let registration = {};
+						let checkAnchorExist: { [key: string]: number } = {};
 						const meshesToMutate = detectInViewMeshes.filter(mesh => {
 							const { anchor } = mesh.userData.dataset;
-							if (registration[anchor]) return false;
-							return (registration[anchor] = 1);
+							return checkAnchorExist[anchor] ? false : (checkAnchorExist[anchor] = 1);
 						});
 
 						const renderIdx = pingPongMutationRef.current++ % meshesToMutate.length;
@@ -223,52 +234,24 @@ export default function Billboard({ children }) {
 
 						if (mesh) {
 							const { anchor } = mesh.userData.dataset;
-							maskBufferMap[anchor].mutateScene(ball, torso, clonedBall);
-
-							gl.setRenderTarget(maskBufferMap[anchor].buffer);
+							offscreenMutate(anchor, ball, torso, clonedBall, billboardScene, isMobile, currGsapMorph);
+							gl.setRenderTarget(chapBufferMap[anchor]);
 							gl.render(billboardScene, camera);
 						}
 					}
 				}
 
-				billboardScene.environmentIntensity = 0.05;
-				torso.material.uniforms.uBrightColor.value.set('#69D2B7');
-				torso.material.uniforms.uDarkColor.value.set('#868686');
-				ball.material.wireframe = true;
-				clonedBall.material.wireframe = true;
-				ball.material.uniforms.uFractAmount.value = 0.8;
-				ball.material.uniforms.uIsNormalColor.value = 0;
-				ball.material.uniforms.uColor.value.set('#002BF9');
-				ball.material.sheenColor.set('#fd267a');
-				ball.material.displacementScale = 0.3;
-				ball.material.sheen = 1;
-				ball.material.iridescence = 1;
-				ball.material.roughness = ogRoughness;
-				ball.material.metalness = ogMetalness;
-				ball.material.clearcoat = ogClearcoat;
-				ball.material.emissive.set('#FFC58D');
-				ball.material.emissiveIntensity = 0.3;
-				ball.scale.set(...(isMobile ? [0.6, 0.6, 0.6] : [1, 1, 1]));
-				clonedBall.scale.copy(ball.scale);
+				offscreenMutate(TRANSLUCENT, ball, torso, clonedBall, billboardScene, isMobile, currGsapMorph);
 
-				const shouldRender = pingPongTranslucentRef.current++ % 5;
-				if (!isNavOpen && shouldRender) {
+				if (!isNavOpen && pingPongTranslucentRef.current++ % 5) {
 					gl.setRenderTarget(translucentBuffer);
 					gl.render(billboardScene, camera);
 				}
 
-				containerGroup.visible = true;
 				textGroup.visible = true;
-				billboardScene.environmentIntensity = 1.25;
-				ball.material.emissiveIn;
-				ball.material.wireframe = false;
-				ball.material.wireframe = false;
-				clonedBall.material.wireframe = false;
-				ball.material.emissiveIntensity = 0;
-				ball.material.sheen = 0;
-				ball.material.displacementScale = 0;
-				ball.material.iridescence = ogIridescence;
-				ball.material.uniforms.uColor.value.set('#e6ff00');
+				containerGroup.visible = true;
+
+				offscreenMutate(ORIGINAL, ball, torso, clonedBall, billboardScene, isMobile, currGsapMorph);
 			}
 		}
 	});
@@ -293,4 +276,86 @@ export default function Billboard({ children }) {
 				geometry={billboardGeo}></mesh>
 		</>
 	);
+}
+
+function offscreenMutate(
+	type: string,
+	ball: BallMesh,
+	torso: TorsoMesh,
+	clonedBall: BallMesh,
+	scene: Scene,
+	isMobile: boolean,
+	currGsapMorph: CurrGsapMorph,
+) {
+	if (type === CHAP.ABOUT) {
+		torso.material.uniforms.uBrightColor.value.set('#7B60FB');
+		torso.material.uniforms.uDarkColor.value.set('#FF00C7');
+		ball.material.uniforms.uIsNormalColor.value = 1;
+		ball.material.wireframe = true;
+		ball.material.roughness = 0.5;
+		ball.material.displacementScale = 1;
+	}
+
+	if (type === CHAP.SKILL) {
+		torso.material.uniforms.uBrightColor.value.set('#FF0000');
+		torso.material.uniforms.uDarkColor.value.set('#0500FF');
+		ball.material.uniforms.uColor.value.set('#FF0000');
+		ball.material.uniforms.uIsNormalColor.value = 0;
+		ball.material.wireframe = false;
+		ball.material.roughness = 0.5;
+		ball.material.metalness = 0.3;
+		ball.material.iridescence = 0.5;
+		ball.material.displacementScale = 0;
+		ball.material.sheen = 1.0;
+		ball.material.clearcoat = 0.0;
+		ball.material.ior = 0.0;
+		ball.material.sheenColor.set('#ff69b4');
+	}
+
+	if (type === CHAP.EXPERIENCE) {
+		torso.material.uniforms.uBrightColor.value.set('#FF0000');
+		torso.material.uniforms.uDarkColor.value.set('#0500FF');
+		ball.material.uniforms.uIsNormalColor.value = 1;
+		ball.material.wireframe = true;
+		ball.material.roughness = 0.1;
+		ball.material.metalness = 1;
+		ball.material.uniforms.uFractAmount.value = 0.1;
+		ball.scale.set(0.5, 0.5, 0.5);
+		clonedBall.material.wireframe = true;
+		clonedBall.scale.copy(ball.scale);
+	}
+
+	if (type === TRANSLUCENT) {
+		const scale: [number, number, number] = isMobile ? [0.6, 0.6, 0.6] : [1.1, 1.1, 1.1];
+		scene.environmentIntensity = 0.05;
+		torso.material.uniforms.uBrightColor.value.set('#69D2B7');
+		torso.material.uniforms.uDarkColor.value.set('#868686');
+		ball.material.uniforms.uFractAmount.value = BALL_INIT_UNIFORMS.uFractAmount.value;
+		ball.material.uniforms.uIsNormalColor.value = BALL_INIT_UNIFORMS.uIsNormalColor.value;
+		ball.material.uniforms.uColor.value.set('#002BF9');
+		ball.material.sheenColor.set('#fd267a');
+		ball.material.wireframe = true;
+		ball.material.displacementScale = 0.3;
+		ball.material.sheen = 1;
+		ball.material.iridescence = 1;
+		ball.material.roughness = currGsapMorph.roughness;
+		ball.material.metalness = currGsapMorph.metalness;
+		ball.material.clearcoat = currGsapMorph.clearcoat;
+		ball.material.emissive.set('#FFC58D');
+		ball.material.emissiveIntensity = 0.3;
+		ball.scale.set(...scale);
+		clonedBall.scale.copy(ball.scale);
+		clonedBall.material.wireframe = true;
+	}
+
+	if (type === ORIGINAL && currGsapMorph) {
+		scene.environmentIntensity = 1.25;
+		ball.material.wireframe = false;
+		ball.material.emissiveIntensity = BALL_INIT_MATERIAL.emissiveIntensity;
+		ball.material.sheen = BALL_INIT_MATERIAL.sheen;
+		ball.material.displacementScale = BALL_INIT_MATERIAL.displacementScale;
+		ball.material.iridescence = currGsapMorph.iridescence;
+		ball.material.uniforms.uColor.value.set('#e6ff00');
+		clonedBall.material.wireframe = false;
+	}
 }
