@@ -1,5 +1,9 @@
 import { create } from 'zustand';
 
-export const usePlatformStore = create(set => ({
+interface PlatformStore {
+	isMobile: boolean;
+}
+
+export const usePlatformStore = create<PlatformStore>(set => ({
 	isMobile: false,
 }));

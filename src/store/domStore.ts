@@ -1,41 +1,52 @@
 import { create } from 'zustand';
 
-export const useDomStore = create(set => ({
+interface DomStoreState {
+	textEls: Set<HTMLElement>;
+	torsoEl: HTMLElement | null;
+	containerEls: Set<HTMLElement>;
+	anchorEls: Set<HTMLElement>;
+	setText: (el: HTMLElement) => void;
+	setTorso: (el: HTMLElement) => void;
+	setContainer: (el: HTMLElement) => void;
+	setAnchor: (el: HTMLElement) => void;
+}
+
+export const useDomStore = create<DomStoreState>(set => ({
 	textEls: new Set(),
 	torsoEl: null,
 	containerEls: new Set(),
 	anchorEls: new Set(),
 
-	textElRegister: (el: HTMLElement) => {
+	setText: (el: HTMLElement) => {
 		set(state => {
 			if (state && el && !state.textEls.has(el)) {
 				return { textEls: new Set(state.textEls).add(el) };
 			}
-			return;
+			return state;
 		});
 	},
-	torsoElRegister: (el: HTMLElement) => {
+	setTorso: (el: HTMLElement) => {
 		set(state => {
 			if (state && el) {
 				return { torsoEl: el };
 			}
-			return;
+			return state;
 		});
 	},
-	containerElRegister: (el: HTMLElement) => {
+	setContainer: (el: HTMLElement) => {
 		set(state => {
 			if (state && el && !state.containerEls.has(el)) {
 				return { containerEls: new Set(state.containerEls).add(el) };
 			}
-			return;
+			return state;
 		});
 	},
-	anchorElRegister: (el: HTMLElement) => {
+	setAnchor: (el: HTMLElement) => {
 		set(state => {
 			if (state && el && !state.anchorEls.has(el)) {
 				return { anchorEls: new Set(state.anchorEls).add(el) };
 			}
-			return;
+			return state;
 		});
 	},
 }));
