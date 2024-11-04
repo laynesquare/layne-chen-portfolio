@@ -1,4 +1,9 @@
-import { NearestFilter, RGBAFormat, UnsignedByteType } from 'three/src/constants.js';
+import { FrontSide, NearestFilter, NoBlending, RGBAFormat, UnsignedByteType } from 'three/src/constants.js';
+
+export const TEXT_BOXING = 'BOXING';
+export const TEXT_SATOSHI = 'SATOSHI';
+export const TRANSLUCENT = 'TRANSLUCENT';
+export const ORIGINAL = 'ORIGINAL';
 
 export const MESH_DISTANCE = {
 	TEXT: 3,
@@ -15,6 +20,13 @@ export const MESH_NAME = {
 	CLONED_BALL: 'CLONE_BALL',
 };
 
+export const CHAP = {
+	ABOUT: 'ABOUT',
+	SKILL: 'SKILL',
+	EXPERIENCE: 'EXPERIENCE',
+	PROJECT: 'PROJECT',
+};
+
 export const FBO_CONFIG = {
 	samples: 0,
 	minFilter: NearestFilter,
@@ -25,4 +37,31 @@ export const FBO_CONFIG = {
 	colorSpace: '',
 	generateMipmaps: false,
 	stencilBuffer: false,
+};
+
+/** place here for cross-component updates in case of chaotic mutation  */
+export const BALL_INIT_MATERIAL = {
+	iridescence: 0.1,
+	ior: 0,
+	metalness: 0.5,
+	roughness: 0.1,
+	clearcoat: 1.0,
+	reflectivity: 0.46,
+	iridescenceIOR: 1.3,
+	displacementScale: 0,
+	sheen: 0,
+	emissiveIntensity: 0,
+	silent: true,
+	transparent: true,
+	side: FrontSide,
+	blending: NoBlending,
+};
+
+export const BALL_INIT_UNIFORMS = {
+	uTime: { value: 0 },
+	uSpeed: { value: 4 },
+	uNoiseStrength: { value: 2.5 },
+	uDisplacementStrength: { value: 1 },
+	uFractAmount: { value: 0.8 },
+	uIsNormalColor: { value: 0 },
 };
