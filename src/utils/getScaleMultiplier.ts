@@ -8,7 +8,6 @@ import { PerspectiveCamera } from 'three';
  * @param {Size} size
  * @return {*}
  */
-
 export default function getScaleMultiplier(zPosition: number, viewport, camera: Camera, size: Size): number {
 	if (!(camera instanceof PerspectiveCamera)) {
 		throw new Error(`Unsupported camera type: ${camera.type}`);
