@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, ReactNode, RefObject, LegacyRef } from 'react';
+import { useEffect, useRef, ReactNode } from 'react';
 import { useNavStore } from '@/store';
-import { ReactLenis, LenisContext } from '@studio-freight/react-lenis';
-import Lenis from '@studio-freight/lenis';
+import { ReactLenis } from '@studio-freight/react-lenis';
+import type Lenis from '@studio-freight/lenis';
 import gsap from 'gsap';
 
 interface SmoothScrollingProps {
