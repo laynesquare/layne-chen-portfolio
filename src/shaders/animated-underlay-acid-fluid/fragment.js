@@ -60,7 +60,7 @@ void main() {
     float gradient = smoothstep(0.1, 8.0, abs(vUv.x - 0.5) * 80.0); // Adjust gradient smoothness
 
     // Generate low-frequency noise for pattern (scale down for larger shapes)
-    float noise = snoise(vUv * 8.0 + uTime * 0.05) * 0.5; // Lower the frequency of noise
+    float noise = snoise(vUv * 8.0 + uTime * 0.1) * 0.5; // Lower the frequency of noise
 
     // Combine gradient and noise for base pattern
     float pattern = mix(gradient, noise, 0.7); // Use more of the noise in blending

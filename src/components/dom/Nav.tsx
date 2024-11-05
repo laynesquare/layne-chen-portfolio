@@ -12,7 +12,7 @@ export default function Nav() {
 				style={{ textShadow: `0 0 0px black` }}>
 				<button
 					title='Go to home section'
-					onClick={() => useNavStore.getState().lenisRef.current.lenis.scrollTo('#home')}
+					onClick={() => useNavStore.getState().lenisRef?.current?.lenis?.scrollTo('#home')}
 					className='w-max'>
 					<span>{`layne chen`}</span>
 				</button>

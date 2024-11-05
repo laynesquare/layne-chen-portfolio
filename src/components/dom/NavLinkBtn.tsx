@@ -5,7 +5,12 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(useGSAP);
 
-export default function NavLinkBtn({ label, href }) {
+interface NavLinkBtnProps {
+	label: string;
+	href: string;
+}
+
+export default function NavLinkBtn({ label, href }: NavLinkBtnProps) {
 	const ctnRef = useRef(null);
 	const [isHover, setIsHover] = useState(false);
 

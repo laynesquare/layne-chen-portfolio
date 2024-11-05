@@ -5,9 +5,9 @@ import { useDomStore } from '@/store';
 import { CHAP } from '@/config/constants';
 
 export default function Skill() {
-	const textElStoreRegister = useDomStore(state => state?.setText);
-	const containerElStoreRegister = useDomStore(state => state?.setContainer);
-	const anchorElStoreRegister = useDomStore(state => state?.setAnchor);
+	const setText = useDomStore(state => state?.setText);
+	const setContainer = useDomStore(state => state?.setContainer);
+	const setAnchor = useDomStore(state => state?.setAnchor);
 	return (
 		<>
 			<section
@@ -18,22 +18,22 @@ export default function Skill() {
 				/* -------------------------------------------------------------------------- */}
 				<header
 					className='flex-[1] text-[13.75rem] border border-neutral min-h-72 flex rounded-[12rem_12rem_12rem_0rem] p-20'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<h2
 						className='m-auto leading-none'
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{'skill'}
 					</h2>
 				</header>
 
 				<div
 					className='flex-[0.3] flex border border-neutral min-h-72 rounded-[12rem_12rem_0rem_12rem] p-20'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<h2 className='m-auto text-6xl'>
 						<span
 							data-font-family='BOXING'
-							ref={textElStoreRegister}>
+							ref={setText}>
 							{'[03.]'}
 						</span>
 					</h2>
@@ -52,8 +52,8 @@ export default function Skill() {
 				<div
 					className='border border-neutral min-h-[60rem] flex flex-[1] rounded-[0rem_0rem_0rem_9rem]'
 					ref={el => {
-						containerElStoreRegister(el);
-						anchorElStoreRegister(el);
+						setContainer(el);
+						setAnchor(el);
 					}}
 					data-anchor={CHAP.SKILL}></div>
 
@@ -70,12 +70,12 @@ export default function Skill() {
 						/* -------------------------------------------------------------------------- */}
 						<div
 							className='border border-neutral flex-[1] flex p-20'
-							ref={containerElStoreRegister}>
+							ref={setContainer}>
 							<div className='m-auto text-center'>
 								<h3 className='text-4xl mb-6 leading-[1.5]'>
 									<span
 										data-font-family='BOXING'
-										ref={textElStoreRegister}>
+										ref={setText}>
 										{`Languages`}
 									</span>
 								</h3>
@@ -83,19 +83,19 @@ export default function Skill() {
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`TypeScript (JavaScript)`}</span>
+											ref={setText}>{`TypeScript (JavaScript)`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>
+											ref={setText}>
 											{`HTML`}
 										</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`CSS/Sass`}</span>
+											ref={setText}>{`CSS/Sass`}</span>
 									</li>
 								</ul>
 							</div>
@@ -107,12 +107,12 @@ export default function Skill() {
 
 						<div
 							className='border border-neutral flex flex-[1] p-20'
-							ref={containerElStoreRegister}>
+							ref={setContainer}>
 							<div className='m-auto text-center'>
 								<h3 className='text-4xl mb-6 leading-[1.5]'>
 									<span
 										data-font-family='BOXING'
-										ref={textElStoreRegister}>
+										ref={setText}>
 										{`Frontend`}
 									</span>
 								</h3>
@@ -120,64 +120,64 @@ export default function Skill() {
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Next.js`}</span>
+											ref={setText}>{`Next.js`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`React Router`}</span>
+											ref={setText}>{`React Router`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>
+											ref={setText}>
 											{`React Redux`}
 										</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Angular`}</span>
+											ref={setText}>{`Angular`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Angular Universal`}</span>
+											ref={setText}>{`Angular Universal`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`RxJS`}</span>
+											ref={setText}>{`RxJS`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Karma/Jasmine`}</span>
+											ref={setText}>{`Karma/Jasmine`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Tailwind CSS`}</span>
+											ref={setText}>{`Tailwind CSS`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Bootstrap`}</span>
+											ref={setText}>{`Bootstrap`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`WebGL`}</span>
+											ref={setText}>{`WebGL`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Three.js`}</span>
+											ref={setText}>{`Three.js`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`GSAP`}</span>
+											ref={setText}>{`GSAP`}</span>
 									</li>
 								</ul>
 							</div>
@@ -188,12 +188,12 @@ export default function Skill() {
 						/* -------------------------------------------------------------------------- */}
 						<div
 							className='border border-neutral flex flex-[1] p-20'
-							ref={containerElStoreRegister}>
+							ref={setContainer}>
 							<div className='m-auto text-center'>
 								<h3 className='text-4xl mb-6 leading-[1.5]'>
 									<span
 										data-font-family='BOXING'
-										ref={textElStoreRegister}>
+										ref={setText}>
 										{`Backend`}
 									</span>
 								</h3>
@@ -201,29 +201,29 @@ export default function Skill() {
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Node.js`}</span>
+											ref={setText}>{`Node.js`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>
+											ref={setText}>
 											{`Express`}
 										</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Mongoose`}</span>
+											ref={setText}>{`Mongoose`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`MongoDB`}</span>
+											ref={setText}>{`MongoDB`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`RESTful API`}</span>
+											ref={setText}>{`RESTful API`}</span>
 									</li>
 								</ul>
 							</div>
@@ -234,12 +234,12 @@ export default function Skill() {
 
 						<div
 							className='border border-neutral flex flex-[1] p-20'
-							ref={containerElStoreRegister}>
+							ref={setContainer}>
 							<div className='m-auto text-center'>
 								<h3 className='text-4xl mb-6 leading-[1.5] whitespace-pre-line'>
 									<span
 										data-font-family='BOXING'
-										ref={textElStoreRegister}>
+										ref={setText}>
 										{`Tools &\nPlatforms`}
 									</span>
 								</h3>
@@ -247,19 +247,19 @@ export default function Skill() {
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Git (Sourcetree)`}</span>
+											ref={setText}>{`Git (Sourcetree)`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>
+											ref={setText}>
 											{`GitLab`}
 										</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Webpack`}</span>
+											ref={setText}>{`Webpack`}</span>
 									</li>
 								</ul>
 							</div>
@@ -270,12 +270,12 @@ export default function Skill() {
 						/* -------------------------------------------------------------------------- */}
 						<div
 							className='border border-neutral rounded-[0rem_0rem_9rem_0rem] flex p-20'
-							ref={containerElStoreRegister}>
+							ref={setContainer}>
 							<div className='m-auto text-center'>
 								<h3 className='text-4xl mb-6 leading-[1.5]'>
 									<span
 										data-font-family='BOXING'
-										ref={textElStoreRegister}>
+										ref={setText}>
 										{`Design`}
 									</span>
 								</h3>
@@ -283,19 +283,19 @@ export default function Skill() {
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Figma`}</span>
+											ref={setText}>{`Figma`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>
+											ref={setText}>
 											{`Illustrator`}
 										</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={textElStoreRegister}>{`Photoshop`}</span>
+											ref={setText}>{`Photoshop`}</span>
 									</li>
 								</ul>
 							</div>

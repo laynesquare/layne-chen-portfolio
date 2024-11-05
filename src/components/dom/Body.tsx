@@ -10,12 +10,12 @@ import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(useGSAP);
 
 export default function Body() {
-	const torsoElStoreRegister = useDomStore(state => state?.setTorso);
+	const setTorso = useDomStore(state => state?.setTorso);
 
 	return (
 		<article
 			className={`w-full h-full relative z-10 font-boxing pointer-events-none`}
-			ref={torsoElStoreRegister}>
+			ref={setTorso}>
 			<Hero />
 
 			<div className='p-[6rem_3rem] flex flex-col gap-12'>

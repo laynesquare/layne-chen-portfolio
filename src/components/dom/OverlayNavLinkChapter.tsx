@@ -1,4 +1,4 @@
-import { useRef, useState, MouseEvent } from 'react';
+import { useRef, useState } from 'react';
 
 // component
 import { OverlayNavDecor } from '@/components';
@@ -6,12 +6,23 @@ import { OverlayNavDecor } from '@/components';
 // store
 import { useNavStore, usePlatformStore } from '@/store';
 
+// type
+import type { PointerEvent } from 'react';
+
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(useGSAP);
 
-export default function OverlayNavLinkChapter({ chapter, label, width, justify, isDecor }) {
+interface OverlayNavLinkChapterProps {
+	chapter: string;
+	label: string;
+	width: string;
+	justify: string;
+	isDecor: boolean;
+}
+
+export default function OverlayNavLinkChapter({ chapter, label, width, justify, isDecor }: OverlayNavLinkChapterProps) {
 	const [isHover, setIsHover] = useState(false);
 	const isMobile = usePlatformStore(state => state.isMobile);
 	const ctnRef = useRef(null);
@@ -81,12 +92,14 @@ export default function OverlayNavLinkChapter({ chapter, label, width, justify, 
 		{ dependencies: [isHover], scope: ctnRef },
 	);
 
-	function handleClick(e: MouseEvent<HTMLAnchorElement>): void {
+	function handleClick(e: PointerEvent<HTMLAnchorElement>): void {
 		e.preventDefault();
-		const { lenis } = useNavStore.getState().lenisRef.current;
-		lenis.start();
-		useNavStore.setState({ isOpen: false });
-		lenis.scrollTo(`#${label}`);
+		const lenis = useNavStore.getState()?.lenisRef?.current?.lenis;
+		if (lenis) {
+			lenis.start();
+			useNavStore.setState({ isOpen: false });
+			lenis.scrollTo(`#${label}`);
+		}
 	}
 
 	return (

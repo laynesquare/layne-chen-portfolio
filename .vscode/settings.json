@@ -1,5 +1,6 @@
 {
 	"cSpell.words": [
+		"browserconfig",
 		"clearcoat",
 		"drei",
 		"Fract",
@@ -9,11 +10,14 @@
 		"LAYNE",
 		"lerp",
 		"Lightformer",
+		"lowp",
 		"metalness",
 		"Mipmaps",
+		"msapplication",
 		"Photoshop",
 		"raycast",
 		"satoshi",
+		"unproject",
 		"webp",
 		"wireframe",
 		"zustand"

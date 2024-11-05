@@ -20,20 +20,36 @@ import { getScaleMultiplier } from '@/utils';
 // constant
 import { MESH_DISTANCE, MESH_NAME } from '@/config/constants';
 
+// type
+import type { Viewport, Size, Camera, Vector3 } from '@react-three/fiber';
+import type { Group } from 'three';
+
 export default function Torso() {
-	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
+	const torsoEl = useDomStore.getState().torsoEl;
+
+	const [viewport, size, camera]: [Viewport, Size, Camera] = useThree(state => [
+		state.viewport,
+		state.size,
+		state.camera,
+	]);
 	const { factor, height } = viewport;
-	const { offsetWidth, offsetHeight } = useDomStore.getState().torsoEl;
+	const { width: elWidth, height: elHeight } = torsoEl ? torsoEl.getBoundingClientRect() : { width: 0, height: 0 };
 
 	const planeGeo = useMemo(() => new PlaneGeometry(1, 1, 1, 1), []);
 	const torsoMeshRef = useRef(null);
-	const torsoGroupRef = useRef(null);
+	const torsoGroupRef = useRef<Group>(null);
 	const torsoMeshRatio = getScaleMultiplier(MESH_DISTANCE.TORSO, viewport, camera, size);
 
-	const torsoScale = [(offsetWidth / factor) * torsoMeshRatio, (offsetHeight / factor) * torsoMeshRatio, 1];
-	const torsoPos = [
+	const torsoScale: Vector3 = [
+		//
+		(elWidth / factor) * torsoMeshRatio,
+		(elHeight / factor) * torsoMeshRatio,
+		1,
+	];
+
+	const torsoPos: Vector3 = [
 		0,
-		(height / 2) * torsoMeshRatio - ((offsetHeight / factor) * torsoMeshRatio) / 2,
+		(height / 2) * torsoMeshRatio - ((elHeight / factor) * torsoMeshRatio) / 2,
 		MESH_DISTANCE.TORSO,
 	];
 
@@ -64,8 +80,8 @@ export default function Torso() {
 	);
 
 	useFrame(({}, delta) => {
-		if (!useWebGlStore.getState().isEntryAnimationDone || !materialAcidBg.current) return;
-		materialAcidBg.current.uniforms.uTime.value += delta;
+		if (!useWebGlStore.getState().isEntryAnimationDone) return;
+		materialAcidBg.uniforms.uTime.value += delta;
 	});
 
 	console.log('torso renders');

@@ -6,6 +6,7 @@ import { useCursorStore, usePlatformStore } from '@/store';
 export default function PlatformMonitor() {
 	function updatePlatform() {
 		const isMobile = window.innerWidth < 768;
+		// @ts-ignore
 		const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 		const mobileRegex = /android|iphone|ipad|ipod|blackberry|windows phone/i;
 		const isCustomCursor = !mobileRegex.test(userAgent);

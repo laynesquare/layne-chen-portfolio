@@ -12,9 +12,9 @@ import previewLayneChenPortfolio from '/public/frame/project-preview-layne-chen-
 import { CHAP } from '@/config/constants';
 
 export default function Project() {
-	const textElStoreRegister = useDomStore(state => state?.setText);
-	const containerElStoreRegister = useDomStore(state => state?.setContainer);
-	const anchorElStoreRegister = useDomStore(state => state?.setAnchor);
+	const setText = useDomStore(state => state?.setText);
+	const setContainer = useDomStore(state => state?.setContainer);
+	const setAnchor = useDomStore(state => state?.setAnchor);
 
 	function toggleRipple(bool: boolean) {
 		useCursorStore.setState({ isRippleZone: bool });
@@ -29,21 +29,21 @@ export default function Project() {
 			/* -------------------------------------------------------------------------- */}
 			<header
 				className='flex-[1] text-[13.75rem] border border-neutral min-h-72 flex rounded-[12rem_12rem_12rem_12rem] p-20'
-				ref={containerElStoreRegister}>
+				ref={setContainer}>
 				<h2
 					className='m-auto leading-none'
 					data-font-family='BOXING'
-					ref={textElStoreRegister}>
+					ref={setText}>
 					{'project'}
 				</h2>
 			</header>
 			<div
 				className='flex-[0.3] flex border border-neutral min-h-72 rounded-[12rem_12rem_12rem_12rem] p-20'
-				ref={containerElStoreRegister}>
+				ref={setContainer}>
 				<h2 className='m-auto text-6xl'>
 					<span
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{'[05.]'}
 					</span>
 				</h2>
@@ -58,8 +58,8 @@ export default function Project() {
 			<figure
 				className='border border-neutral rounded-[0rem_0rem_0rem_0rem] min-h-[60rem] flex flex-[3]'
 				ref={el => {
-					containerElStoreRegister(el);
-					anchorElStoreRegister(el);
+					setContainer(el);
+					setAnchor(el);
 				}}
 				data-parallax='previewLayneChenPortfolio'
 				data-anchor={CHAP.PROJECT}>
@@ -78,11 +78,11 @@ export default function Project() {
 			<div className='flex flex-[1] gap-12 flex-wrap md:flex-col'>
 				<div
 					className='border border-neutral min-h-72 flex flex-[1] flex-col p-20 min-w-[180px]'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<h3 className='m-auto text-center text-5xl'>
 						<span
 							data-font-family='BOXING'
-							ref={textElStoreRegister}>
+							ref={setText}>
 							{`Layne Chen Portfolio ‘24`}
 						</span>
 					</h3>
@@ -90,50 +90,50 @@ export default function Project() {
 
 				<div
 					className='border border-neutral min-h-[39rem] flex flex-[1] flex-col p-20 min-w-[180px]'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<div className='m-auto text-center'>
 						<h3 className='text-4xl mb-6 leading-[1.5]'>
 							<span
 								data-font-family='BOXING'
-								ref={textElStoreRegister}>{`# frontend`}</span>
+								ref={setText}>{`# frontend`}</span>
 						</h3>
 						<ul className='font-satoshi text-xl leading-[1.5]'>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`TypeScript`}</span>
+									ref={setText}>{`TypeScript`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>
+									ref={setText}>
 									{`HTML`}
 								</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`CSS`}</span>
+									ref={setText}>{`CSS`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`Next.js`}</span>
+									ref={setText}>{`Next.js`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`Tailwind CSS`}</span>
+									ref={setText}>{`Tailwind CSS`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`Three.js`}</span>
+									ref={setText}>{`Three.js`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`GSAP`}</span>
+									ref={setText}>{`GSAP`}</span>
 							</li>
 						</ul>
 					</div>
@@ -145,12 +145,12 @@ export default function Project() {
 			/* -------------------------------------------------------------------------- */}
 			<div
 				className='flex flex-[2]'
-				ref={containerElStoreRegister}>
+				ref={setContainer}>
 				<div className='border border-neutral min-h-72 flex p-20 gap-14 flex-col md:flex-row'>
 					<h3 className='m-auto text-center text-4xl leading-[1.25]'>
 						<span
 							data-font-family='BOXING'
-							ref={textElStoreRegister}>
+							ref={setText}>
 							{`overview`}
 						</span>
 					</h3>
@@ -158,7 +158,7 @@ export default function Project() {
 					<p className='m-auto text-xl font-satoshi whitespace-pre-line leading-[1.5]'>
 						<span
 							data-font-family='SATOSHI'
-							ref={textElStoreRegister}>
+							ref={setText}>
 							{`Showcases my work and expertise as a front-end developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for fast load times while improving crawlability for better SEO.`}
 						</span>
 					</p>
@@ -172,7 +172,7 @@ export default function Project() {
 
 			<div
 				className='pointer-events-auto border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_0rem_0rem] leading-[1] gap-40 md:gap-12'
-				ref={containerElStoreRegister}
+				ref={setContainer}
 				onPointerEnter={e => toggleRipple(false)}
 				onPointerLeave={e => toggleRipple(true)}>
 				<a
@@ -182,7 +182,7 @@ export default function Project() {
 					<span
 						data-font-family='BOXING'
 						data-font-highlight='button'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{`[ demo ]`}
 					</span>
 				</a>
@@ -193,7 +193,7 @@ export default function Project() {
 					<span
 						data-font-highlight='button'
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{`[ code ]`}
 					</span>
 				</a>
@@ -208,8 +208,8 @@ export default function Project() {
 			<figure
 				className='border border-neutral rounded-[0rem_0rem_0rem_0rem] min-h-[60rem] flex flex-[3]'
 				ref={el => {
-					containerElStoreRegister(el);
-					anchorElStoreRegister(el);
+					setContainer(el);
+					setAnchor(el);
 				}}
 				data-parallax='previewShareYourMemories'
 				data-anchor={CHAP.PROJECT}>
@@ -228,11 +228,11 @@ export default function Project() {
 			<div className='flex flex-[1] gap-12 flex-row flex-wrap md:flex-col'>
 				<div
 					className='border border-neutral min-h-72 flex flex-col p-20 flex-[1] min-w-[180px]'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<h3 className='m-auto text-center text-5xl'>
 						<span
 							data-font-family='BOXING'
-							ref={textElStoreRegister}>
+							ref={setText}>
 							{`Share Your Memories`}
 						</span>
 					</h3>
@@ -240,80 +240,80 @@ export default function Project() {
 
 				<div
 					className='border border-neutral min-h-[39rem] flex flex-col p-20 flex-[1] md:flex-auto min-w-[180px]'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<div className='m-auto text-center'>
 						<h3 className='text-4xl mb-6 leading-[1.5]'>
 							<span
 								data-font-family='BOXING'
-								ref={textElStoreRegister}>{`# full stack`}</span>
+								ref={setText}>{`# full stack`}</span>
 						</h3>
 						<ul className='font-satoshi text-xl leading-[1.5]'>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`JavaScript`}</span>
+									ref={setText}>{`JavaScript`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>
+									ref={setText}>
 									{`HTML`}
 								</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`CSS`}</span>
+									ref={setText}>{`CSS`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`React (hooks)`}</span>
+									ref={setText}>{`React (hooks)`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`React Router`}</span>
+									ref={setText}>{`React Router`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`React Redux`}</span>
+									ref={setText}>{`React Redux`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`Material UI`}</span>
+									ref={setText}>{`Material UI`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`Node.js`}</span>
+									ref={setText}>{`Node.js`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`Express`}</span>
+									ref={setText}>{`Express`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`Mongoose`}</span>
+									ref={setText}>{`Mongoose`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`MongoDB`}</span>
+									ref={setText}>{`MongoDB`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`RESTful API`}</span>
+									ref={setText}>{`RESTful API`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`Axios`}</span>
+									ref={setText}>{`Axios`}</span>
 							</li>
 						</ul>
 					</div>
@@ -325,12 +325,12 @@ export default function Project() {
 			/* -------------------------------------------------------------------------- */}
 			<div
 				className='flex flex-[2]'
-				ref={containerElStoreRegister}>
+				ref={setContainer}>
 				<div className='border border-neutral min-h-72 flex p-20 gap-14 flex-col md:flex-row'>
 					<h3 className='m-auto text-center text-4xl leading-[1.25]'>
 						<span
 							data-font-family='BOXING'
-							ref={textElStoreRegister}>
+							ref={setText}>
 							{`overview`}
 						</span>
 					</h3>
@@ -338,7 +338,7 @@ export default function Project() {
 					<p className='m-auto text-xl font-satoshi whitespace-pre-line leading-[1.5]'>
 						<span
 							data-font-family='SATOSHI'
-							ref={textElStoreRegister}>
+							ref={setText}>
 							{`Create a platform where people could share treasured memories with anyone throughout the globe. Each user can register a whole new account to enable full functionality coming with the application, or just simply log in via Google Oauth 2.0 to enjoy the full access.\n\nYou can create, delete, edit your posts, and bookmark, comment on, or give a thumbs-up to other users' posts. Each post delivers Youtube video recommendations based on respective content. You can venture around further if any posts pique your interest.`}
 						</span>
 					</p>
@@ -352,7 +352,7 @@ export default function Project() {
 			/* -------------------------------------------------------------------------- */}
 			<div
 				className='pointer-events-auto border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_0rem_0rem] leading-[1] gap-40 md:gap-12'
-				ref={containerElStoreRegister}
+				ref={setContainer}
 				onPointerEnter={e => toggleRipple(false)}
 				onPointerLeave={e => toggleRipple(true)}>
 				<a
@@ -362,7 +362,7 @@ export default function Project() {
 					<span
 						data-font-highlight='button'
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>{`[ demo ]`}</span>
+						ref={setText}>{`[ demo ]`}</span>
 				</a>
 				<a
 					href='https://github.com/laynesquare/share_your_memories'
@@ -371,7 +371,7 @@ export default function Project() {
 					<span
 						data-font-highlight='button'
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>{`[ code ]`}</span>
+						ref={setText}>{`[ code ]`}</span>
 				</a>
 			</div>
 			<div className='flex-[1_0_100%]'></div>
@@ -384,8 +384,8 @@ export default function Project() {
 			<figure
 				className='border border-neutral rounded-[0rem_0rem_0rem_0rem] min-h-[60rem] flex flex-[3]'
 				ref={el => {
-					containerElStoreRegister(el);
-					anchorElStoreRegister(el);
+					setContainer(el);
+					setAnchor(el);
 				}}
 				data-parallax='previewLearnEnglishDictionary'
 				data-anchor={CHAP.PROJECT}>
@@ -404,11 +404,11 @@ export default function Project() {
 			<div className='flex flex-[1] gap-12 flex-row flex-wrap md:flex-col'>
 				<div
 					className='border border-neutral min-h-72 flex p-20 flex-col flex-[1] min-w-[180px]'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<h3 className='m-auto text-center text-5xl'>
 						<span
 							data-font-family='BOXING'
-							ref={textElStoreRegister}>
+							ref={setText}>
 							{`Learn English with Dictionary`}
 						</span>
 					</h3>
@@ -416,60 +416,50 @@ export default function Project() {
 
 				<div
 					className='border border-neutral min-h-[39rem] flex flex-col p-20 flex-[1] min-w-[180px]'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<div className='m-auto text-center'>
 						<h3 className='text-4xl mb-6 leading-[1.5]'>
 							<span
 								data-font-family='BOXING'
-								ref={textElStoreRegister}>{`# frontend`}</span>
+								ref={setText}>{`# frontend`}</span>
 						</h3>
 						<ul className='font-satoshi text-xl leading-[1.5]'>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`JavaScript`}</span>
+									ref={setText}>{`JavaScript`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>
+									ref={setText}>
 									{`HTML`}
 								</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`CSS`}</span>
+									ref={setText}>{`CSS`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`React (hooks)`}</span>
+									ref={setText}>{`React (hooks)`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`React Redux`}</span>
+									ref={setText}>{`React Redux`}</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`Material UI`}</span>
+									ref={setText}>{`Material UI`}</span>
 							</li>
-							{/* <li>
-											<span
-												data-font-family='SATOSHI'
-												ref={textElStoreRegister}>{`Node.js`}</span>
-										</li>
-										<li>
-											<span
-												data-font-family='SATOSHI'
-												ref={textElStoreRegister}>{`Express`}</span>
-										</li> */}
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>{`Axios`}</span>
+									ref={setText}>{`Axios`}</span>
 							</li>
 						</ul>
 					</div>
@@ -482,11 +472,11 @@ export default function Project() {
 
 			<div
 				className='border border-neutral min-h-72 px-12 gap-14 p-20 flex flex-[2] flex-col rounded-[0rem_0rem_0rem_0rem] md:flex-row md:rounded-[0rem_0rem_0rem_9rem]'
-				ref={containerElStoreRegister}>
+				ref={setContainer}>
 				<h3 className='m-auto text-center text-4xl leading-[1.25]'>
 					<span
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{`overview`}
 					</span>
 				</h3>
@@ -494,7 +484,7 @@ export default function Project() {
 				<p className='m-auto text-xl font-satoshi whitespace-pre-line leading-[1.5]'>
 					<span
 						data-font-family='SATOSHI'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{`Solve the inconvenience of encountering unknown words upon reading an English passage and having to look up elsewhere.\n\nRead multiple professional-written passages fetched via New York Times API with a juxtaposed dictionary to facilitate English learning.\n\nCo-located design of text and relevant keyword tags. You can explore more in a topic-oriented way.`}
 					</span>
 				</p>
@@ -507,7 +497,7 @@ export default function Project() {
 			/* -------------------------------------------------------------------------- */}
 			<div
 				className='pointer-events-auto border border-neutral min-h-72 flex flex-[1] items-center justify-center text-4xl text-highlight p-20 rounded-[0rem_0rem_9rem_9rem] md:rounded-[0rem_0rem_9rem_0rem] leading-[1] gap-40 md:gap-12'
-				ref={el => containerElStoreRegister(el)}
+				ref={el => setContainer(el)}
 				onPointerEnter={e => toggleRipple(false)}
 				onPointerLeave={e => toggleRipple(true)}>
 				<a
@@ -517,7 +507,7 @@ export default function Project() {
 					<span
 						data-font-highlight
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>{`[ demo ]`}</span>
+						ref={setText}>{`[ demo ]`}</span>
 				</a>
 				<a
 					href='https://github.com/laynesquare/learn_english_with_dictionary'
@@ -526,7 +516,7 @@ export default function Project() {
 					<span
 						data-font-highlight
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{`[ code ]`}
 					</span>
 				</a>

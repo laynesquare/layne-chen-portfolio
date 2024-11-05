@@ -5,9 +5,9 @@ import { useDomStore } from '@/store';
 import { CHAP } from '@/config/constants';
 
 export default function Experience() {
-	const textElStoreRegister = useDomStore(state => state?.setText);
-	const containerElStoreRegister = useDomStore(state => state?.setContainer);
-	const anchorElStoreRegister = useDomStore(state => state?.setAnchor);
+	const setText = useDomStore(state => state?.setText);
+	const setContainer = useDomStore(state => state?.setContainer);
+	const setAnchor = useDomStore(state => state?.setAnchor);
 	return (
 		<section
 			className='flex gap-x-12 gap-y-6 flex-wrap'
@@ -17,11 +17,11 @@ export default function Experience() {
 			/* -------------------------------------------------------------------------- */}
 			<header
 				className='flex-[1] text-[13.75rem] border border-neutral min-h-72 flex rounded-[12rem_12rem_0rem_0rem] p-20'
-				ref={containerElStoreRegister}>
+				ref={setContainer}>
 				<h2 className='m-auto leading-none'>
 					<span
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{'experience'}
 					</span>
 				</h2>
@@ -35,22 +35,22 @@ export default function Experience() {
 
 			<div
 				className='flex-[0.3] flex border border-neutral min-h-96 rounded-[0rem_12rem_12rem_12rem] p-20'
-				ref={containerElStoreRegister}>
+				ref={setContainer}>
 				<h2 className='m-auto text-6xl'>
 					<span
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{'[04.]'}
 					</span>
 				</h2>
 			</div>
 			<div
 				className='flex-[1] text-7xl border border-neutral min-h-96 flex p-20 rounded-[12rem_0rem_0rem_12rem]'
-				ref={containerElStoreRegister}>
+				ref={setContainer}>
 				<h3 className='m-auto leading-none text-center'>
 					<span
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{'Frontend Developer'}
 					</span>
 				</h3>
@@ -65,8 +65,8 @@ export default function Experience() {
 			<div
 				className='border border-neutral min-h-[60rem] flex flex-[1] rounded-[0rem_0rem_0rem_0rem] md:flex-[0.3] md:rounded-[0rem_0rem_0rem_9rem] p-[3.25rem]'
 				ref={el => {
-					containerElStoreRegister(el);
-					anchorElStoreRegister(el);
+					setContainer(el);
+					setAnchor(el);
 				}}
 				data-anchor={CHAP.EXPERIENCE}
 				data-anchor-mirror></div>
@@ -83,27 +83,27 @@ export default function Experience() {
 				/* -------------------------------------------------------------------------- */}
 				<div
 					className='border border-neutral min-h-72 flex-[1_1_100%] flex p-20'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<div className='m-auto text-center'>
 						<ul className='font-satoshi text-3xl leading-[1.5]'>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>
+									ref={setText}>
 									{`KUNYOU Technology Co., LTD., Full-time`}
 								</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>
+									ref={setText}>
 									{`Jun 2023 - Present, 1yr 1mos`}
 								</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
-									ref={textElStoreRegister}>
+									ref={setText}>
 									{`Taipei, Taipei City, Taiwan, On-site`}
 								</span>
 							</li>
@@ -116,12 +116,12 @@ export default function Experience() {
 				/* -------------------------------------------------------------------------- */}
 				<div
 					className='border border-neutral min-h-72 flex flex-[1_30%] p-20 min-w-[180px]'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<div className='m-auto text-center'>
 						<p className='text-xl font-satoshi leading-[1.5]'>
 							<span
 								data-font-family='SATOSHI'
-								ref={textElStoreRegister}>
+								ref={setText}>
 								{`Facilitate the official website's SEO and achieve 100 in the Lighthouse index with Angular Universal's SSG tech`}
 							</span>
 						</p>
@@ -129,12 +129,12 @@ export default function Experience() {
 				</div>
 				<div
 					className='border border-neutral min-h-72 flex-[1_30%] flex min-w-[180px] p-20'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<div className='m-auto text-center'>
 						<p className='text-xl font-satoshi leading-[1.5]'>
 							<span
 								data-font-family='SATOSHI'
-								ref={textElStoreRegister}>
+								ref={setText}>
 								{`Utilize UI framework PrimeNG and data-visualizing package ECharts to materialize UI/UX drafts and RWD`}
 							</span>
 						</p>
@@ -142,12 +142,12 @@ export default function Experience() {
 				</div>
 				<div
 					className='border border-neutral min-h-72 flex-[1_30%] flex min-w-[180px] p-20'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<div className='m-auto text-center'>
 						<p className='text-xl font-satoshi leading-[1.5]'>
 							<span
 								data-font-family='SATOSHI'
-								ref={textElStoreRegister}>
+								ref={setText}>
 								{`Use RxJS to execute asynchronous requests and fulfill API integration`}
 							</span>
 						</p>
@@ -159,12 +159,12 @@ export default function Experience() {
 				/* -------------------------------------------------------------------------- */}
 				<div
 					className='border border-neutral min-h-72 flex-[1_30%] flex min-w-[180px] p-20'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<div className='m-auto text-center'>
 						<p className='text-xl font-satoshi leading-[1.5]'>
 							<span
 								data-font-family='SATOSHI'
-								ref={textElStoreRegister}>
+								ref={setText}>
 								{`Use Karma/Jasmine to implement Unit Test and achieve 98% code coverage`}
 							</span>
 						</p>
@@ -172,12 +172,12 @@ export default function Experience() {
 				</div>
 				<div
 					className='border border-neutral min-h-72 flex-[1_30%] flex min-w-[180px] p-20'
-					ref={containerElStoreRegister}>
+					ref={setContainer}>
 					<div className='m-auto text-center'>
 						<p className='text-xl font-satoshi leading-[1.5]'>
 							<span
 								data-font-family='SATOSHI'
-								ref={textElStoreRegister}>
+								ref={setText}>
 								{`Acquire AA level of web accessibility standard in developing public sectors projects`}
 							</span>
 						</p>
@@ -186,8 +186,8 @@ export default function Experience() {
 				<div
 					className='border border-neutral min-h-[120rem] flex-[1_100%] flex min-w-[180px] rounded-[0rem_0rem_9rem_9rem] p-20 md:rounded-[0rem_0rem_9rem_0rem] md:min-h-72'
 					ref={el => {
-						containerElStoreRegister(el);
-						anchorElStoreRegister(el);
+						setContainer(el);
+						setAnchor(el);
 					}}
 					data-anchor={CHAP.EXPERIENCE}
 					data-anchor-mirror>

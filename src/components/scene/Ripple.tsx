@@ -17,13 +17,15 @@ import {
 	FrontSide,
 } from 'three';
 
-import type { Mesh, Material } from 'three';
+import type { Mesh, Material, BufferGeometry } from 'three';
 
 // store
 import { useWebGlStore, useCursorStore } from '@/store';
 
 // constant
 import { MESH_NAME } from '@/config/constants';
+
+type RippleMesh = Mesh<BufferGeometry, MeshBasicMaterial>;
 
 export default function Ripple() {
 	const getThree = useThree(state => state.get);
@@ -32,7 +34,7 @@ export default function Ripple() {
 	const preMousePos = useRef({ x: 0, y: 0 });
 	const rippleVec3 = useMemo(() => new Vector3(), []);
 	const rippleTexture = useLoader(TextureLoader, '/scene/textures/ripple.png');
-	const rippleRefs = useRef<(Mesh | null)[]>([]);
+	const rippleRefs = useRef<RippleMesh[]>([]);
 	const rippleCurrIdx = useRef(-1);
 	const rippleGeo = useMemo(() => new PlaneGeometry(0.5, 0.5, 1, 1), []);
 	const rippleMaterial = useMemo(
@@ -71,7 +73,7 @@ export default function Ripple() {
 			meshes.push(
 				<mesh
 					key={i}
-					ref={el => {
+					ref={(el: RippleMesh) => {
 						rippleRefs.current[i] = el;
 					}}
 					material={rippleMaterial.clone()}
@@ -93,31 +95,33 @@ export default function Ripple() {
 			const ndcY = -((event.clientY / size.height) * 2 - 1);
 
 			useCursorStore.setState({
-				curr: { x: event.clientX, y: event.clientY, cursor: window.getComputedStyle(event.target).cursor },
+				curr: {
+					x: event.clientX,
+					y: event.clientY,
+					cursor: event.target ? window.getComputedStyle(event.target as HTMLElement).cursor : 'auto',
+				},
 				ndcPosition: useCursorStore.getState().ndcPosition.set(ndcX, ndcY),
 			});
 
-			const vector = rippleVec3;
-			vector.set(ndcX, ndcY, 0.5);
-			vector.unproject(camera);
-			vector.sub(camera.position).normalize();
-			const distance = (3 - camera.position.z) / vector.z;
+			rippleVec3.set(ndcX, ndcY, 0.5);
+			rippleVec3.unproject(camera);
+			rippleVec3.sub(camera.position).normalize();
 
+			const distance = (3 - camera.position.z) / rippleVec3.z;
 			const offsetX = Math.abs(preMousePos.current.x - event.clientX);
 			const offsetY = Math.abs(preMousePos.current.y - event.clientY);
 
 			const isRippleZone = useCursorStore.getState().isRippleZone;
 
 			if ((offsetX >= 0.5 || offsetY >= 0.5) && isRippleZone) {
-				rippleCurrIdx.current = (rippleCurrIdx.current + 1) % 25;
-				rippleRefs.current[rippleCurrIdx.current].material.visible = true;
-				rippleRefs.current[rippleCurrIdx.current].material.opacity = 1;
-				rippleRefs.current[rippleCurrIdx.current].scale.x = rippleRefs.current[
-					rippleCurrIdx.current
-				].scale.y = 1;
-				rippleRefs.current[rippleCurrIdx.current].position
-					.copy(camera.position)
-					.add(vector.multiplyScalar(distance));
+				const currRipple = rippleRefs.current[++rippleCurrIdx.current % 25];
+
+				if (currRipple) {
+					currRipple.material.visible = true;
+					currRipple.material.opacity = 1;
+					currRipple.scale.x = currRipple.scale.y = 1;
+					currRipple.position.copy(camera.position).add(rippleVec3.multiplyScalar(distance));
+				}
 			}
 
 			preMousePos.current = { x: event.clientX, y: event.clientY };
@@ -125,9 +129,7 @@ export default function Ripple() {
 		[getThree, rippleVec3],
 	);
 
-	useEffect(() => {
-		useWebGlStore.setState({ rippleBuffer });
-	}, [rippleBuffer]);
+	useEffect(() => useWebGlStore.setState({ rippleBuffer }), [rippleBuffer]);
 
 	useEffect(() => {
 		window.addEventListener('mousemove', handleMouseMove);
@@ -138,7 +140,7 @@ export default function Ripple() {
 		rippleRefs.current.forEach(mesh => {
 			if (mesh) {
 				mesh.rotation.z += 0.025;
-				(mesh.material as MeshBasicMaterial).opacity *= 0.95;
+				mesh.material.opacity *= 0.95;
 				mesh.scale.x = 0.98 * mesh.scale.x + 0.155;
 				mesh.scale.y = mesh.scale.x;
 			}

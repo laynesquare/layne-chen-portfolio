@@ -5,7 +5,7 @@ import { ResponsiveText } from '@/components';
 import { useDomStore, useCursorStore, useNavStore } from '@/store';
 
 export default function Contact() {
-	const textElStoreRegister = useDomStore(state => state?.setText);
+	const setText = useDomStore(state => state?.setText);
 
 	function toggleRipple(bool: boolean) {
 		useCursorStore.setState({ isRippleZone: bool });
@@ -19,12 +19,12 @@ export default function Contact() {
 				<h3 className='whitespace-pre-line text-7xl mb-6 w-max'>
 					<span
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>{`Let's connect.`}</span>
+						ref={setText}>{`Let's connect.`}</span>
 				</h3>
 				<h4 className='whitespace-pre-line text-3xl leading-[1.25] w-max'>
 					<span
 						data-font-family='BOXING'
-						ref={textElStoreRegister}>{`Open for new challenges\nand collaborations.`}</span>
+						ref={setText}>{`Open for new challenges\nand collaborations.`}</span>
 				</h4>
 			</div>
 			<div className='text-xl flex flex-[1] -translate-y-36 leading-none text-highlight flex-col justify-end items-start px-12 pb-12 md:flex-row md:justify-between md:items-end md:pb-0 z-20'>
@@ -37,7 +37,7 @@ export default function Contact() {
 						target='_blank'
 						title='Go to Github'>
 						<span
-							ref={textElStoreRegister}
+							ref={setText}
 							data-font-family='BOXING'
 							data-font-highlight='button'>{`[ github ]`}</span>
 					</a>
@@ -46,7 +46,7 @@ export default function Contact() {
 						target='_blank'
 						title='Go to Linkedin'>
 						<span
-							ref={textElStoreRegister}
+							ref={setText}
 							data-font-family='BOXING'
 							data-font-highlight='button'>{`[ linkedin ]`}</span>
 					</a>
@@ -55,7 +55,7 @@ export default function Contact() {
 						target='_blank'
 						title='Go to resume'>
 						<span
-							ref={textElStoreRegister}
+							ref={setText}
 							data-font-family='BOXING'
 							data-font-highlight='button'>
 							{`[ resume ]`}
@@ -65,7 +65,7 @@ export default function Contact() {
 						href='mailto:laynechensquare@gmail.com'
 						title='Mail to laynechensquare@gmail.com'>
 						<span
-							ref={textElStoreRegister}
+							ref={setText}
 							data-font-family='BOXING'
 							data-font-highlight='button'>
 							<ResponsiveText
@@ -82,9 +82,9 @@ export default function Contact() {
 					<button
 						className='text-right mt-12 md:mt-0'
 						title='Back to top'
-						onClick={() => useNavStore.getState().lenisRef.current.lenis.scrollTo('#home')}>
+						onClick={() => useNavStore.getState().lenisRef?.current?.lenis?.scrollTo('#home')}>
 						<span
-							ref={textElStoreRegister}
+							ref={setText}
 							data-font-family='BOXING'
 							data-font-highlight='button'>
 							{'[ Back to top ]'}
@@ -97,7 +97,7 @@ export default function Contact() {
 					<span
 						data-font-family='BOXING'
 						data-scale-y='2'
-						ref={textElStoreRegister}>
+						ref={setText}>
 						{'GET IN TOUCH'}
 					</span>
 				</h1>

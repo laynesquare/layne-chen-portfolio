@@ -1,5 +1,6 @@
-import { Size, Camera } from '@react-three/fiber';
 import { PerspectiveCamera } from 'three';
+
+import type { Size, Camera, Viewport } from '@react-three/fiber';
 
 /**
  * @export
@@ -8,7 +9,7 @@ import { PerspectiveCamera } from 'three';
  * @param {Size} size
  * @return {*}
  */
-export default function getScaleMultiplier(zPosition: number, viewport, camera: Camera, size: Size): number {
+export default function getScaleMultiplier(zPosition: number, viewport: Viewport, camera: Camera, size: Size): number {
 	if (!(camera instanceof PerspectiveCamera)) {
 		throw new Error(`Unsupported camera type: ${camera.type}`);
 	}

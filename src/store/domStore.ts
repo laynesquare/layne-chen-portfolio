@@ -5,10 +5,10 @@ interface DomStoreState {
 	torsoEl: HTMLElement | null;
 	containerEls: Set<HTMLElement>;
 	anchorEls: Set<HTMLElement>;
-	setText: (el: HTMLElement) => void;
-	setTorso: (el: HTMLElement) => void;
-	setContainer: (el: HTMLElement) => void;
-	setAnchor: (el: HTMLElement) => void;
+	setText: (el: HTMLElement | null) => void;
+	setTorso: (el: HTMLElement | null) => void;
+	setContainer: (el: HTMLElement | null) => void;
+	setAnchor: (el: HTMLElement | null) => void;
 }
 
 export const useDomStore = create<DomStoreState>(set => ({
@@ -17,7 +17,7 @@ export const useDomStore = create<DomStoreState>(set => ({
 	containerEls: new Set(),
 	anchorEls: new Set(),
 
-	setText: (el: HTMLElement) => {
+	setText: el => {
 		set(state => {
 			if (state && el && !state.textEls.has(el)) {
 				return { textEls: new Set(state.textEls).add(el) };
@@ -25,7 +25,7 @@ export const useDomStore = create<DomStoreState>(set => ({
 			return state;
 		});
 	},
-	setTorso: (el: HTMLElement) => {
+	setTorso: el => {
 		set(state => {
 			if (state && el) {
 				return { torsoEl: el };
@@ -33,7 +33,7 @@ export const useDomStore = create<DomStoreState>(set => ({
 			return state;
 		});
 	},
-	setContainer: (el: HTMLElement) => {
+	setContainer: el => {
 		set(state => {
 			if (state && el && !state.containerEls.has(el)) {
 				return { containerEls: new Set(state.containerEls).add(el) };
@@ -41,7 +41,7 @@ export const useDomStore = create<DomStoreState>(set => ({
 			return state;
 		});
 	},
-	setAnchor: (el: HTMLElement) => {
+	setAnchor: el => {
 		set(state => {
 			if (state && el && !state.anchorEls.has(el)) {
 				return { anchorEls: new Set(state.anchorEls).add(el) };

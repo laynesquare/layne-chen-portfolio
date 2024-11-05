@@ -17,9 +17,6 @@ import {
 	NoBlending,
 } from 'three';
 
-// type
-import type { Group, Mesh, Object3D, BufferGeometry, MeshPhysicalMaterial } from 'three';
-
 // shader
 import vertexShader from '@/shaders/animated-scroll-warp/vertex';
 import fragmentShader from '@/shaders/animated-scroll-warp/fragment';
@@ -41,6 +38,9 @@ import {
 	BALL_INIT_MATERIAL,
 	ORIGINAL,
 } from '@/config/constants';
+
+// type
+import type { Group, Mesh, Object3D, BufferGeometry, MeshPhysicalMaterial } from 'three';
 
 // gsap
 import gsap from 'gsap';
@@ -70,7 +70,7 @@ interface MutatedObject3DMeshes {
 	clonedBall: Object3D | null | undefined;
 }
 
-type CurrGsapMorph = { [key: string]: number };
+type CurrGsapMorph = Record<string, number>;
 
 export default function Billboard({ children }: BillboardProps) {
 	const getThree = useThree(state => state.get);
@@ -223,7 +223,7 @@ export default function Billboard({ children }: BillboardProps) {
 					);
 
 					if (detectInViewMeshes.length) {
-						let checkAnchorExist: { [key: string]: number } = {};
+						let checkAnchorExist: Record<string, number> = {};
 						const meshesToMutate = detectInViewMeshes.filter(mesh => {
 							const { anchor } = mesh.userData.dataset;
 							return checkAnchorExist[anchor] ? false : (checkAnchorExist[anchor] = 1);

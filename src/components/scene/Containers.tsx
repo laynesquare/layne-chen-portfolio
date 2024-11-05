@@ -22,38 +22,51 @@ import { getScaleMultiplier } from '@/utils';
 // constant
 import { MESH_DISTANCE, MESH_NAME, CHAP } from '@/config/constants';
 
+// type
+import type { Viewport, Size, Camera } from '@react-three/fiber';
+import type { Group, Mesh, BufferGeometry, Texture } from 'three';
+
 // gsap
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Containers() {
-	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
+	const [viewport, size, camera]: [Viewport, Size, Camera] = useThree(state => [
+		state.viewport,
+		state.size,
+		state.camera,
+	]);
+
+	const planeGeo = useMemo(() => new PlaneGeometry(1, 1, 1, 1), []);
+
 	const pointer = useMemo(() => new Vector2(0, 0), []);
 	const pointerCenter = useMemo(() => new Vector2(0, 0), []);
-	const planeGeo = useMemo(() => new PlaneGeometry(1, 1, 1, 1), []);
-	const containerGroupRef = useRef(null);
+
+	const containerGroupRef = useRef<Group>(null);
 	const containerMeshRatio = getScaleMultiplier(MESH_DISTANCE.CONTAINER, viewport, camera, size);
-	const containerParallaxMeshesRefs = useRef(new Set());
-	const containerMaskedMeshesRef = useRef(new Set());
-	const containerTranslucentMaskedMeshesRef = useRef(new Set());
+	const containerParallaxMeshesRefs = useRef<Set<Mesh<BufferGeometry, ShaderMaterial>>>(new Set());
+	const containerMaskedMeshesRef = useRef<Set<Mesh<BufferGeometry, ShaderMaterial>>>(new Set());
+	const containerTranslucentMaskedMeshesRef = useRef<Set<Mesh<BufferGeometry, ShaderMaterial>>>(new Set());
 
-	const [previewLayneChenPortfolio, previewShareYourMemories, previewLearnEnglishDictionary] = useLoader(
-		TextureLoader,
-		[
-			'/frame/project-preview-layne-chen-portfolio-2024.webp',
-			'/frame/project-preview-share-your-memories.webp',
-			'/frame/project-preview-learn-english-dictionary.webp',
-		],
-	);
+	const [
+		//
+		previewLayneChenPortfolio,
+		previewShareYourMemories,
+		previewLearnEnglishDictionary,
+	] = useLoader(TextureLoader, [
+		'/frame/project-preview-layne-chen-portfolio-2024.webp',
+		'/frame/project-preview-share-your-memories.webp',
+		'/frame/project-preview-learn-english-dictionary.webp',
+	]);
 
-	const previewMap = {
+	const previewMap: Record<string, Texture> = {
 		previewLayneChenPortfolio: previewLayneChenPortfolio,
 		previewShareYourMemories: previewShareYourMemories,
 		previewLearnEnglishDictionary: previewLearnEnglishDictionary,
 	};
 
-	const chapBufferNameMap = {
+	const chapBufferNameMap: Record<string, 'aboutBuffer' | 'skillBuffer' | 'experienceBuffer'> = {
 		[CHAP.ABOUT]: 'aboutBuffer',
 		[CHAP.SKILL]: 'skillBuffer',
 		[CHAP.EXPERIENCE]: 'experienceBuffer',
@@ -156,7 +169,7 @@ export default function Containers() {
 				const { scrollY } = window;
 				const { left, top, width, height } = el.getBoundingClientRect();
 				const { parallax, anchor, anchorMirror } = el.dataset;
-				const { factor, dpr } = viewport;
+				const { factor } = viewport;
 				const ratio = containerMeshRatio;
 				const baseX = (-viewport.width / 2) * ratio;
 				const baseY = (viewport.height / 2) * ratio;
@@ -175,8 +188,17 @@ export default function Containers() {
 
 				if (parallax) {
 					material = containerMeshParallaxMaterial.clone();
+					material.uniforms.uTexture.value = previewMap[parallax] || null;
+				} else if (anchor) {
+					material = containerMeshMaterial.clone();
+					material.uniforms.uMaskTexture.value =
+						//
+						useWebGlStore.getState()[chapBufferNameMap[anchor]]?.texture;
 				} else {
 					material = containerMeshMaterial.clone();
+					material.uniforms.uTranslucentMaskTexture.value =
+						//
+						useWebGlStore.getState().translucentBuffer?.texture;
 				}
 
 				const dynamicDpr = usePlatformStore.getState().isMobile
@@ -185,20 +207,17 @@ export default function Containers() {
 					? 1
 					: 1.2;
 
-				material.uniforms.uTexture.value = previewMap[parallax] || null;
 				material.uniforms.uResolution.value.set(width, height);
 				material.uniforms.uRadii.value.set(...radius);
 				material.uniforms.uMouse.value.set(0, 0);
 				material.uniforms.uAnchor.value = +!!anchor;
 				material.uniforms.uHeatMap.value = +!!anchorMirror;
 				material.uniforms.uMaskResolution.value.set(size.width * dynamicDpr, size.height * dynamicDpr);
-				material.uniforms.uTranslucentMaskTexture.value = useWebGlStore.getState().translucentBuffer?.texture;
-				material.uniforms.uMaskTexture.value = useWebGlStore.getState()[chapBufferNameMap[anchor]]?.texture;
 
 				return (
 					<mesh
 						key={idx}
-						ref={el => {
+						ref={(el: Mesh<BufferGeometry, ShaderMaterial>) => {
 							if (!el) return;
 
 							if (!anchor && !parallax) {

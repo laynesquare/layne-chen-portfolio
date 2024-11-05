@@ -89,7 +89,7 @@ export default function OverlayNav() {
 					className='px-[max(1.5rem,24px)] border border-neutralContrast h-full flex flex-col justify-center items-center origin-center aspect-[4.5] w-full md:aspect-square md:rounded-full md:w-auto'
 					title='Close menu'
 					onClick={() => {
-						useNavStore.getState().lenisRef.current.lenis.start();
+						useNavStore.getState().lenisRef?.current?.lenis?.start();
 						useNavStore.setState({ isOpen: false });
 					}}
 					onPointerEnter={() => setIsOverlayCloseHover(true)}

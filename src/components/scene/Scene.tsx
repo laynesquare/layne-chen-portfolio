@@ -10,11 +10,11 @@ import { Vector3 } from 'three';
 // store
 import { useWebGlStore } from '@/store';
 
-// type
-import { SceneProps } from '@/types';
-
 // component
 import { Disclose, SuspenseMonitor, Ripple, Billboard, Torso, Texts, Containers, Ball } from '@/components';
+
+// type
+import { SceneProps } from '@/types';
 
 export default function Scene({ wrapperRef }: SceneProps) {
 	const canvasRef = useRef(null);

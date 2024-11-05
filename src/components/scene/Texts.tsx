@@ -17,9 +17,17 @@ import { getScaleMultiplier } from '@/utils';
 // constant
 import { MESH_DISTANCE, MESH_NAME, TEXT_BOXING, TEXT_SATOSHI } from '@/config/constants';
 
+// type
+import type { Viewport, Size, Camera } from '@react-three/fiber';
+import type { Group } from 'three';
+
 export default function Texts() {
-	const [viewport, size, camera] = useThree(state => [state.viewport, state.size, state.camera]);
-	const textGroupRef = useRef(null);
+	const [viewport, size, camera]: [Viewport, Size, Camera] = useThree(state => [
+		state.viewport,
+		state.size,
+		state.camera,
+	]);
+	const textGroupRef = useRef<Group>(null);
 	const textMeshRatio = getScaleMultiplier(MESH_DISTANCE.TEXT, viewport, camera, size);
 
 	const materialDomText = useMemo(
@@ -44,20 +52,6 @@ export default function Texts() {
 		[],
 	);
 
-	function getTextProps(type) {
-		const fontFamily = {
-			[TEXT_BOXING]: '/font/Boxing-Regular.woff',
-			[TEXT_SATOSHI]: '/font/Satoshi-Bold.woff',
-		};
-
-		return {
-			font: fontFamily[type],
-			anchorX: 'left',
-			anchorY: 'top',
-			overflowWrap: 'break-word',
-		};
-	}
-
 	useLenis(
 		event => {
 			if (!textGroupRef.current) return;
@@ -76,8 +70,8 @@ export default function Texts() {
 			{[...useDomStore.getState().textEls].map((el, idx) => {
 				const { fontSize, lineHeight, textAlign } = window.getComputedStyle(el);
 				const { scrollY } = window;
-				const { left, top, height, width } = el.getBoundingClientRect();
-				const { fontFamily, scaleY, fontHighlight } = el.dataset;
+				const { left, top, width } = el.getBoundingClientRect();
+				const { fontFamily = TEXT_BOXING, scaleY, fontHighlight } = el.dataset;
 				const { factor } = viewport;
 
 				const parsedFontSize = parseFloat(fontSize);
@@ -88,6 +82,8 @@ export default function Texts() {
 				const scrollOffset = (scrollY / factor) * ratio;
 				const material = fontHighlight ? materialDomTextHighlight : materialDomText;
 
+				const font = fontFamily === TEXT_BOXING ? '/font/Boxing-Regular.woff' : '/font/Satoshi-Bold.woff';
+
 				let pX = baseX + (left / factor) * ratio;
 				let pY = baseY - (top / factor) * ratio - scrollOffset;
 				let pZ = MESH_DISTANCE.TEXT;
@@ -96,23 +92,24 @@ export default function Texts() {
 				let sY = 1;
 				let sZ = 1;
 
-				if (scaleY) {
-					sY = parseFloat(scaleY);
-				}
+				if (scaleY) sY = parseFloat(scaleY);
 
 				return (
 					<Text
 						key={idx}
-						{...getTextProps(fontFamily)}
+						font={font}
 						position={[pX, pY, pZ]}
 						material={material}
 						lineHeight={parsedLineHeight / parsedFontSize}
 						maxWidth={(width / factor) * ratio * 1.03}
 						scale={[sX, sY, sZ]}
-						textAlign={textAlign}
+						textAlign={textAlign === 'center' ? 'center' : 'left'}
 						fontSize={(parsedFontSize / factor) * ratio}
 						userData={el.dataset}
-						characters={el.innerText}>
+						characters={el.innerText}
+						anchorX='left'
+						anchorY='top'
+						overflowWrap='break-word'>
 						{el.textContent}
 					</Text>
 				);

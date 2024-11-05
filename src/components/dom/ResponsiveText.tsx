@@ -1,6 +1,11 @@
 import { usePlatformStore } from '@/store';
 
-export default function ResponsiveText({ desktop, mobile }) {
+interface ResponsiveTextProps {
+	desktop: string;
+	mobile: string;
+}
+
+export default function ResponsiveText({ desktop, mobile }: ResponsiveTextProps) {
 	const isMobile = usePlatformStore(state => state.isMobile);
-	return <>{isMobile ? desktop : mobile}</>;
+	return <>{isMobile ? desktop : desktop}</>;
 }

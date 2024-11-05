@@ -8,27 +8,37 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(useGSAP);
 
-export default function OverlayNavLinkBtn({ label, href }) {
+// type
+import type { PointerEvent } from 'react';
+
+interface NavLinkBtnProps {
+	label: string;
+	href: string;
+}
+
+export default function OverlayNavLinkBtn({ label, href }: NavLinkBtnProps) {
 	const [isHover, setIsHover] = useState(false);
 	const pointerRef = useRef({ xPercent: 0, yPercent: 0 });
-	const btnRef = useRef(null);
+	const btnRef = useRef<HTMLAnchorElement>(null);
 	const labelRef = useRef(null);
 	const flairRef = useRef(null);
 
-	function handlePointerEnter(e) {
-		const { clientX, clientY } = e;
-		const { left, top, width, height } = btnRef.current.getBoundingClientRect();
-		const originX = clientX - left;
-		const originY = clientY - top;
-		const mapOriginX = getMapRange(originX, 0, width, 0, 100);
-		const mapOriginY = getMapRange(originY, 0, height, 0, 100);
+	function handlePointerEnter(e: PointerEvent<HTMLAnchorElement>) {
+		if (btnRef.current) {
+			const { clientX, clientY } = e;
+			const { left, top, width, height } = btnRef.current.getBoundingClientRect();
+			const originX = clientX - left;
+			const originY = clientY - top;
+			const mapOriginX = getMapRange(originX, 0, width, 0, 100);
+			const mapOriginY = getMapRange(originY, 0, height, 0, 100);
 
-		pointerRef.current = {
-			xPercent: mapOriginX,
-			yPercent: mapOriginY,
-		};
+			pointerRef.current = {
+				xPercent: mapOriginX,
+				yPercent: mapOriginY,
+			};
 
-		setIsHover(true);
+			setIsHover(true);
+		}
 	}
 
 	useGSAP(
