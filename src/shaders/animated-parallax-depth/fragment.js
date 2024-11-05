@@ -1,4 +1,4 @@
-const fragmentShader = `
+export default glsl = `
 precision lowp float;
 precision lowp int;
 
@@ -83,8 +83,6 @@ void main() {
     gl_FragColor = vec4(color, alpha * smoothedAlpha);
 }
 `;
-
-export default fragmentShader;
 
 // - output the original with distortion
 // vec4 color = texture(uTexture, vec2(vUv.x + distortion, vUv.y));

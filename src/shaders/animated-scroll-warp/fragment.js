@@ -1,4 +1,4 @@
-const fragmentShader = `
+export default glsl = `
 precision lowp float;
 precision lowp int;
 
@@ -61,5 +61,3 @@ void main() {
   outColor = vec4(color, 1.0);
 }
 `;
-
-export default fragmentShader;

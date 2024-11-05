@@ -1,4 +1,4 @@
-const fragmentShader = `
+export default glsl = `
 precision lowp float;
 precision lowp int;
 
@@ -69,8 +69,6 @@ void main() {
     gl_FragColor = vec4(finalColor, finalAlpha);
 }
 `;
-
-export default fragmentShader;
 
 // Output the final color with the calculated alpha
 // csm_DiffuseColor = vec4(color, alpha * smoothedAlpha);

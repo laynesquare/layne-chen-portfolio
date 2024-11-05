@@ -1,4 +1,4 @@
-export default /*glsl*/ `
+export default glsl = `
 precision lowp float;
 precision lowp int;
 

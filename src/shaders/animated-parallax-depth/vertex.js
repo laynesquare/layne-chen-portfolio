@@ -1,10 +1,9 @@
-export default `
+export default glsl = `
 precision lowp float;
 precision lowp int;
 
 varying vec2 vUv;
 varying vec3 vPosition;
-
 
 uniform float uShouldSample;
 varying float vIsInView;

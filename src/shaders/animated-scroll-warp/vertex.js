@@ -1,4 +1,4 @@
-export default `
+export default glsl = `
 precision lowp float;
 precision lowp int;
 
