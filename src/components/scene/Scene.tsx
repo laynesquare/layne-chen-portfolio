@@ -13,8 +13,9 @@ import { useWebGlStore } from '@/store';
 // component
 import { Disclose, SuspenseMonitor, Ripple, Billboard, Torso, Texts, Containers, Ball } from '@/components';
 
-// type
-import { SceneProps } from '@/types';
+interface SceneProps {
+	wrapperRef: React.RefObject<HTMLElement>;
+}
 
 export default function Scene({ wrapperRef }: SceneProps) {
 	const canvasRef = useRef(null);
