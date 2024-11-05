@@ -1,4 +1,4 @@
-export default glsl = `
+const glsl = `
 precision lowp float;
 precision lowp int;
 
@@ -92,3 +92,5 @@ void main() {
 
 // vec4 color = texture(uTexture, parallaxPosition);
 // csm_FragColor = color;
+
+export default glsl;

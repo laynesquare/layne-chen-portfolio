@@ -1,4 +1,4 @@
-export default glsl = `
+const glsl = `
 precision lowp float;
 precision lowp int;
 
@@ -39,3 +39,5 @@ void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(deformedPosition, 1.0);
 }
 `;
+
+export default glsl;

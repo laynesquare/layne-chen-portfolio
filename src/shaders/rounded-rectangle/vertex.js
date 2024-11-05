@@ -1,4 +1,4 @@
-export default glsl = `
+const glsl = `
 precision lowp float;
 precision lowp int;
 
@@ -14,3 +14,5 @@ void main() {
     // csm_PositionRaw.xy = floor(csm_PositionRaw.xy * 80.0) / 80.0 * csm_PositionRaw.w;
 }
 `;
+
+export default glsl;

@@ -1,4 +1,4 @@
-export default glsl = `
+const glsl = `
 precision lowp float;
 precision lowp int;
 
@@ -15,6 +15,8 @@ void main() {
     csm_DiffuseColor = vec4(finalColor, 1.0);
 }
 `;
+
+export default glsl;
 
 // void main() {
 //     vec3 color = uColor;

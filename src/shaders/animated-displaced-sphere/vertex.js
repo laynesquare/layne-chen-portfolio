@@ -1,4 +1,4 @@
-export default glsl = `
+const glsl = `
 precision lowp float;
 precision lowp int;
 
@@ -140,3 +140,5 @@ void main() {
     csm_Position = basePos;
 }
 `;
+
+export default glsl;

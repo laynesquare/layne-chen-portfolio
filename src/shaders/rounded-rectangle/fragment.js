@@ -1,4 +1,4 @@
-export default glsl = `
+const glsl = `
 precision lowp float;
 precision lowp int;
 
@@ -86,3 +86,5 @@ void main() {
 // float amplitude = 0.003;
 // float distortion = sin(maskUv.y * frequency) * amplitude;
 // maskColor = texture2D(uMask, vec2(maskUv.x + distortion, maskUv.y));
+
+export default glsl;
