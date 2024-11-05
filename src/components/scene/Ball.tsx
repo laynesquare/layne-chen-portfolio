@@ -140,7 +140,7 @@ export default function Ball() {
 		if (anchorMirror) {
 			const inViewMirrorEl = anchorEls.find(el => el.dataset['anchor'] === anchor && el !== inViewEl);
 			const { x: mirrorX, y: mirrorY } = inViewMirrorEl
-				? getElementCenter(inViewEl, factor, baseX, baseY)
+				? getElementCenter(inViewMirrorEl, factor, baseX, baseY)
 				: { x: targetX, y: targetY };
 
 			const targetBallClonePos = ballClonedDynamicPos.set(mirrorX, mirrorY, 1);
