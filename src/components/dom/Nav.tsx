@@ -40,7 +40,7 @@ export default function Nav() {
 				/>
 				<NavLinkBtn
 					label={`resume`}
-					href={`/frame/layne_res_all.pdf`}
+					href={`/dom/layne_res_all.pdf`}
 				/>
 				<NavLinkBtn
 					label={`mail`}

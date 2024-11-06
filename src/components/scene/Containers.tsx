@@ -55,9 +55,9 @@ export default function Containers() {
 		previewShareYourMemories,
 		previewLearnEnglishDictionary,
 	] = useLoader(TextureLoader, [
-		'/frame/project-preview-layne-chen-portfolio-2024.webp',
-		'/frame/project-preview-share-your-memories.webp',
-		'/frame/project-preview-learn-english-dictionary.webp',
+		'/dom/project-preview-layne-chen-portfolio-2024.webp',
+		'/dom/project-preview-share-your-memories.webp',
+		'/dom/project-preview-learn-english-dictionary.webp',
 	]);
 
 	const previewMap: Record<string, Texture> = {

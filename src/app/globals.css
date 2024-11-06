@@ -165,6 +165,21 @@ html.lenis body {
 /*                                 fontFamily                                 */
 /* -------------------------------------------------------------------------- */
 
+/* -------------------------------------------------------------------------- */
+/*                                   canvas                                   */
+/* -------------------------------------------------------------------------- */
+
+main canvas {
+	-webkit-mask-image: url('/dom/star-mask.svg');
+	mask-image: url('/dom/star-mask.svg');
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center center;
+	mask-position: center center;
+	mask-size: 0rem;
+	pointer-events: none;
+}
+
 @layer utilities {
 	.font-boxing {
 		font-family: var(--font-boxing);
