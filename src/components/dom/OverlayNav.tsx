@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { OverlayNavLinkChapter, OverlayNavLinkBtn, OverlayNavDecor } from '@/components';
 
 // store
-import { useNavStore } from '@/store';
+import { useNavStore, useWebGlStore } from '@/store';
 
 // gsap
 import gsap from 'gsap';
@@ -12,9 +12,10 @@ import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(useGSAP);
 
 export default function OverlayNav() {
-	const overlayNavRef = useRef(null);
 	const [isOverlayCloseHover, setIsOverlayCloseHover] = useState(false);
+	const isLoaded = useWebGlStore(state => state.isLoaded);
 	const isOpen = useNavStore(state => state.isOpen);
+	const overlayNavRef = useRef(null);
 
 	useGSAP(
 		() => {
@@ -44,7 +45,7 @@ export default function OverlayNav() {
 					.to(overlayNavRef.current, { display: 'none', duration: 0, ease: 'none' }, '<');
 			}
 		},
-		{ dependencies: [isOpen], scope: overlayNavRef },
+		{ dependencies: [isOpen, isLoaded], scope: overlayNavRef },
 	);
 
 	useGSAP(

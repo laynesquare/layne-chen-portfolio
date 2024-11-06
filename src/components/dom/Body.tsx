@@ -4,11 +4,6 @@ import { useDomStore } from '@/store';
 // component
 import { Hero, About, Skill, Experience, Project, Contact } from '@/components';
 
-// gsap
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-gsap.registerPlugin(useGSAP);
-
 export default function Body() {
 	const setTorso = useDomStore(state => state?.setTorso);
 

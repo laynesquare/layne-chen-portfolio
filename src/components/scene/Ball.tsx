@@ -207,7 +207,7 @@ export default function Ball() {
 		ballRotationUpdate(clock.elapsedTime);
 	});
 
-	console.log('ball renders');
+	// console.log('ball renders');
 
 	return (
 		<group>

@@ -152,7 +152,7 @@ export default function Billboard({ children }: BillboardProps) {
 		});
 	}, [translucentBuffer, aboutBuffer, skillBuffer, experienceBuffer]);
 
-	useFrame(({ gl, camera, size }, delta) => {
+	useFrame(({ gl, camera, size, viewport }, delta) => {
 		if (!useWebGlStore.getState().isEntryAnimationDone) return;
 
 		const isNavOpen = useNavStore.getState().isOpen;
@@ -262,7 +262,7 @@ export default function Billboard({ children }: BillboardProps) {
 		gl.setRenderTarget(null);
 	});
 
-	console.log('billboard rerenders');
+	// console.log('billboard rerenders');
 
 	return (
 		<>

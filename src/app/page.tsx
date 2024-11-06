@@ -2,10 +2,10 @@
 import { useRef } from 'react';
 
 // component
-import { PlatformMonitor, Cursor, Nav, Body, Scene, Loader } from '@/components';
+import { PlatformMonitor, Cursor, Nav, OverlayNav, Body, Scene, Loader } from '@/components';
 
 export default function Home() {
-	const wrapperRef = useRef<HTMLDivElement>(null);
+	const wrapperRef = useRef<HTMLElement>(null);
 
 	return (
 		<>
@@ -16,6 +16,7 @@ export default function Home() {
 				ref={wrapperRef}
 				className='isolate'>
 				<Nav />
+				<OverlayNav />
 				<Body />
 				<Scene wrapperRef={wrapperRef} />
 			</main>

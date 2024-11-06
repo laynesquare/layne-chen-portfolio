@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { OverlayNavDecor } from '@/components';
 
 // store
-import { useNavStore, usePlatformStore } from '@/store';
+import { useNavStore, usePlatformStore, useWebGlStore } from '@/store';
 
 // type
 import type { PointerEvent } from 'react';
@@ -25,6 +25,7 @@ interface OverlayNavLinkChapterProps {
 export default function OverlayNavLinkChapter({ chapter, label, width, justify, isDecor }: OverlayNavLinkChapterProps) {
 	const [isHover, setIsHover] = useState(false);
 	const isMobile = usePlatformStore(state => state.isMobile);
+	const isLoaded = useWebGlStore(state => state.isLoaded);
 	const ctnRef = useRef(null);
 
 	useGSAP(
@@ -89,7 +90,7 @@ export default function OverlayNavLinkChapter({ chapter, label, width, justify, 
 				});
 			}
 		},
-		{ dependencies: [isHover], scope: ctnRef },
+		{ dependencies: [isHover, isLoaded], scope: ctnRef },
 	);
 
 	function handleClick(e: PointerEvent<HTMLAnchorElement>): void {

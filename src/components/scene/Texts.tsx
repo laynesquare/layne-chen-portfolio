@@ -61,7 +61,7 @@ export default function Texts() {
 		[size],
 	);
 
-	console.log('texts renders');
+	// console.log('texts renders');
 
 	return (
 		<group

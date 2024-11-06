@@ -1,5 +1,8 @@
 import { useRef, useState } from 'react';
 
+// store
+import { useWebGlStore } from '@/store';
+
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -13,38 +16,27 @@ interface NavLinkBtnProps {
 export default function NavLinkBtn({ label, href }: NavLinkBtnProps) {
 	const ctnRef = useRef(null);
 	const [isHover, setIsHover] = useState(false);
+	const isLoaded = useWebGlStore(state => state.isLoaded);
 
 	useGSAP(
 		() => {
-			if (isHover) {
-				gsap.to('[data-nav-action]', {
-					yPercent: -100,
-					duration: 0.5,
-					ease: 'bounce.out',
-				});
-				gsap.to('[data-nav-action-clone]', {
-					yPercent: 0,
-					duration: 0.5,
-					ease: 'bounce.out',
-				});
-			} else {
-				gsap.to('[data-nav-action]', {
-					yPercent: 0,
-					duration: 0.5,
-					ease: 'bounce.out',
-				});
-				gsap.to('[data-nav-action-clone]', {
-					yPercent: 100,
-					duration: 0.5,
-					ease: 'bounce.out',
-				});
-			}
+			gsap.to('[data-nav-action]', {
+				yPercent: isHover ? -100 : 0,
+				duration: 0.5,
+				ease: 'bounce.out',
+			});
+			gsap.to('[data-nav-action-clone]', {
+				yPercent: isHover ? 0 : 100,
+				duration: 0.5,
+				ease: 'bounce.out',
+			});
 		},
-		{ dependencies: [isHover], scope: ctnRef },
+		{ dependencies: [isHover, isLoaded], scope: ctnRef },
 	);
+
 	return (
 		<a
-			className='relative leading-none overflow-hidden min-w-max'
+			className='relative leading-none min-w-max overflow-hidden'
 			href={href}
 			target='_blank'
 			title={`Go to ${label.charAt(0).toUpperCase() + label.slice(1)}`}
@@ -59,7 +51,7 @@ export default function NavLinkBtn({ label, href }: NavLinkBtnProps) {
 			<span
 				data-nav-action-clone
 				className='absolute top-0 left-0 h-full flex items-center'>
-				{`[ ${label} ]`}{' '}
+				{`[ ${label} ]`}
 			</span>
 		</a>
 	);

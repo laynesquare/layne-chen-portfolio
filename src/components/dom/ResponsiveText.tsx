@@ -7,5 +7,5 @@ interface ResponsiveTextProps {
 
 export default function ResponsiveText({ desktop, mobile }: ResponsiveTextProps) {
 	const isMobile = usePlatformStore(state => state.isMobile);
-	return <>{isMobile ? desktop : desktop}</>;
+	return <>{isMobile ? mobile : desktop}</>;
 }

@@ -11,6 +11,7 @@ gsap.registerPlugin(useGSAP);
 export default function NavOpenBtn() {
 	const [isHover, setIsHover] = useState(false);
 	const ctnRef = useRef(null);
+
 	useGSAP(
 		() => {
 			if (isHover) {

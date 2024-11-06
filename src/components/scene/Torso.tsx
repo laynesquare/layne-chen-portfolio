@@ -84,7 +84,7 @@ export default function Torso() {
 		materialAcidBg.uniforms.uTime.value += delta;
 	});
 
-	console.log('torso renders');
+	// console.log('torso renders');
 
 	return (
 		<group ref={torsoGroupRef}>

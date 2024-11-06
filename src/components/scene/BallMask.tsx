@@ -119,7 +119,7 @@ export default function BallMask({ ballRef, ballMaskRef, ballMaskCloneRef }: Bal
 		document.body.style.cursor = 'auto';
 	}
 
-	console.log('mask ball renders');
+	// console.log('mask ball renders');
 
 	return (
 		<>

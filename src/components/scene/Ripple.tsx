@@ -150,7 +150,7 @@ export default function Ripple() {
 		gl.render(rippleScene, camera);
 	});
 
-	console.log('Ripple renders');
+	// console.log('Ripple renders');
 
 	return <>{createPortal(ripples, rippleScene)}</>;
 }

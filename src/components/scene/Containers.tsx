@@ -153,7 +153,7 @@ export default function Containers() {
 		});
 	});
 
-	console.log('ctn renders');
+	// console.log('ctn renders');
 
 	return (
 		<group

@@ -9,8 +9,6 @@ export default function useScaleMultiplier(zPosition: number): number {
 		state.camera,
 	]);
 
-	console.log('custom');
-
 	if (!(camera instanceof PerspectiveCamera)) {
 		throw new Error(`Unsupported camera type: ${camera.type}`);
 	}
