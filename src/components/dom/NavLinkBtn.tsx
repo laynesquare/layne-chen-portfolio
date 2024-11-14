@@ -6,7 +6,6 @@ import { useWebGlStore } from '@/store';
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-gsap.registerPlugin(useGSAP);
 
 interface NavLinkBtnProps {
 	label: string;

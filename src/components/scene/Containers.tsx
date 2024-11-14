@@ -27,9 +27,7 @@ import type { Viewport, Size, Camera } from '@react-three/fiber';
 import type { Group, Mesh, BufferGeometry, Texture } from 'three';
 
 // gsap
-import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-gsap.registerPlugin(ScrollTrigger);
 
 export default function Containers() {
 	const [viewport, size, camera]: [Viewport, Size, Camera] = useThree(state => [
@@ -159,82 +157,85 @@ export default function Containers() {
 		<group
 			name={MESH_NAME.CONTAINER_GROUP}
 			ref={containerGroupRef}>
-			{[...useDomStore.getState().containerEls].map((el, idx) => {
-				const {
-					borderBottomLeftRadius: rbl,
-					borderBottomRightRadius: rbr,
-					borderTopLeftRadius: rtl,
-					borderTopRightRadius: rtr,
-				} = window.getComputedStyle(el);
-				const { scrollY } = window;
-				const { left, top, width, height } = el.getBoundingClientRect();
-				const { parallax, anchor, anchorMirror } = el.dataset;
-				const { factor } = viewport;
-				const ratio = containerMeshRatio;
-				const baseX = (-viewport.width / 2) * ratio;
-				const baseY = (viewport.height / 2) * ratio;
-				const shiftHalfW = width / 2;
-				const shiftHalfH = height / 2;
-				const scrollOffset = (scrollY / factor) * ratio;
+			{
+				// @ts-ignore
+				[...useDomStore.getState().containerEls].map((el, idx) => {
+					const {
+						borderBottomLeftRadius: rbl,
+						borderBottomRightRadius: rbr,
+						borderTopLeftRadius: rtl,
+						borderTopRightRadius: rtr,
+					} = window.getComputedStyle(el);
+					const { scrollY } = window;
+					const { left, top, width, height } = el.getBoundingClientRect();
+					const { parallax, anchor, anchorMirror } = el.dataset;
+					const { factor } = viewport;
+					const ratio = containerMeshRatio;
+					const baseX = (-viewport.width / 2) * ratio;
+					const baseY = (viewport.height / 2) * ratio;
+					const shiftHalfW = width / 2;
+					const shiftHalfH = height / 2;
+					const scrollOffset = (scrollY / factor) * ratio;
 
-				let x = baseX + ((left + shiftHalfW) / factor) * ratio;
-				let y = baseY - ((top + shiftHalfH) / factor) * ratio - scrollOffset;
-				let z = MESH_DISTANCE.CONTAINER;
+					let x = baseX + ((left + shiftHalfW) / factor) * ratio;
+					let y = baseY - ((top + shiftHalfH) / factor) * ratio - scrollOffset;
+					let z = MESH_DISTANCE.CONTAINER;
 
-				const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
+					const radius = [parseFloat(rtr), parseFloat(rbr), parseFloat(rtl), parseFloat(rbl)];
 
-				let material;
-				let geometry = planeGeo.clone();
+					let material;
+					let geometry = planeGeo.clone();
 
-				if (parallax) {
-					material = containerMeshParallaxMaterial.clone();
-					material.uniforms.uTexture.value = previewMap[parallax] || null;
-				} else if (anchor) {
-					material = containerMeshMaterial.clone();
-					material.uniforms.uMaskTexture.value =
-						//
-						useWebGlStore.getState()[chapBufferNameMap[anchor]]?.texture;
-				} else {
-					material = containerMeshMaterial.clone();
-					material.uniforms.uTranslucentMaskTexture.value =
-						//
-						useWebGlStore.getState().translucentBuffer?.texture;
-				}
+					if (parallax) {
+						material = containerMeshParallaxMaterial.clone();
+						material.uniforms.uTexture.value = previewMap[parallax] || null;
+					} else if (anchor) {
+						material = containerMeshMaterial.clone();
+						material.uniforms.uMaskTexture.value =
+							//
+							useWebGlStore.getState()[chapBufferNameMap[anchor]]?.texture;
+					} else {
+						material = containerMeshMaterial.clone();
+						material.uniforms.uTranslucentMaskTexture.value =
+							//
+							useWebGlStore.getState().translucentBuffer?.texture;
+					}
 
-				const dynamicDpr = usePlatformStore.getState().isMobile
-					? Math.max(Math.min(window.devicePixelRatio, 2.5), 2)
-					: window.devicePixelRatio > 1
-					? 1
-					: 1.2;
+					const dynamicDpr = usePlatformStore.getState().isMobile
+						? Math.max(Math.min(window.devicePixelRatio, 2.5), 2)
+						: window.devicePixelRatio > 1
+						? 1
+						: 1.2;
 
-				material.uniforms.uResolution.value.set(width, height);
-				material.uniforms.uRadii.value.set(...radius);
-				material.uniforms.uMouse.value.set(0, 0);
-				material.uniforms.uAnchor.value = +!!anchor;
-				material.uniforms.uHeatMap.value = +!!anchorMirror;
-				material.uniforms.uMaskResolution.value.set(size.width * dynamicDpr, size.height * dynamicDpr);
+					material.uniforms.uResolution.value.set(width, height);
+					material.uniforms.uRadii.value.set(...radius);
+					material.uniforms.uMouse.value.set(0, 0);
+					material.uniforms.uAnchor.value = +!!anchor;
+					material.uniforms.uHeatMap.value = +!!anchorMirror;
+					material.uniforms.uMaskResolution.value.set(size.width * dynamicDpr, size.height * dynamicDpr);
 
-				return (
-					<mesh
-						key={idx}
-						ref={(el: Mesh<BufferGeometry, ShaderMaterial>) => {
-							if (!el) return;
+					return (
+						<mesh
+							key={idx}
+							ref={(el: Mesh<BufferGeometry, ShaderMaterial>) => {
+								if (!el) return;
 
-							if (!anchor && !parallax) {
-								containerTranslucentMaskedMeshesRef.current.add(el);
-							} else if (parallax) {
-								containerParallaxMeshesRefs.current.add(el);
-							} else if (anchor) {
-								containerMaskedMeshesRef.current.add(el);
-							}
-						}}
-						position={[x, y, z]}
-						userData={{ dataset: el.dataset, el }}
-						material={material}
-						geometry={geometry}
-						scale={[(width / factor) * ratio, (height / factor) * ratio, 1]}></mesh>
-				);
-			})}
+								if (!anchor && !parallax) {
+									containerTranslucentMaskedMeshesRef.current.add(el);
+								} else if (parallax) {
+									containerParallaxMeshesRefs.current.add(el);
+								} else if (anchor) {
+									containerMaskedMeshesRef.current.add(el);
+								}
+							}}
+							position={[x, y, z]}
+							userData={{ dataset: el.dataset, el }}
+							material={material}
+							geometry={geometry}
+							scale={[(width / factor) * ratio, (height / factor) * ratio, 1]}></mesh>
+					);
+				})
+			}
 		</group>
 	);
 }

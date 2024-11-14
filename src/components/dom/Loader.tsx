@@ -12,7 +12,6 @@ import { getTruncateText } from '@/utils';
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-gsap.registerPlugin(useGSAP);
 
 export default function Loader() {
 	const isLoaded = useWebGlStore(state => state.isLoaded);

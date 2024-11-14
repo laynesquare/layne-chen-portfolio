@@ -6,7 +6,6 @@ import { useNavStore } from '@/store';
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-gsap.registerPlugin(useGSAP);
 
 export default function NavOpenBtn() {
 	const [isHover, setIsHover] = useState(false);

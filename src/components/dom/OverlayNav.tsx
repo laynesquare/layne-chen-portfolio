@@ -9,7 +9,6 @@ import { useNavStore, useWebGlStore } from '@/store';
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-gsap.registerPlugin(useGSAP);
 
 export default function OverlayNav() {
 	const [isOverlayCloseHover, setIsOverlayCloseHover] = useState(false);

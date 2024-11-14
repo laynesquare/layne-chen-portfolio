@@ -39,13 +39,14 @@ import {
 	ORIGINAL,
 } from '@/config/constants';
 
+// util
+// import { getIsInViewport } from '@/utils';
+
 // type
 import type { Group, Mesh, Object3D, BufferGeometry, MeshPhysicalMaterial } from 'three';
 
 // gsap
-import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-gsap.registerPlugin(ScrollTrigger);
 
 interface BillboardProps {
 	children: React.ReactNode;
@@ -218,6 +219,7 @@ export default function Billboard({ children }: BillboardProps) {
 				containerGroup.visible = false;
 
 				if (!isNavOpen) {
+					// @ts-ignore
 					const detectInViewMeshes = [...containerMaskedMeshes].filter(mesh =>
 						ScrollTrigger.isInViewport(mesh.userData.el),
 					);

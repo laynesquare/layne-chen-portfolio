@@ -6,7 +6,6 @@ import { getMapRange } from '@/utils';
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-gsap.registerPlugin(useGSAP);
 
 // type
 import type { PointerEvent } from 'react';

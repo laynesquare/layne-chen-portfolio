@@ -12,7 +12,6 @@ import type { PointerEvent } from 'react';
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-gsap.registerPlugin(useGSAP);
 
 interface OverlayNavLinkChapterProps {
 	chapter: string;
