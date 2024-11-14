@@ -18,6 +18,9 @@ export const MESH_NAME = {
 	TORSO: 'TORSO',
 	BALL: 'BALL',
 	CLONED_BALL: 'CLONE_BALL',
+
+	BALL_MASK: 'BALL_MASK',
+	BALL_MASK_CLONED: 'BALL_MASK_CLONED',
 };
 
 export const CHAP = {
