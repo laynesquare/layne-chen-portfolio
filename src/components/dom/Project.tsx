@@ -64,6 +64,7 @@ export default function Project() {
 				data-parallax='previewLayneChenPortfolio'
 				data-anchor={CHAP.PROJECT}>
 				<Image
+					loading='lazy'
 					src={previewLayneChenPortfolio}
 					alt="Portfolio website header of Layne Chen, featuring a dynamic gold abstract 3D object in the center. A wavy green background covers the page. The name 'LAYNE CHEN' is displayed in large, bold, cream-colored text at the bottom. Navigation links such as 'GitHub', 'LinkedIn', and 'Resume' are positioned at the top alongside a hamburger menu. The text 'Front-end Developer' appears on the left, while 'Based in Taipei, Taiwan' is on the right."
 					className='h-full w-full object-cover'
@@ -176,7 +177,7 @@ export default function Project() {
 				onPointerEnter={e => toggleRipple(false)}
 				onPointerLeave={e => toggleRipple(true)}>
 				<a
-					href='https://github.com/laynesquare/layne-chen-portfolio'
+					href={process.env.NEXT_PUBLIC_BASE_URL}
 					target='_blank'
 					title='Go to Layne Chen Portfolio ‘24 demo page'>
 					<span
@@ -214,6 +215,7 @@ export default function Project() {
 				data-parallax='previewShareYourMemories'
 				data-anchor={CHAP.PROJECT}>
 				<Image
+					loading='lazy'
 					src={previewShareYourMemories}
 					alt={`Web interface displaying a music memory-sharing platform with a dark theme. The layout features a header with the title 'Share Your Memories' and includes options for searching, bookmarks, profile, and logout. The main section shows a grid of memory cards, each with an image, title, hashtags, description, and a like count. The right sidebar includes a form labeled 'Create a memory' with fields for title, message, and tags, along with submit and clear buttons. Pagination is visible below the grid of memory cards.`}
 					className='h-full w-full object-cover'
@@ -390,6 +392,7 @@ export default function Project() {
 				data-parallax='previewLearnEnglishDictionary'
 				data-anchor={CHAP.PROJECT}>
 				<Image
+					loading='lazy'
 					src={previewLearnEnglishDictionary}
 					alt={`Dark-themed web interface titled 'Learn English with Dictionary' designed to facilitate English learning. The page has a central search bar for entering keywords and an orange search button. A sidebar on the left has 'Home' and 'Result' options, with instructions in the center section under the heading 'Let's Get Started.' The instructions guide users on how to search for definitions, and an illustration of a person with raised fists is displayed. On the right, a panel displays the word 'none' with pronunciation and multiple definitions categorized as noun, adverb, and pronoun, each with examples.`}
 					className='h-full w-full object-cover'
