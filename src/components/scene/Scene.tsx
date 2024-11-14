@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useMemo, useRef } from 'react';
+import dynamic from 'next/dynamic';
 
 // three
 import { Canvas } from '@react-three/fiber';
@@ -11,7 +12,14 @@ import { Vector3 } from 'three';
 import { useWebGlStore } from '@/store';
 
 // component
-import { Disclose, SuspenseMonitor, Ripple, Billboard, Torso, Texts, Containers, Ball } from '@/components';
+import { SuspenseMonitor, Ripple, Billboard } from '@/components';
+
+const Disclose = dynamic(() => import('./Disclose'), { ssr: false });
+const Torso = dynamic(() => import('./Torso'), { ssr: false });
+const Containers = dynamic(() => import('./Containers'), { ssr: false });
+const Texts = dynamic(() => import('./Texts'), { ssr: false });
+const Ball = dynamic(() => import('./Ball'), { ssr: false });
+const BallMask = dynamic(() => import('./BallMask'), { ssr: false });
 
 interface SceneProps {
 	wrapperRef: React.RefObject<HTMLElement>;
@@ -62,6 +70,7 @@ export default function Scene({ wrapperRef }: SceneProps) {
 						<Containers />
 						<Texts />
 						<Ball />
+						<BallMask />
 						<Environment
 							files='/scene/textures/empty_warehouse.hdr'
 							resolution={16}>

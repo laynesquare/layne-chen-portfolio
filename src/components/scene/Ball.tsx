@@ -32,22 +32,17 @@ import { MESH_DISTANCE, MESH_NAME, BALL_INIT_MATERIAL, BALL_INIT_UNIFORMS } from
 import type { Mesh, BufferGeometry, MeshBasicMaterial } from 'three';
 
 // gsap
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 type BallMesh = Mesh<BufferGeometry, CustomShaderMaterial & MeshPhysicalMaterial>;
-type BallMaskMesh = Mesh<BufferGeometry, MeshBasicMaterial>;
+// type BallMaskMesh = Mesh<BufferGeometry, MeshBasicMaterial>;
 
 export default function Ball() {
 	const getThree = useThree(state => state.get);
 	const ballMeshRatio = getScaleMultiplier(1, getThree().viewport, getThree().camera, getThree().size);
 
 	const ballRef = useRef<BallMesh>(null);
-	const ballCloneRef = useRef<BallMesh | null>(null);
-	const ballMaskRef = useRef<BallMaskMesh>(null);
-	const ballMaskCloneRef = useRef<BallMaskMesh>(null);
+	const ballClonedRef = useRef<BallMesh | null>(null);
 
 	const ballInitPos = useMemo(() => new Vector3(5, 5, MESH_DISTANCE.BALL), []);
 	const ballCenterPos = useMemo(() => new Vector3(0, 0, MESH_DISTANCE.BALL), []);
@@ -116,15 +111,14 @@ export default function Ball() {
 	}
 
 	function updatePosByScroll() {
+		// @ts-ignore
 		const anchorEls = [...useDomStore.getState().anchorEls];
 		const inViewEl = anchorEls.findLast(el => ScrollTrigger.isInViewport(el, 0.3));
 
 		const ball = ballRef.current;
-		const ballClone = ballCloneRef.current;
-		const ballMask = ballMaskRef.current;
-		const ballMaskClone = ballMaskCloneRef.current;
+		const ballClone = ballClonedRef.current;
 
-		if (!inViewEl || !ball || !ballClone || !ballMask || !ballMaskClone) return;
+		if (!inViewEl || !ball || !ballClone) return;
 
 		const { viewport } = getThree();
 		const { factor } = viewport;
@@ -135,7 +129,6 @@ export default function Ball() {
 		const { x: targetX, y: targetY } = getElementCenter(inViewEl, factor, baseX, baseY);
 		const targetBallPos = ballDynamicPos.set(targetX, targetY, 1);
 		ball.position.lerp(targetBallPos, 0.035);
-		ballMask.position.copy(ball.position);
 
 		if (anchorMirror) {
 			const inViewMirrorEl = anchorEls.find(el => el.dataset['anchor'] === anchor && el !== inViewEl);
@@ -145,11 +138,9 @@ export default function Ball() {
 
 			const targetBallClonePos = ballClonedDynamicPos.set(mirrorX, mirrorY, 1);
 			ballClone.position.lerp(targetBallClonePos, 0.035);
-			ballMaskClone.position.copy(ballClone.position);
 			ballClone.visible = true;
 		} else {
 			ballClone.position.lerp(targetBallPos, 0.035);
-			ballMaskClone.position.copy(ballClone.position);
 		}
 	}
 
@@ -161,48 +152,39 @@ export default function Ball() {
 	useEffect(() => {
 		const { scene } = getThree();
 		if (ballRef.current) {
-			ballCloneRef.current = ballRef.current.clone();
-			ballCloneRef.current.name = MESH_NAME.CLONED_BALL;
-			ballCloneRef.current.visible = false;
-			scene.add(ballCloneRef.current);
+			ballClonedRef.current = ballRef.current.clone();
+			ballClonedRef.current.name = MESH_NAME.CLONED_BALL;
+			ballClonedRef.current.visible = false;
+			scene.add(ballClonedRef.current);
 		}
 	}, [getThree]);
 
-	useFrame(({ clock }, delta) => {
+	useFrame(({ clock, scene }, delta) => {
 		const ball = ballRef.current;
-		const ballClone = ballCloneRef.current;
-		const ballMask = ballMaskRef.current;
-		const ballMaskClone = ballMaskCloneRef.current;
+		const ballClone = ballClonedRef.current;
 
 		if (
 			//
 			!useWebGlStore.getState().isEntryAnimationDone ||
 			!ball ||
-			!ballClone ||
-			!ballMask ||
-			!ballMaskClone
+			!ballClone
 		)
 			return;
 
+		// @ts-ignore
 		const inViewEl = [...useDomStore.getState().anchorEls].findLast(el => ScrollTrigger.isInViewport(el, 0.3));
 
 		if (!inViewEl) {
 			const epsilon = ballRef.current.position.distanceTo(ballCenterPos) > 0.005;
 			if (epsilon) {
 				ball.position.lerp(ballCenterPos, 0.035);
-				ballMask.position.copy(ball.position);
 				ballClone.position.copy(ball.position);
-				ballMaskClone.position.copy(ball.position);
 				ballClone.visible = false;
 			}
 		}
 
-		const isMobile = usePlatformStore.getState().isMobile;
-		const scale: [number, number, number] = isMobile ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2];
 		ball.material.uniforms.uTime.value += delta;
 		ballClone.rotation.copy(ball.rotation);
-		ballMask?.scale.set(...scale);
-		ballMaskClone.scale.copy(ballMask.scale);
 
 		ballRotationUpdate(clock.elapsedTime);
 	});
@@ -220,12 +202,6 @@ export default function Ball() {
 				position={ballInitPos}
 				material={ballMaterial}
 				frustumCulled={false}></mesh>
-
-			<BallMask
-				ballRef={ballRef}
-				ballMaskRef={ballMaskRef}
-				ballMaskCloneRef={ballMaskCloneRef}
-			/>
 		</group>
 	);
 }
