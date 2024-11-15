@@ -186,7 +186,7 @@ export class LightProbe {}
 
 export class Layers {}
 
-export class BufferAttribute {}
+// export class BufferAttribute {}
 export class ShapeUtils {}
 export class PropertyBinding {}
 
