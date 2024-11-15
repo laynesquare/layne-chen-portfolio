@@ -1,12 +1,11 @@
+// zustand
 import { create } from 'zustand';
+
+// three
 import { Vector2 } from 'three';
 
-interface cursorStore {
-	isRippleZone: boolean;
-	isCustomCursor: boolean;
-	ndcPosition: Vector2;
-	curr: { x: number; y: number; cursor: string };
-}
+// type
+import type { cursorStore } from '@/types';
 
 export const useCursorStore = create<cursorStore>(set => ({
 	isRippleZone: true,

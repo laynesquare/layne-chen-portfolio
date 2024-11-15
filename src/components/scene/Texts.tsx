@@ -67,56 +67,53 @@ export default function Texts() {
 		<group
 			name={MESH_NAME.TEXT_GROUP}
 			ref={textGroupRef}>
-			{
-				// @ts-ignore
-				[...useDomStore.getState().textEls].map((el, idx) => {
-					const { fontSize, lineHeight, textAlign } = window.getComputedStyle(el);
-					const { scrollY } = window;
-					const { left, top, width } = el.getBoundingClientRect();
-					const { fontFamily = TEXT_BOXING, scaleY, fontHighlight } = el.dataset;
-					const { factor } = viewport;
+			{[...useDomStore.getState().textEls].map((el, idx) => {
+				const { fontSize, lineHeight, textAlign } = window.getComputedStyle(el);
+				const { scrollY } = window;
+				const { left, top, width } = el.getBoundingClientRect();
+				const { fontFamily = TEXT_BOXING, scaleY, fontHighlight } = el.dataset;
+				const { factor } = viewport;
 
-					const parsedFontSize = parseFloat(fontSize);
-					const parsedLineHeight = parseFloat(lineHeight);
-					const ratio = textMeshRatio;
-					const baseX = (-viewport.width / 2) * ratio;
-					const baseY = (viewport.height / 2) * ratio;
-					const scrollOffset = (scrollY / factor) * ratio;
-					const material = fontHighlight ? materialDomTextHighlight : materialDomText;
+				const parsedFontSize = parseFloat(fontSize);
+				const parsedLineHeight = parseFloat(lineHeight);
+				const ratio = textMeshRatio;
+				const baseX = (-viewport.width / 2) * ratio;
+				const baseY = (viewport.height / 2) * ratio;
+				const scrollOffset = (scrollY / factor) * ratio;
+				const material = fontHighlight ? materialDomTextHighlight : materialDomText;
 
-					const font = fontFamily === TEXT_BOXING ? '/font/Boxing-Regular.woff' : '/font/Satoshi-Bold.woff';
+				const font = fontFamily === TEXT_BOXING ? '/font/Boxing-Regular.woff' : '/font/Satoshi-Bold.woff';
 
-					let pX = baseX + (left / factor) * ratio;
-					let pY = baseY - (top / factor) * ratio - scrollOffset;
-					let pZ = MESH_DISTANCE.TEXT;
+				let pX = baseX + (left / factor) * ratio;
+				let pY = baseY - (top / factor) * ratio - scrollOffset;
+				let pZ = MESH_DISTANCE.TEXT;
 
-					let sX = 1;
-					let sY = 1;
-					let sZ = 1;
+				let sX = 1;
+				let sY = 1;
+				let sZ = 1;
 
-					if (scaleY) sY = parseFloat(scaleY);
+				if (scaleY) sY = parseFloat(scaleY);
 
-					return (
-						<Text
-							key={idx}
-							font={font}
-							position={[pX, pY, pZ]}
-							material={material}
-							lineHeight={parsedLineHeight / parsedFontSize}
-							maxWidth={(width / factor) * ratio * 1.03}
-							scale={[sX, sY, sZ]}
-							textAlign={textAlign === 'center' ? 'center' : 'left'}
-							fontSize={(parsedFontSize / factor) * ratio}
-							userData={el.dataset}
-							characters={el.innerText}
-							anchorX='left'
-							anchorY='top'
-							overflowWrap='break-word'>
-							{el.textContent}
-						</Text>
-					);
-				})
-			}
+				return (
+					<Text
+						key={idx}
+						font={font}
+						position={[pX, pY, pZ]}
+						material={material}
+						lineHeight={parsedLineHeight / parsedFontSize}
+						maxWidth={(width / factor) * ratio * 1.03}
+						scale={[sX, sY, sZ]}
+						textAlign={textAlign === 'center' ? 'center' : 'left'}
+						fontSize={(parsedFontSize / factor) * ratio}
+						userData={el.dataset}
+						characters={el.innerText}
+						anchorX='left'
+						anchorY='top'
+						overflowWrap='break-word'>
+						{el.textContent}
+					</Text>
+				);
+			})}
 		</group>
 	);
 }

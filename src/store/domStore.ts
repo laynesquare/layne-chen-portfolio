@@ -1,15 +1,7 @@
 import { create } from 'zustand';
 
-interface DomStoreState {
-	textEls: Set<HTMLElement>;
-	torsoEl: HTMLElement | null;
-	containerEls: Set<HTMLElement>;
-	anchorEls: Set<HTMLElement>;
-	setText: (el: HTMLElement | null) => void;
-	setTorso: (el: HTMLElement | null) => void;
-	setContainer: (el: HTMLElement | null) => void;
-	setAnchor: (el: HTMLElement | null) => void;
-}
+// three
+import type { DomStoreState } from '@/types';
 
 export const useDomStore = create<DomStoreState>(set => ({
 	textEls: new Set(),

@@ -9,11 +9,7 @@ import { useGSAP } from '@gsap/react';
 
 // type
 import type { PointerEvent } from 'react';
-
-interface NavLinkBtnProps {
-	label: string;
-	href: string;
-}
+import type { NavLinkBtnProps } from '@/types';
 
 export default function OverlayNavLinkBtn({ label, href }: NavLinkBtnProps) {
 	const [isHover, setIsHover] = useState(false);

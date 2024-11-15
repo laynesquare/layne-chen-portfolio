@@ -7,10 +7,8 @@ import { useWebGlStore } from '@/store';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
-interface NavLinkBtnProps {
-	label: string;
-	href: string;
-}
+// type
+import type { NavLinkBtnProps } from '@/types';
 
 export default function NavLinkBtn({ label, href }: NavLinkBtnProps) {
 	const ctnRef = useRef(null);

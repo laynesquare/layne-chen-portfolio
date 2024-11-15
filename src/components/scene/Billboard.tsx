@@ -39,39 +39,18 @@ import {
 	ORIGINAL,
 } from '@/config/constants';
 
-// util
-// import { getIsInViewport } from '@/utils';
-
 // type
-import type { Group, Mesh, Object3D, BufferGeometry, MeshPhysicalMaterial } from 'three';
+import type {
+	MutatedMeshesType,
+	MutatedObject3DMeshes,
+	CurrGsapMorph,
+	BallMesh,
+	TorsoMesh,
+	BillboardProps,
+} from '@/types';
 
 // gsap
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-interface BillboardProps {
-	children: React.ReactNode;
-}
-
-type BallMesh = Mesh<BufferGeometry, CustomShaderMaterial & MeshPhysicalMaterial>;
-type TorsoMesh = Mesh<BufferGeometry, ShaderMaterial>;
-
-interface MutatedMeshesType {
-	containerGroup: Group;
-	textGroup: Group;
-	torso: TorsoMesh;
-	ball: BallMesh;
-	clonedBall: BallMesh;
-}
-
-interface MutatedObject3DMeshes {
-	containerGroup: Object3D | null | undefined;
-	textGroup: Object3D | null | undefined;
-	torso: Object3D | null | undefined;
-	ball: Object3D | null | undefined;
-	clonedBall: Object3D | null | undefined;
-}
-
-type CurrGsapMorph = Record<string, number>;
 
 export default function Billboard({ children }: BillboardProps) {
 	const getThree = useThree(state => state.get);
@@ -219,7 +198,6 @@ export default function Billboard({ children }: BillboardProps) {
 				containerGroup.visible = false;
 
 				if (!isNavOpen) {
-					// @ts-ignore
 					const detectInViewMeshes = [...containerMaskedMeshes].filter(mesh =>
 						ScrollTrigger.isInViewport(mesh.userData.el),
 					);

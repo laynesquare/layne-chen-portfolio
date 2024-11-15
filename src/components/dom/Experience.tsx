@@ -8,6 +8,7 @@ export default function Experience() {
 	const setText = useDomStore(state => state?.setText);
 	const setContainer = useDomStore(state => state?.setContainer);
 	const setAnchor = useDomStore(state => state?.setAnchor);
+
 	return (
 		<section
 			className='flex gap-x-12 gap-y-6 flex-wrap'

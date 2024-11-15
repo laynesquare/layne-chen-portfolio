@@ -8,18 +8,11 @@ import { useNavStore, usePlatformStore, useWebGlStore } from '@/store';
 
 // type
 import type { PointerEvent } from 'react';
+import type { OverlayNavLinkChapterProps } from '@/types';
 
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-
-interface OverlayNavLinkChapterProps {
-	chapter: string;
-	label: string;
-	width: string;
-	justify: string;
-	isDecor: boolean;
-}
 
 export default function OverlayNavLinkChapter({ chapter, label, width, justify, isDecor }: OverlayNavLinkChapterProps) {
 	const [isHover, setIsHover] = useState(false);

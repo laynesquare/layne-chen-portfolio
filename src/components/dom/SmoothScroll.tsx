@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, ReactNode } from 'react';
+import { useEffect, useRef } from 'react';
 
 // store
 import { useNavStore } from '@/store';
@@ -9,20 +9,10 @@ import { useNavStore } from '@/store';
 import { ReactLenis } from '@studio-freight/react-lenis';
 
 // type
-import type Lenis from '@studio-freight/lenis';
+import type { SmoothScrollingProps, LenisRef } from '@/types';
 
 // gsap
 import gsap from 'gsap';
-
-interface SmoothScrollingProps {
-	children: ReactNode;
-}
-
-type LenisRef = {
-	wrapper?: HTMLElement;
-	content?: HTMLElement;
-	lenis?: Lenis;
-};
 
 function SmoothScrolling({ children }: SmoothScrollingProps) {
 	const lenisRef = useRef<LenisRef>(null);

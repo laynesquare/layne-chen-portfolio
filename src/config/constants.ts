@@ -44,8 +44,8 @@ export const FBO_CONFIG = {
 
 /** place here for cross-component updates in case of chaotic mutation  */
 export const BALL_INIT_MATERIAL = {
-	iridescence: 0.1,
 	ior: 0,
+	iridescence: 0.1,
 	metalness: 0.5,
 	roughness: 0.1,
 	clearcoat: 1.0,

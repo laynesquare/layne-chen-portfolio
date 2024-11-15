@@ -14,13 +14,13 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 export default function Loader() {
-	const isLoaded = useWebGlStore(state => state.isLoaded);
+	const [isLoaded, isBallReady] = useWebGlStore(state => [state.isLoaded, state.isBallReady]);
 	const [item, progress] = useProgress(state => [state.item, state.progress]);
 	const loaderRef = useRef(null);
 
 	useGSAP(
 		() => {
-			if (isLoaded) {
+			if (isLoaded && isBallReady) {
 				const tl = gsap.timeline({ delay: 0.3, smoothChildTiming: true });
 				const width = window.innerWidth;
 				const factor = 1920 / width;
@@ -54,7 +54,7 @@ export default function Loader() {
 					);
 			}
 		},
-		{ dependencies: [isLoaded], scope: loaderRef },
+		{ dependencies: [isLoaded, isBallReady], scope: loaderRef },
 	);
 
 	return (

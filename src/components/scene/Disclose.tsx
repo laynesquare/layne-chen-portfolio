@@ -5,9 +5,8 @@ import { useWebGlStore } from '@/store';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
-interface DiscloseProps {
-	canvasRef: React.RefObject<HTMLCanvasElement>;
-}
+// type
+import type { DiscloseProps } from '@/types';
 
 export default function Disclose({ canvasRef }: DiscloseProps) {
 	const isEntryAnimationDone = useWebGlStore(state => state.isEntryAnimationDone);

@@ -14,16 +14,15 @@ import { useWebGlStore } from '@/store';
 // component
 import { SuspenseMonitor, Ripple, Billboard } from '@/components';
 
+// type
+import { SceneProps } from '@/types';
+
 const Disclose = dynamic(() => import('./Disclose'), { ssr: false });
 const Torso = dynamic(() => import('./Torso'), { ssr: false });
 const Containers = dynamic(() => import('./Containers'), { ssr: false });
 const Texts = dynamic(() => import('./Texts'), { ssr: false });
 const Ball = dynamic(() => import('./Ball'), { ssr: false });
 const BallMask = dynamic(() => import('./BallMask'), { ssr: false });
-
-interface SceneProps {
-	wrapperRef: React.RefObject<HTMLElement>;
-}
 
 export default function Scene({ wrapperRef }: SceneProps) {
 	const canvasRef = useRef(null);
