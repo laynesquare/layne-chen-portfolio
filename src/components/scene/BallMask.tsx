@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 // three
 import { meshBounds } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { FrontSide, MeshBasicMaterial, CircleGeometry } from 'three';
 
 // store
@@ -12,16 +12,12 @@ import { useWebGlStore } from '@/store';
 import { BALL_INIT_MATERIAL, BALL_INIT_UNIFORMS, MESH_NAME } from '@/config/constants';
 
 // type
-import type { Mesh, BufferGeometry, MeshPhysicalMaterial } from 'three';
-import type CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 import type { ThreeEvent } from '@react-three/fiber';
+import type { BallMesh, BallMaskMesh } from '@/types';
 
 // gsap
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-
-type BallMesh = Mesh<BufferGeometry, CustomShaderMaterial & MeshPhysicalMaterial>;
-type BallMaskMesh = Mesh<BufferGeometry, MeshBasicMaterial>;
 
 export default function BallMask() {
 	const isBallPress = useWebGlStore(state => state.isBallPress);
@@ -46,21 +42,24 @@ export default function BallMask() {
 	);
 
 	useFrame(({ scene }) => {
-		ballRef.current = scene.getObjectByName(MESH_NAME.BALL) as BallMesh | undefined;
-		ballClonedRef.current = scene.getObjectByName(MESH_NAME.CLONED_BALL) as BallMesh | undefined;
+		if (!useWebGlStore.getState().isEntryAnimationDone) return;
 
 		const ball = ballRef.current;
 		const ballCloned = ballClonedRef.current;
 		const ballMask = ballMaskRef.current;
 		const ballClonedMask = ballClonedRef.current;
 
-		if (!ball || !ballCloned || !ballMask || !ballClonedMask) return;
+		if (!ball || !ballCloned) {
+			ballRef.current = scene.getObjectByName(MESH_NAME.BALL) as BallMesh | undefined;
+			ballClonedRef.current = scene.getObjectByName(MESH_NAME.CLONED_BALL) as BallMesh | undefined;
+		} else {
+			if (!ballMask || !ballClonedMask) return;
 
-		ballMask.position.copy(ball.position);
-		ballClonedMask.position.copy(ballCloned.position);
-
-		ballMask.scale.copy(ball.scale);
-		ballClonedMask.scale.copy(ball.scale);
+			ballMask.position.copy(ball.position);
+			ballClonedMask.position.copy(ballCloned.position);
+			ballMask.scale.copy(ball.scale);
+			ballClonedMask.scale.copy(ball.scale);
+		}
 	});
 
 	useGSAP(
@@ -136,7 +135,7 @@ export default function BallMask() {
 	// console.log('mask ball renders');
 
 	return (
-		<>
+		<group>
 			<mesh
 				name={MESH_NAME.BALL_MASK}
 				raycast={meshBounds}
@@ -161,6 +160,6 @@ export default function BallMask() {
 				onPointerOut={e => handlePointerOut(e)}
 				scale={1.2}
 				geometry={ballMaskGeo}></mesh>
-		</>
+		</group>
 	);
 }

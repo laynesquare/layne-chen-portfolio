@@ -1,16 +1,20 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 // three
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { meshBounds } from '@react-three/drei';
-import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { lerp } from 'three/src/math/MathUtils.js';
-import { Vector3, TextureLoader, Color, MeshPhysicalMaterial, IcosahedronGeometry } from 'three';
-import { useControls } from 'leva';
-
-// component
-import { BallMask } from '@/components';
+import {
+	Vector3,
+	TextureLoader,
+	Color,
+	MeshPhysicalMaterial,
+	IcosahedronGeometry,
+	BufferAttribute,
+	Float32BufferAttribute,
+	Uint16BufferAttribute,
+} from 'three';
 
 // lenis
 import { useLenis } from '@studio-freight/react-lenis';
@@ -20,7 +24,7 @@ import vertexShader from '@/shaders/animated-displaced-sphere/vertex';
 import fragmentShader from '@/shaders/animated-displaced-sphere/fragment';
 
 // store
-import { useDomStore, usePlatformStore, useWebGlStore } from '@/store';
+import { useDomStore, useWebGlStore } from '@/store';
 
 // util
 import { getScaleMultiplier } from '@/utils';
@@ -29,19 +33,17 @@ import { getScaleMultiplier } from '@/utils';
 import { MESH_DISTANCE, MESH_NAME, BALL_INIT_MATERIAL, BALL_INIT_UNIFORMS } from '@/config/constants';
 
 // type
-import type { Mesh, BufferGeometry, MeshBasicMaterial } from 'three';
+import type { BallMesh } from '@/types';
 
 // gsap
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-type BallMesh = Mesh<BufferGeometry, CustomShaderMaterial & MeshPhysicalMaterial>;
-// type BallMaskMesh = Mesh<BufferGeometry, MeshBasicMaterial>;
-
 export default function Ball() {
 	const getThree = useThree(state => state.get);
-	const ballMeshRatio = getScaleMultiplier(1, getThree().viewport, getThree().camera, getThree().size);
+	const workerRef = useRef<Worker>();
 
-	const ballRef = useRef<BallMesh>(null);
+	const ballMeshRatio = getScaleMultiplier(1, getThree().viewport, getThree().camera, getThree().size);
+	const ballRef = useRef<BallMesh | null>(null);
 	const ballClonedRef = useRef<BallMesh | null>(null);
 
 	const ballInitPos = useMemo(() => new Vector3(5, 5, MESH_DISTANCE.BALL), []);
@@ -50,11 +52,7 @@ export default function Ball() {
 	const ballClonedDynamicPos = useMemo(() => new Vector3(), []);
 	const ballDisplacementTexture = useLoader(TextureLoader, '/scene/textures/ball-displacement.webp');
 
-	const ballGeometry = useMemo(() => {
-		const geometry = mergeVertices(new IcosahedronGeometry(0.5, 64));
-		geometry.computeTangents();
-		return geometry;
-	}, []);
+	const [ballGeo, setBallGeo] = useState<IcosahedronGeometry | null>(null);
 
 	const scrollOffsetRef = useRef(0);
 
@@ -71,19 +69,25 @@ export default function Ball() {
 		[],
 	);
 
-	const ballMaterial = useMemo(
-		() =>
-			new CustomShaderMaterial({
-				baseMaterial: new MeshPhysicalMaterial(),
-				vertexShader: vertexShader,
-				fragmentShader: fragmentShader,
-				uniforms: uniforms,
-				displacementMap: ballDisplacementTexture,
-				...BALL_INIT_MATERIAL,
-				iridescenceIOR: 1.3,
-			}),
-		[ballDisplacementTexture, uniforms],
-	);
+	const ballMaterial = useMemo(() => {
+		const material = new CustomShaderMaterial({
+			baseMaterial: MeshPhysicalMaterial,
+			vertexShader: vertexShader,
+			fragmentShader: fragmentShader,
+			...BALL_INIT_MATERIAL,
+			uniforms: uniforms,
+			displacementMap: ballDisplacementTexture,
+		});
+
+		/*
+		 * For some reason, the 'ior' property is not defined in the type definition of the material,
+		 * but it is present in the material object at runtime and the value is around 1.45.
+		 * Manually cast the material as a combination of CustomShaderMaterial and MeshPhysicalMaterial.
+		 */
+		(material as CustomShaderMaterial & MeshPhysicalMaterial).ior = BALL_INIT_MATERIAL.ior;
+
+		return material;
+	}, [ballDisplacementTexture, uniforms]);
 
 	function ballRotationUpdate(elapsedTime: number) {
 		const isBallPress = useWebGlStore.getState().isBallPress;
@@ -111,7 +115,6 @@ export default function Ball() {
 	}
 
 	function updatePosByScroll() {
-		// @ts-ignore
 		const anchorEls = [...useDomStore.getState().anchorEls];
 		const inViewEl = anchorEls.findLast(el => ScrollTrigger.isInViewport(el, 0.3));
 
@@ -150,6 +153,31 @@ export default function Ball() {
 	});
 
 	useEffect(() => {
+		workerRef.current = new Worker(new URL('@/workers/offload.ts', import.meta.url));
+
+		// Offload mergeVertices/computeTangents to web worker.
+		workerRef.current?.postMessage({ radius: 0.5, detail: 64 });
+
+		workerRef.current.onmessage = (event: MessageEvent<IcosahedronGeometry>) => {
+			const geometry = event.data;
+
+			/*
+			 * Geometry's prototype and methods are lost during serialization.
+			 * Manually patch up the prototypes and methods.
+			 */
+			Object.setPrototypeOf(geometry, IcosahedronGeometry.prototype);
+			Object.setPrototypeOf(geometry.attributes.normal, Float32BufferAttribute.prototype);
+			Object.setPrototypeOf(geometry.attributes.position, Float32BufferAttribute.prototype);
+			Object.setPrototypeOf(geometry.attributes.tangent, BufferAttribute.prototype);
+			Object.setPrototypeOf(geometry.attributes.uv, Float32BufferAttribute.prototype);
+			Object.setPrototypeOf(geometry.index, Uint16BufferAttribute.prototype);
+			setBallGeo(geometry);
+		};
+
+		return () => workerRef.current?.terminate();
+	}, []);
+
+	useEffect(() => {
 		const { scene } = getThree();
 		if (ballRef.current) {
 			ballClonedRef.current = ballRef.current.clone();
@@ -157,25 +185,19 @@ export default function Ball() {
 			ballClonedRef.current.visible = false;
 			scene.add(ballClonedRef.current);
 		}
-	}, [getThree]);
+	}, [getThree, ballGeo]);
 
-	useFrame(({ clock, scene }, delta) => {
+	useFrame(({ clock }, delta) => {
 		const ball = ballRef.current;
 		const ballClone = ballClonedRef.current;
+		const isEntryAnimationDone = useWebGlStore.getState().isEntryAnimationDone;
 
-		if (
-			//
-			!useWebGlStore.getState().isEntryAnimationDone ||
-			!ball ||
-			!ballClone
-		)
-			return;
+		if (!isEntryAnimationDone || !ball || !ballClone) return;
 
-		// @ts-ignore
 		const inViewEl = [...useDomStore.getState().anchorEls].findLast(el => ScrollTrigger.isInViewport(el, 0.3));
 
 		if (!inViewEl) {
-			const epsilon = ballRef.current.position.distanceTo(ballCenterPos) > 0.005;
+			const epsilon = ball.position.distanceTo(ballCenterPos) > 0.005;
 			if (epsilon) {
 				ball.position.lerp(ballCenterPos, 0.035);
 				ballClone.position.copy(ball.position);
@@ -191,14 +213,19 @@ export default function Ball() {
 
 	// console.log('ball renders');
 
+	if (!ballGeo) return null;
+
 	return (
 		<group>
 			<mesh
 				name={MESH_NAME.BALL}
 				raycast={meshBounds}
-				ref={ballRef}
+				ref={(el: BallMesh) => {
+					ballRef.current = el;
+					useWebGlStore.setState({ isBallReady: true });
+				}}
 				scale={1.1}
-				geometry={ballGeometry}
+				geometry={ballGeo}
 				position={ballInitPos}
 				material={ballMaterial}
 				frustumCulled={false}></mesh>
