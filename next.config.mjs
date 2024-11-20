@@ -20,16 +20,18 @@ const nextConfig = withBundleAnalyzer({
 		// 	'three-custom-shader-material',
 		// ],
 	},
+
 	images: {
 		unoptimized: true,
 	},
+
 	webpack: config => {
 		config.resolve.alias = {
 			...config.resolve.alias,
 			three$: path.resolve('./src/three-exports.js'),
 			'three-stdlib$': path.resolve('./src/three-exports.js'),
 			'./webxr/WebXRManager.js': path.resolve('./src/three-exports.js'),
-			'@monogrid/gainmap-js': path.resolve('./src/three-exports.js'),
+			// '@monogrid/gainmap-js': path.resolve('./src/three-exports.js'),
 		};
 
 		config.mode = 'production';

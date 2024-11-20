@@ -127,6 +127,8 @@ export type BallMaskMesh = Mesh<BufferGeometry, MeshBasicMaterial>;
 
 export type CurrGsapMorph = Record<string, number>;
 
+export type RippleMesh = Mesh<BufferGeometry, MeshBasicMaterial>;
+
 export interface MutatedMeshesType {
 	containerGroup: Group;
 	textGroup: Group;

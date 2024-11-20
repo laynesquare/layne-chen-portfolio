@@ -33,6 +33,7 @@ export { Mesh } from 'three/src/objects/Mesh.js';
 export { Material } from 'three/src/materials/Material.js';
 export { Texture } from 'three/src/textures/Texture.js';
 
+export { OrthographicCamera } from 'three/src/cameras/OrthographicCamera.js';
 export { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera.js';
 export { CubeCamera } from 'three/src/cameras/CubeCamera.js';
 
@@ -69,8 +70,8 @@ export { Sphere } from 'three/src/math/Sphere.js';
 export { Ray } from 'three/src/math/Ray.js';
 export { Raycaster } from 'three/src/core/Raycaster.js';
 
-export { TextureLoader } from 'three/src/loaders/TextureLoader.js';
 export { LoadingManager, DefaultLoadingManager } from 'three/src/loaders/LoadingManager.js';
+export { TextureLoader } from 'three/src/loaders/TextureLoader.js';
 
 export { MathUtils } from 'three/src/math/MathUtils.js';
 
@@ -80,9 +81,17 @@ export { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
 /* -------------------------------- stub/mock ------------------------------- */
 
-export class GainMapLoader {}
+// export { GainMapLoader } from 'three/src/loaders/GainMapLoader.js';
+// export class GainMapLoader {}
 export class HDRJPGLoader {}
-export class EXRLoader {}
+// export class EXRLoader {}
+
+// export class Loader {}
+// export class FileLoader {}
+
+// export { Cache } from 'three/src/loaders/Cache.js';
+export { Loader } from 'three/src/loaders/Loader.js';
+export { FileLoader } from 'three/src/loaders/FileLoader.js';
 
 export class ShaderLib {}
 export class UniformsLib {}
@@ -153,15 +162,13 @@ export class LineBasicMaterial {}
 export class EventDispatcher {}
 
 export class Camera {}
-export class OrthographicCamera {}
+// export class OrthographicCamera {}
 export class StereoCamera {}
 export class Frustum {}
 
 export class SphericalHarmonics3 {}
 export class LoaderUtils {}
-export class FileLoader {}
 
-export class Loader {}
 export class CubeTextureLoader {}
 export class BufferGeometryLoader {}
 export class ImageBitmapLoader {}
