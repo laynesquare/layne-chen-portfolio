@@ -67,7 +67,7 @@ export default function Texts() {
 		<group
 			name={MESH_NAME.TEXT_GROUP}
 			ref={textGroupRef}>
-			{[...useDomStore.getState().textEls].map((el, idx) => {
+			{Array.from(useDomStore.getState().textEls).map((el, idx) => {
 				const { fontSize, lineHeight, textAlign } = window.getComputedStyle(el);
 				const { scrollY } = window;
 				const { left, top, width } = el.getBoundingClientRect();

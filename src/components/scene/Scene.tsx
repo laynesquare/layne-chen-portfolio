@@ -71,20 +71,36 @@ export default function Scene({ wrapperRef }: SceneProps) {
 						<Ball />
 						<BallMask />
 						<Environment
-							files='/scene/textures/empty_warehouse.hdr'
+							files='/scene/textures/empty_warehouse.jpg'
 							resolution={16}>
-							<Lightformer
+							{/* <Lightformer
 								color='#FAE9D5'
 								intensity={3}
 								position={[8, 8, 8]}
 								scale={[10, 50, 1]}
 								target={lightDir}
 								form='rect'
+							/> */}
+							<Lightformer
+								color='#FAE9D5'
+								intensity={6}
+								position={[8, 8, 10]}
+								scale={[10, 10, 1]}
+								target={lightDir}
+								form='rect'
+							/>
+							<Lightformer
+								color='#FAE9D5'
+								intensity={6}
+								position={[-8, 10, 10]}
+								scale={[10, 10, 1]}
+								target={lightDir}
+								form='rect'
 							/>
 						</Environment>
 					</Billboard>
 				</Suspense>
-				<Preload all={true} />
+				{/* <Preload all={true} /> */}
 			</Canvas>
 		</>
 	);

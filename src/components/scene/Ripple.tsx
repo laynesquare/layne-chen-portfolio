@@ -3,7 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 // three
 import { useFBO } from '@react-three/drei';
 import { createPortal, useFrame, useThree, useLoader } from '@react-three/fiber';
-import { lerp } from 'three/src/math/MathUtils.js';
+
 import {
 	Scene,
 	TextureLoader,
@@ -17,15 +17,11 @@ import {
 	FrontSide,
 } from 'three';
 
-import type { Mesh, Material, BufferGeometry } from 'three';
+// type
+import type { RippleMesh } from '@/types';
 
 // store
 import { useWebGlStore, useCursorStore } from '@/store';
-
-// constant
-import { MESH_NAME } from '@/config/constants';
-
-type RippleMesh = Mesh<BufferGeometry, MeshBasicMaterial>;
 
 export default function Ripple() {
 	const getThree = useThree(state => state.get);
@@ -33,7 +29,7 @@ export default function Ripple() {
 
 	const preMousePos = useRef({ x: 0, y: 0 });
 	const rippleVec3 = useMemo(() => new Vector3(), []);
-	const rippleTexture = useLoader(TextureLoader, '/scene/textures/ripple.png');
+	const rippleTexture = useLoader(TextureLoader, '/scene/textures/ripple.webp');
 	const rippleRefs = useRef<RippleMesh[]>([]);
 	const rippleCurrIdx = useRef(-1);
 	const rippleGeo = useMemo(() => new PlaneGeometry(0.5, 0.5, 1, 1), []);

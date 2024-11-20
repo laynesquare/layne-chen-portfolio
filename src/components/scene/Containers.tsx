@@ -157,7 +157,7 @@ export default function Containers() {
 		<group
 			name={MESH_NAME.CONTAINER_GROUP}
 			ref={containerGroupRef}>
-			{[...useDomStore.getState().containerEls].map((el, idx) => {
+			{Array.from(useDomStore.getState().containerEls).map((el, idx) => {
 				const {
 					borderBottomLeftRadius: rbl,
 					borderBottomRightRadius: rbr,

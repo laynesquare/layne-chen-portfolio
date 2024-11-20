@@ -115,7 +115,7 @@ export default function Ball() {
 	}
 
 	function updatePosByScroll() {
-		const anchorEls = [...useDomStore.getState().anchorEls];
+		const anchorEls = Array.from(useDomStore.getState().anchorEls);
 		const inViewEl = anchorEls.findLast(el => ScrollTrigger.isInViewport(el, 0.3));
 
 		const ball = ballRef.current;
@@ -194,7 +194,9 @@ export default function Ball() {
 
 		if (!isEntryAnimationDone || !ball || !ballClone) return;
 
-		const inViewEl = [...useDomStore.getState().anchorEls].findLast(el => ScrollTrigger.isInViewport(el, 0.3));
+		const inViewEl = Array.from(useDomStore.getState().anchorEls).findLast(el =>
+			ScrollTrigger.isInViewport(el, 0.3),
+		);
 
 		if (!inViewEl) {
 			const epsilon = ball.position.distanceTo(ballCenterPos) > 0.005;

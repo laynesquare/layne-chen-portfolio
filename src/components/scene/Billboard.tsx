@@ -198,7 +198,7 @@ export default function Billboard({ children }: BillboardProps) {
 				containerGroup.visible = false;
 
 				if (!isNavOpen) {
-					const detectInViewMeshes = [...containerMaskedMeshes].filter(mesh =>
+					const detectInViewMeshes = Array.from(containerMaskedMeshes).filter(mesh =>
 						ScrollTrigger.isInViewport(mesh.userData.el),
 					);
 
@@ -307,11 +307,13 @@ function offscreenMutate(
 
 	if (type === TRANSLUCENT) {
 		const scale: [number, number, number] = isMobile ? [0.6, 0.6, 0.6] : [1.1, 1.1, 1.1];
-		scene.environmentIntensity = 0.05;
+		// scene.environmentIntensity = 0.1;
+		scene.environmentIntensity = 0.085;
 		torso.material.uniforms.uBrightColor.value.set('#69D2B7');
 		torso.material.uniforms.uDarkColor.value.set('#868686');
 		ball.material.uniforms.uFractAmount.value = BALL_INIT_UNIFORMS.uFractAmount.value;
 		ball.material.uniforms.uIsNormalColor.value = BALL_INIT_UNIFORMS.uIsNormalColor.value;
+		// ball.material.uniforms.uColor.value.set('#ff0000');
 		ball.material.uniforms.uColor.value.set('#002BF9');
 		ball.material.sheenColor.set('#fd267a');
 		ball.material.wireframe = true;
@@ -329,7 +331,7 @@ function offscreenMutate(
 	}
 
 	if (type === ORIGINAL && currGsapMorph) {
-		scene.environmentIntensity = 1.25;
+		scene.environmentIntensity = 1.5;
 		ball.material.wireframe = false;
 		ball.material.emissiveIntensity = BALL_INIT_MATERIAL.emissiveIntensity;
 		ball.material.sheen = BALL_INIT_MATERIAL.sheen;
