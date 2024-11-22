@@ -1,0 +1,37 @@
+name: Deploy to S3
+
+on:
+    push:
+        branches:
+            - main
+
+workflow:
+    jobs:
+        build-and-deploy:
+            runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+              node-version: '18'
+
+            - name: Install Dependencies
+              run: npm install
+
+            - name: Build Project
+              run: npm run build
+
+            - name: Post-Build Optimization
+              run: npm run post-build
+
+            - name: Sync to S3
+              env:
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  AWS_REGION: ${{ secrets.AWS_REGION }}
+              run: |
+                  aws s3 sync ./out s3://${{ secrets.S3_BUCKET_NAME }} --delete --exact-timestamps
