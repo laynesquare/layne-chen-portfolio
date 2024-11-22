@@ -1,16 +1,17 @@
 {
 	"name": "layne-chen-portfolio",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"private": true,
-	"sideEffects": false,
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
+		"post-build": "node build-utils/optimize-index-html.js",
 		"start": "next start",
 		"lint": "next lint"
 	},
 	"dependencies": {
 		"@gsap/react": "^2.1.1",
+		"@next/third-parties": "^15.0.3",
 		"@react-three/drei": "^9.109.2",
 		"@react-three/fiber": "^8.16.8",
 		"@studio-freight/react-lenis": "^0.0.47",
@@ -28,8 +29,10 @@
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
 		"@types/three": "^0.167.1",
+		"cheerio": "^1.0.0",
 		"eslint": "^8",
 		"eslint-config-next": "14.2.5",
+		"glob": "^11.0.0",
 		"leva": "^0.9.34",
 		"postcss": "^8",
 		"tailwindcss": "^3.4.1",

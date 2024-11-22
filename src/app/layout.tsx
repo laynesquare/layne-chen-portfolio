@@ -1,5 +1,6 @@
 import SmoothScrolling from '@/components/dom/SmoothScroll';
 import localFont from 'next/font/local';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 // type
 import type { Metadata, Viewport } from 'next';
@@ -107,6 +108,7 @@ export default function RootLayout({
 			</head>
 			<body>
 				<SmoothScrolling>{children}</SmoothScrolling>
+				<GoogleAnalytics gaId='G-2D740SV3DP' />
 			</body>
 		</html>
 	);
