@@ -28,10 +28,10 @@ const nextConfig = withBundleAnalyzer({
 	webpack: config => {
 		config.resolve.alias = {
 			...config.resolve.alias,
-			three$: path.resolve('./src/three-exports.js'),
-			'three-stdlib$': path.resolve('./src/three-exports.js'),
-			'./webxr/WebXRManager.js': path.resolve('./src/three-exports.js'),
-			// '@monogrid/gainmap-js': path.resolve('./src/three-exports.js'),
+			three$: path.resolve('./src/aliases/three.js'),
+			'three-stdlib$': path.resolve('./src/aliases/three.js'),
+			'./webxr/WebXRManager.js': path.resolve('./src/aliases/three.js'),
+			// '@monogrid/gainmap-js': path.resolve('./src/aliases/three.js'),
 		};
 
 		config.mode = 'production';
