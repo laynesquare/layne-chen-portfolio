@@ -5,11 +5,9 @@ on:
         branches:
             - main
 
-workflow:
-    jobs:
-        build-and-deploy:
-            runs-on: ubuntu-latest
-
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout Code
               uses: actions/checkout@v3
@@ -17,7 +15,7 @@ workflow:
             - name: Setup Node.js
               uses: actions/setup-node@v3
               with:
-              node-version: '18'
+                  node-version: '18'
 
             - name: Install Dependencies
               run: npm install
