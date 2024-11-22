@@ -67,20 +67,6 @@ const nextConfig = withBundleAnalyzer({
 			},
 		};
 
-		// config.optimization.cacheGroups = {
-		// 	...config.optimization.cacheGroups,
-
-		// 	three: {
-		// 		test: /[\\/]node_modules[\\/]three[\\/]/,
-		// 		name: 'three',
-		// 		chunks: 'all',
-		// 		priority: -5,
-		// 		enforce: true,
-		// 	},
-		// };
-
-		// config.optimization.splitChunks.enforceSizeThreshold = 50000;
-
 		return config;
 	},
 });
