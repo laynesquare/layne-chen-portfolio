@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+    portfolio:
+        image: layne-chen-portfolio
+        build:
+            context: .
+        ports:
+            - '7878:80' # Maps port 7878 on the host to port 80 in the container
+        stdin_open: true # Equivalent to `-it` for keeping stdin open
+        tty: true # Also part of `-it` for interactive terminal
+        restart: 'no' # Equivalent to `--rm` (container is not restarted after stopping)

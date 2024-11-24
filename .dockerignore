@@ -1,0 +1,9 @@
+.git
+.next
+.github
+.reference
+.dockerignore
+.vscode
+
+node_modules
+Dockerfile
