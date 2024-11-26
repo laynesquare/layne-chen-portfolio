@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Layne Chen Portfolio 2024
 
-## Getting Started
+A modern portfolio website showcasing my work as a front-end developer and 3D enthusiast. Built with Next.js, Three.js, and GSAP, featuring WebGL experiences and optimal performance.
 
-First, run the development server:
+![Portfolio Preview](/public/dom/project-preview-layne-chen-portfolio-2024.webp)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌟 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+-   **Modern Stack**: Built with Next.js, TypeScript, and Tailwind CSS
+-   **3D Graphics**: Powered by Three.js with custom shaders
+-   **Smooth Animations**: Implemented using GSAP
+-   **Optimal Performance**: Static Site Generation (SSG) for fast load times
+-   **Responsive Design**: Fully responsive across all devices
+-   **SEO Optimized**: Enhanced meta tags and static generation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Frontend
 
-## Learn More
+-   TypeScript
+-   Next.js
+-   Three.js
+-   GLSL
+-   GSAP
+-   Tailwind CSS
+-   Zustand (State Management)
 
-To learn more about Next.js, take a look at the following resources:
+## 🌐 Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+-   **Hosting**: Amazon S3
+-   **CDN and Security**: Integrated with Amazon CloudFront for Content Delivery and HTTPS
+-   **Domain Management**: Managed via Amazon Route 53
+-   **Deployment Process**: CI/CD using GitHub Actions for automatic S3 bucket updates and CloudFront cache invalidation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Deployment Workflow with GitHub Actions
 
-## Deploy on Vercel
+This project utilizes **GitHub Actions** for automated deployment. Whenever changes are pushed to the `main` branch, the deployment workflow is triggered, ensuring that the latest code is built and synced with the Amazon S3 bucket.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Below is a summary of the deployment workflow:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. **Checkout the Code**: GitHub Actions checks out the latest version of the code.
+2. **Setup Node.js**: Installs the necessary Node.js environment.
+3. **Install Dependencies**: Runs `npm install` to install all required dependencies.
+4. **Build Project**: Runs `npm run build` to build the project.
+5. **Post-Build Optimization**: Executes post-build optimization scripts.
+6. **Sync to S3**: Uses the AWS CLI to sync the built files to the S3 bucket, ensuring the latest version is deployed.
