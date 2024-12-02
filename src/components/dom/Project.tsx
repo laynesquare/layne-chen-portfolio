@@ -78,22 +78,22 @@ export default function Project() {
 			/* -------------------------------------------------------------------------- */}
 			<div className='flex flex-[1] gap-12 flex-wrap md:flex-col'>
 				<div
-					className='border border-neutral min-h-72 flex flex-[1] flex-col p-20 min-w-[180px]'
+					className='border border-neutral min-h-72 flex flex-auto flex-col p-20 min-w-[180px]'
 					ref={setContainer}>
-					<h3 className='m-auto text-center text-5xl'>
+					<h3 className='m-auto text-center text-5xl whitespace-pre-line'>
 						<span
 							data-font-family='BOXING'
 							ref={setText}>
-							{`Layne Chen Portfolio ‘24`}
+							{`Layne Chen Portfolio\n\n#2024`}
 						</span>
 					</h3>
 				</div>
 
 				<div
-					className='border border-neutral min-h-[39rem] flex flex-[1] flex-col p-20 min-w-[180px]'
+					className='border border-neutral min-h-[39rem] flex flex-[1] flex-col p-20 min-w-[180px] md:flex-auto'
 					ref={setContainer}>
 					<div className='m-auto text-center'>
-						<h3 className='text-4xl mb-6 leading-[1.5]'>
+						<h3 className='text-4xl mb-6 leading-[1.5] whitespace-nowrap'>
 							<span
 								data-font-family='BOXING'
 								ref={setText}>{`# frontend`}</span>
@@ -136,6 +136,21 @@ export default function Project() {
 									data-font-family='SATOSHI'
 									ref={setText}>{`GSAP`}</span>
 							</li>
+							<li>
+								<span
+									data-font-family='SATOSHI'
+									ref={setText}>{`AWS S3`}</span>
+							</li>
+							<li>
+								<span
+									data-font-family='SATOSHI'
+									ref={setText}>{`AWS Route 53`}</span>
+							</li>
+							<li>
+								<span
+									data-font-family='SATOSHI'
+									ref={setText}>{`AWS CloudFront`}</span>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -160,7 +175,7 @@ export default function Project() {
 						<span
 							data-font-family='SATOSHI'
 							ref={setText}>
-							{`Showcases my work and expertise as a front-end developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for fast load times while improving crawlability for better SEO.`}
+							{`Showcases my work and expertise as a front-end developer and 3D enthusiast. Built using cutting-edge web technologies, the portfolio leverages the power of WebGL, Three.js, and GSAP, ensuring optimal performance, responsiveness, and immersive user experiences with custom shaders.\n\nIntegrates Static Site Generation (SSG) with Next.js, allowing for fast load times while improving crawlability for better SEO.\n\nIncorporates AWS S3 as the origin for static website hosting, paired with CloudFront for efficient content delivery. Deployment is streamlined through GitHub Actions for Continuous Integration and Continuous Deployment (CI/CD).`}
 						</span>
 					</p>
 				</div>
@@ -229,22 +244,22 @@ export default function Project() {
 
 			<div className='flex flex-[1] gap-12 flex-row flex-wrap md:flex-col'>
 				<div
-					className='border border-neutral min-h-72 flex flex-col p-20 flex-[1] min-w-[180px]'
+					className='border border-neutral min-h-72 flex flex-col p-20 flex-auto min-w-[180px]'
 					ref={setContainer}>
-					<h3 className='m-auto text-center text-5xl'>
+					<h3 className='m-auto text-center text-5xl whitespace-pre-line'>
 						<span
 							data-font-family='BOXING'
 							ref={setText}>
-							{`Share Your Memories`}
+							{`Share Your Memories\n\n#2022`}
 						</span>
 					</h3>
 				</div>
 
 				<div
-					className='border border-neutral min-h-[39rem] flex flex-col p-20 flex-[1] md:flex-auto min-w-[180px]'
+					className='border border-neutral min-h-[39rem] flex flex-col p-20 flex-[1] min-w-[180px] md:flex-auto'
 					ref={setContainer}>
 					<div className='m-auto text-center'>
-						<h3 className='text-4xl mb-6 leading-[1.5]'>
+						<h3 className='text-4xl mb-6 leading-[1.5] whitespace-nowrap'>
 							<span
 								data-font-family='BOXING'
 								ref={setText}>{`# full stack`}</span>
@@ -406,22 +421,22 @@ export default function Project() {
 			/* -------------------------------------------------------------------------- */}
 			<div className='flex flex-[1] gap-12 flex-row flex-wrap md:flex-col'>
 				<div
-					className='border border-neutral min-h-72 flex p-20 flex-col flex-[1] min-w-[180px]'
+					className='border border-neutral min-h-72 flex p-20 flex-col flex-auto min-w-[180px]'
 					ref={setContainer}>
-					<h3 className='m-auto text-center text-5xl'>
+					<h3 className='m-auto text-center text-5xl whitespace-pre-line'>
 						<span
 							data-font-family='BOXING'
 							ref={setText}>
-							{`Learn English with Dictionary`}
+							{`Learn English with Dictionary\n\n#2022`}
 						</span>
 					</h3>
 				</div>
 
 				<div
-					className='border border-neutral min-h-[39rem] flex flex-col p-20 flex-[1] min-w-[180px]'
+					className='border border-neutral min-h-[39rem] flex flex-col p-20 flex-[1] min-w-[180px] md:flex-auto'
 					ref={setContainer}>
 					<div className='m-auto text-center'>
-						<h3 className='text-4xl mb-6 leading-[1.5]'>
+						<h3 className='text-4xl mb-6 leading-[1.5] whitespace-nowrap'>
 							<span
 								data-font-family='BOXING'
 								ref={setText}>{`# frontend`}</span>

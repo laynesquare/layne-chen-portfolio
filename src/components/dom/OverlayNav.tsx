@@ -113,7 +113,7 @@ export default function OverlayNav() {
 					<div className='flex-[1_0_100%] block md:hidden'></div>
 					<OverlayNavLinkBtn
 						label={`resume`}
-						href={`/dom/layne_res_all.pdf`}
+						href={`/dom/layne_chen_resume_20241202_op.pdf`}
 					/>
 					<OverlayNavLinkBtn
 						label={`mail`}

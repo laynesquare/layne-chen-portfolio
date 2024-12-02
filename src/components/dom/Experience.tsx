@@ -91,14 +91,14 @@ export default function Experience() {
 								<span
 									data-font-family='SATOSHI'
 									ref={setText}>
-									{`KUNYOU Technology Co., LTD., Full-time`}
+									{`KunYou Technology Co., LTD., Full-time`}
 								</span>
 							</li>
 							<li>
 								<span
 									data-font-family='SATOSHI'
 									ref={setText}>
-									{`Jun 2023 - Present, 1yr 1mos`}
+									{`June 2023 - July 2024, 1yr 2mos`}
 								</span>
 							</li>
 							<li>
@@ -123,7 +123,7 @@ export default function Experience() {
 							<span
 								data-font-family='SATOSHI'
 								ref={setText}>
-								{`Facilitate the official website's SEO and achieve 100 in the Lighthouse index with Angular Universal's SSG tech`}
+								{`Facilitated the official website's SEO and achieved 100 in the Lighthouse index with Angular Universal's SSG tech`}
 							</span>
 						</p>
 					</div>
@@ -136,7 +136,7 @@ export default function Experience() {
 							<span
 								data-font-family='SATOSHI'
 								ref={setText}>
-								{`Utilize UI framework PrimeNG and data-visualizing package ECharts to materialize UI/UX drafts and RWD`}
+								{`Utilized UI framework PrimeNG and data-visualizing package ECharts to materialize UI/UX drafts and RWD`}
 							</span>
 						</p>
 					</div>
@@ -149,7 +149,7 @@ export default function Experience() {
 							<span
 								data-font-family='SATOSHI'
 								ref={setText}>
-								{`Use RxJS to execute asynchronous requests and fulfill API integration`}
+								{`Used RxJS to execute asynchronous requests and fulfilled API integration`}
 							</span>
 						</p>
 					</div>
@@ -166,7 +166,7 @@ export default function Experience() {
 							<span
 								data-font-family='SATOSHI'
 								ref={setText}>
-								{`Use Karma/Jasmine to implement Unit Test and achieve 98% code coverage`}
+								{`Used Karma/Jasmine to implement Unit Test and achieve 98% code coverage`}
 							</span>
 						</p>
 					</div>
@@ -179,7 +179,7 @@ export default function Experience() {
 							<span
 								data-font-family='SATOSHI'
 								ref={setText}>
-								{`Acquire AA level of web accessibility standard in developing public sectors projects`}
+								{`Acquired AA level of web accessibility standard in developing public sector projects`}
 							</span>
 						</p>
 					</div>

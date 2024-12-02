@@ -73,7 +73,7 @@ export default function Loader() {
 						style={{
 							transform: `rotateX(-45deg) rotateY(-45deg) rotateZ(0deg) translate3d(9.375rem, -6.25rem, -8.125rem)`,
 						}}>
-						{getTruncateText(item, 40)}
+						{getTruncateText(item, 25)}
 					</p>
 					<p
 						className='text-right text-[11.75rem] absolute flex justify-center items-center h-full w-full'

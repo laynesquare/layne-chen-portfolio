@@ -51,7 +51,7 @@ export default function About() {
 					<span
 						data-font-family='SATOSHI'
 						ref={setText}>
-						{`Proficient in TypeScript/JavaScript, React, Angular, Node.js, and MongoDB. Skilled in SSG/SSR, RESTful APIs, and UX design, with a focus on performance and aesthetics.`}
+						{`Proficient in modern web development, with expertise in TypeScript/JavaScript (ES6), React, and Angular. Skilled at implementing dynamic user interfaces using Three.js, GLSL, and GSAP.\n\nExperienced in back-end development with Node.js, Express, and MongoDB. Knowledgeable in DevOps practices, including Docker, AWS (S3, Route 53, CloudFront), and CI/CD pipelines using GitHub Actions.`}
 					</span>
 				</h3>
 			</div>

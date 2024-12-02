@@ -51,7 +51,7 @@ export default function Contact() {
 							data-font-highlight='button'>{`[ linkedin ]`}</span>
 					</a>
 					<a
-						href='/dom/layne_res_all.pdf'
+						href='/dom/layne_chen_resume_20241202_op.pdf'
 						target='_blank'
 						title='Go to resume'>
 						<span

@@ -104,7 +104,6 @@ export default function Skill() {
 						{/* -------------------------------------------------------------------------- */
 						/*                                btm frontend                                */
 						/* -------------------------------------------------------------------------- */}
-
 						<div
 							className='border border-neutral flex flex-[1] p-20'
 							ref={setContainer}>
@@ -121,6 +120,11 @@ export default function Skill() {
 										<span
 											data-font-family='SATOSHI'
 											ref={setText}>{`Next.js`}</span>
+									</li>
+									<li>
+										<span
+											data-font-family='SATOSHI'
+											ref={setText}>{`React`}</span>
 									</li>
 									<li>
 										<span
@@ -147,6 +151,16 @@ export default function Skill() {
 									<li>
 										<span
 											data-font-family='SATOSHI'
+											ref={setText}>{`Webpack`}</span>
+									</li>
+									<li>
+										<span
+											data-font-family='SATOSHI'
+											ref={setText}>{`Zustand`}</span>
+									</li>
+									<li>
+										<span
+											data-font-family='SATOSHI'
 											ref={setText}>{`RxJS`}</span>
 									</li>
 									<li>
@@ -167,12 +181,22 @@ export default function Skill() {
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={setText}>{`WebGL`}</span>
+											ref={setText}>{`Material UI`}</span>
+									</li>
+									<li>
+										<span
+											data-font-family='SATOSHI'
+											ref={setText}>{`PrimeNg`}</span>
 									</li>
 									<li>
 										<span
 											data-font-family='SATOSHI'
 											ref={setText}>{`Three.js`}</span>
+									</li>
+									<li>
+										<span
+											data-font-family='SATOSHI'
+											ref={setText}>{`GLSL`}</span>
 									</li>
 									<li>
 										<span
@@ -228,6 +252,48 @@ export default function Skill() {
 								</ul>
 							</div>
 						</div>
+
+						{/* -------------------------------------------------------------------------- */
+						/*                                btm DevOps                                */
+						/* -------------------------------------------------------------------------- */}
+						<div
+							className='border border-neutral flex flex-[1] p-20'
+							ref={setContainer}>
+							<div className='m-auto text-center'>
+								<h3 className='text-4xl mb-6 leading-[1.5]'>
+									<span
+										data-font-family='BOXING'
+										ref={setText}>
+										{`DevOps`}
+									</span>
+								</h3>
+								<ul className='font-satoshi text-xl leading-[1.5]'>
+									<li>
+										<span
+											data-font-family='SATOSHI'
+											ref={setText}>{`Docker`}</span>
+									</li>
+									<li>
+										<span
+											data-font-family='SATOSHI'
+											ref={setText}>
+											{`AWS S3`}
+										</span>
+									</li>
+									<li>
+										<span
+											data-font-family='SATOSHI'
+											ref={setText}>{`AWS Route 53`}</span>
+									</li>
+									<li>
+										<span
+											data-font-family='SATOSHI'
+											ref={setText}>{`AWS CloudFront`}</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+
 						{/* -------------------------------------------------------------------------- */
 						/*                             btm Tools & Platforms                          */
 						/* -------------------------------------------------------------------------- */}
@@ -259,7 +325,17 @@ export default function Skill() {
 									<li>
 										<span
 											data-font-family='SATOSHI'
-											ref={setText}>{`Webpack`}</span>
+											ref={setText}>{`GitHub Actions`}</span>
+									</li>
+									<li>
+										<span
+											data-font-family='SATOSHI'
+											ref={setText}>{`Google Search Console`}</span>
+									</li>
+									<li>
+										<span
+											data-font-family='SATOSHI'
+											ref={setText}>{`Google Analytics`}</span>
 									</li>
 								</ul>
 							</div>
