@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 // three
 import { meshBounds } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { FrontSide, MeshBasicMaterial, CircleGeometry } from 'three';
+import { FrontSide, MeshBasicMaterial, CircleGeometry, Color } from 'three';
 
 // store
 import { useWebGlStore } from '@/store';
@@ -47,14 +47,13 @@ export default function BallMask() {
 		const ball = ballRef.current;
 		const ballCloned = ballClonedRef.current;
 		const ballMask = ballMaskRef.current;
-		const ballClonedMask = ballClonedRef.current;
+		const ballClonedMask = ballMaskClonedRef.current;
 
 		if (!ball || !ballCloned) {
 			ballRef.current = scene.getObjectByName(MESH_NAME.BALL) as BallMesh | undefined;
 			ballClonedRef.current = scene.getObjectByName(MESH_NAME.CLONED_BALL) as BallMesh | undefined;
 		} else {
 			if (!ballMask || !ballClonedMask) return;
-
 			ballMask.position.copy(ball.position);
 			ballClonedMask.position.copy(ballCloned.position);
 			ballMask.scale.copy(ball.scale);
